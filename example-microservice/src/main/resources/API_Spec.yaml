@@ -30,7 +30,7 @@ paths:
         '404':
           description: Unsuccessful, no orders were found
 
-  /order/[orderId]/rating:
+  /order/{orderId}/rating:
     put:
       tags:
         - Order
@@ -61,7 +61,7 @@ paths:
         '401':
           description: Unauthorized
 
-  /status/[orderId]/accepted:
+  /status/{orderId}/accepted:
     put:
       tags:
         - Status
@@ -92,7 +92,7 @@ paths:
         '401':
           description: Unauthorized
 
-  /status/[orderId]/rejected:
+  /status/{orderId}/rejected:
     put:
       summary: Set status to “rejected”
       tags:
@@ -116,8 +116,7 @@ paths:
         '404':
           description: Order not found
 
-
-  /status/[orderId]/preparing:
+  /status/{orderId}/preparing:
     put:
       tags:
         - Status
@@ -148,7 +147,7 @@ paths:
         '401':
           description: Unauthorized
 
-  /status/[orderId]/giventocourier:
+  /status/{orderId}/giventocourier:
     put:
       summary: Set status to “given to courier”
       tags:
@@ -179,7 +178,7 @@ paths:
         '404':
           description: Order not found
 
-  /status/[orderId]/intransit:
+  /status/{orderId}/intransit:
     put:
       tags:
         - Status
@@ -210,7 +209,7 @@ paths:
         '401':
           description: Unauthorized
 
-  /status/[orderId]/delivered:
+  /status/{orderId}/delivered:
     put:
       summary: Set status to “delivered”
       tags:
