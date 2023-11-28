@@ -61,6 +61,34 @@ paths:
         '401':
           description: Unauthorized
 
+  /order/[orderId]/ETA:
+    get:
+      summary: Get the ETA of an order
+      tags:
+        - Order
+      description: return the ETA of an order
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to get it's ETA
+      responses:
+        '200':
+          description: Successful response, order found
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid arguments
+        '404':
+          description: Unsuccessful, order not found
+
   /status/[orderId]/accepted:
     put:
       tags:
@@ -132,7 +160,7 @@ paths:
           required: true
           description: Id of order to change status
       requestBody:
-        description: Order object where status and prepTime are updated
+        description: Order object where status, prepTime and estimatedDeliveryTime are updated
         required: true
         content:
           application/json:
