@@ -168,7 +168,7 @@ components:
             - rejected
             - preparing
             - given to courier
-            - om-transit
+            - on-transit
             - delivered
         id:
           type: number
@@ -210,8 +210,65 @@ components:
           type: string
           format: date-time
           description: the time the order actually is delivered
-
-
+    User:
+      properties:
+        id:
+          type: number
+          format: int64
+          example: 66
+    Vendor:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+      properties:
+        radius:
+          type: number
+          format: double
+        location:
+          $ref: '#/components/schemas/Location'
+        hasCouriers:
+          description: to indicate if a vendor has specific couriers that are assigned to them, and can only take requests from them
+          type: boolean
+        independentOrders:
+          type: array
+          description: a queue of all the ids of the independent orders
+          items:
+            type: number
+            format: int64
+    Customer:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+    Courier:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+      properties:
+        currentLocation:
+          $ref: '#/components/schemas/Location'
+        bossId:
+          type: number
+          format: int64
+          example: 666
+    DeliveryException:
+      properties:
+        orderId:
+          type: number
+          format: int64
+          description: the id of the order that the exception happened on
+        message:
+          type: string
+          description: explanation of what went wrong with the order
+          example: "Order was not delivered"
+    LateDelivery:
+      allOf:
+        - $ref: '#/components/schemas/DeliveryException'
+    NotDelivered:
+      allOf:
+        - $ref: '#/components/schemas/DeliveryException'
+    Rejected:
+      allOf:
+        - $ref: '#/components/schemas/DeliveryException'
     Location:
       type: object
       properties:
