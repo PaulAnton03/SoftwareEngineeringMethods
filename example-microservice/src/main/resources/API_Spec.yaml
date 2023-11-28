@@ -81,9 +81,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Order'
+                type: string
+                format: date-time
         '400':
           description: Invalid arguments
         '404':
