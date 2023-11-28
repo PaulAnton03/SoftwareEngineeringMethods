@@ -30,6 +30,116 @@ paths:
         '404':
           description: Unsuccessful, no orders were found
 
+  /independent-orders:
+    get:
+      summary: Retrieve independent orders for admin
+      tags:
+        - Admin
+      description: Return a list of independent orders (orders from admin couriers) for admin
+      responses:
+        '200':
+          description: Successful response, independent orders received by admin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, independent orders for admin cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve independent orders
+        '404':
+          description: Unsuccessful, no independent orders for admin were found
+
+  /vendors:
+    get:
+      summary: Retrieve all vendors
+      tags:
+        - Admin
+      description: Return a list of all vendors for admin
+      responses:
+        '200':
+          description: Successful response, all vendors received by admin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendor'
+        '400':
+          description: Unsuccessful, vendors cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve vendors
+        '404':
+          description: Unsuccessful, no vendors were found
+
+  /couriers:
+    get:
+      summary: Retrieve all couriers
+      tags:
+        - Admin
+      description: Return a list of all couriers for admin
+      responses:
+        '200':
+          description: Successful response, all couriers received by admin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, couriers cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve couriers
+        '404':
+          description: Unsuccessful, no couriers were found
+
+  /dependent-couriers:
+    get:
+      summary: Retrieve dependent couriers for admin
+      tags:
+        - Admin
+      description: Return a list of dependent couriers (couriers that belong to a vendor) for admin
+      responses:
+        '200':
+          description: Successful response, dependent couriers for admin received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, dependent couriers for admin cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve dependent couriers
+        '404':
+          description: Unsuccessful, no dependent couriers for admin were found
+
+  /independent-couriers:
+    get:
+      summary: Retrieve independent couriers for admin
+      tags:
+        - Admin
+      description: Return a list of independent couriers (couriers that do not depend on vendors) for admin
+      responses:
+        '200':
+          description: Successful response, independent couriers for admin received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, independent couriers for admin cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve independent couriers
+        '404':
+          description: Unsuccessful, no independent couriers for admin were found
+
   /order/{orderId}/rating:
     put:
       tags:
