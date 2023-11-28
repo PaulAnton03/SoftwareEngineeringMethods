@@ -140,6 +140,138 @@ paths:
         '404':
           description: Unsuccessful, no independent couriers for admin were found
 
+  /customers:
+    get:
+      summary: Retrieve all customers for admin
+      tags:
+        - Admin
+      description: Return a list of all customers that have placed an order for admin
+      responses:
+        '200':
+          description: Successful response, all customers for admin received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        '400':
+          description: Unsuccessful, customers for admin cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve customers
+        '404':
+          description: Unsuccessful, no customers for admin were found
+
+  /exceptions:
+    get:
+      summary: Retrieve all exceptions for admin
+      tags:
+        - Admin
+      description: Return a list of all exceptions collected from orders for admin
+      responses:
+        '200':
+          description: Successful response, all exceptions for admin received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, exceptions for admin cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve exceptions
+        '404':
+          description: Unsuccessful, no exceptions for admin were found
+
+  /exceptions/{id}:
+    get:
+      summary: Retrieve exception for a specific order for admin
+      tags:
+        - Admin
+      description: Return exception information for a specific order for admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response, exception for the specific order for admin received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, specific exception for admin cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve specific exception
+        '404':
+          description: Unsuccessful, no specific exception for admin was found
+
+  /vendor/radius/{id}:
+    get:
+      summary: Retrieve radius from specific vendor for admin
+      tags:
+        - Admin
+      description: Return radius of a specific vendor for admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response, radius for the specific vendor for admin received
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  radius:
+                    type: number
+                    format: double
+        '400':
+          description: Unsuccessful, specific radius for admin cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve specific radius
+        '404':
+          description: Unsuccessful, no specific radius for admin was found
+    put:
+      summary: Update radius from specific vendor for admin
+      tags:
+        - Admin
+      description: Update radius of a specific vendor for admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Radius object where radius is updated
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                radius:
+                  type: number
+                  format: double
+      responses:
+        '204':
+          description: Successful response, radius for the specific vendor for admin updated
+        '400':
+          description: Unsuccessful, specific radius for admin cannot be updated because of a bad request
+        '404':
+          description: Unsuccessful, no specific radius for admin was found
+
   /order/[orderId]/rating:
     put:
       tags:
