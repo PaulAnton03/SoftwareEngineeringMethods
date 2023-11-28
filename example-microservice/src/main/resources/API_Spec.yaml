@@ -101,7 +101,7 @@ paths:
       parameters:
         - in: path
           name: orderId
-          description: id of the order of which we need to update the status
+          description: Id of the order to change status
           required: true
           schema:
             type: number
@@ -164,7 +164,7 @@ paths:
       parameters:
         - in: path
           name: orderId
-          description: id of the order of which we need to update the status
+          description: Id of the order to change status
           required: true
           schema:
             type: number
@@ -219,7 +219,7 @@ paths:
       parameters:
         - in: path
           name: orderId
-          description: id of the order of which we need to update the status
+          description: Id of the order to change status
           required: true
           schema:
             type: number
