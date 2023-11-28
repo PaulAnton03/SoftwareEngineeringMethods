@@ -30,6 +30,38 @@ paths:
         '404':
           description: Unsuccessful, no orders were found
 
+  /order/[orderId]/rating:
+    put:
+      tags:
+        - Order
+      summary: Change the rating number and comment
+      description: Update both of the orders ratings
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to update rating
+      requestBody:
+        description: Order object where status, ratingNumber and ratingComment are updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '204':
+          description: Successful update of status to accepted
+        '400':
+          description: Invalid arguments
+        '404':
+          description: Order not found
+        '401':
+          description: Unauthorized
+
+
   /status/[orderId]/accepted:
     put:
       tags:
@@ -46,6 +78,7 @@ paths:
           description: Id of the order to change status
       requestBody:
         description: Order object where status is updated
+        required: true
         content:
           application/json:
             schema:
@@ -76,6 +109,7 @@ paths:
           description: Id of order to change status
       requestBody:
         description: Order object where status and prepTime are updated
+        required: true
         content:
           application/json:
             schema:
@@ -106,6 +140,7 @@ paths:
           description: Id of order to change status
       requestBody:
         description: Order object where status is updated
+        required: true
         content:
           application/json:
             schema:
