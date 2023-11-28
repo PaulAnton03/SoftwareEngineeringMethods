@@ -1,9 +1,110 @@
 openapi: 3.0.3
 info:
-  title: Title
+  title: Delivery Specification
   description: Title
   version: 1.0.0
 servers:
   - url: 'https'
+tags:
+  - name: Order
+  - name: Status
+  - name: Admin
 paths:
+  /order:
+    get:
+      summary: Retrieve a list of all orders
+      tags:
+        - Order
+      description: return a list of order objects
+      responses:
+        '200':
+          description: Successful response, order received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no orders were found
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - pending
+            - accepted
+            - rejected
+            - preparing
+            - given to courier
+            - om-transit
+            - delivered
+        id:
+          type: number
+          format: int64
+        deliveryDestination:
+          $ref: '#/components/schemas/Location'
+        customerId:
+          type: number
+          format: int64
+          example: 66
+        vendorId:
+          type: number
+          format: int64
+          example: 77
+        courierId:
+          type: number
+          format: int64
+          example: 88
+        ratingNumber:
+          type: integer
+          example: 5
+        ratingComment:
+          type: string
+        orderTime:
+          type: string
+          format: date-time
+          example: 2023-11-28T15:30:00Z
+          description: the time the order was made
+        prepTime:
+          type: string
+          format: time
+          description: the time it takes to prepare the order in format "HH:MM:SS"
+          example: '01:30:00'
+        expectedDeliveryTime:
+          type: string
+          format: date-time
+          description: the time the order will be planned to be delivered
+        ActualDeliveryTime:
+          type: string
+          format: date-time
+          description: the time the order actually is delivered
+
+
+    Location:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: float
+          example: 23.92488
+        longitude:
+          type: number
+          format: float
+          example: 74.7099
+
+
+
+
+
+
+
+
+
   
