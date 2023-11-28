@@ -135,6 +135,57 @@ paths:
           description: Unsuccessful, location cannot be updated because of bad request
         '404':
           description: Unsuccessful, no location was found
+  /order/{id}/distance:
+    get:
+      summary: Retrieve the current distance to the courier with this order
+      tags:
+        - Order
+      description: return the distance to the courier who has the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order with the distance to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, distance received
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+        '400':
+          description: Unsuccessful, distance cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no distance was found
+    put:
+      summary: Update the current distance of the courier with this order
+      tags:
+        - Order
+      description: update the distance of the courier who has the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order with the distance to update
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, distance updated
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+        '400':
+          description: Unsuccessful, distance cannot be updated because of bad request
+        '404':
+          description: Unsuccessful, no distance was found
   /order/{vendorId}:
     get:
       summary: Retrieve a list of all orders that belong to a given vendor
