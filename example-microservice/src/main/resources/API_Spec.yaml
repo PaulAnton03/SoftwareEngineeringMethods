@@ -561,6 +561,13 @@ paths:
             format: int64
           required: true
           description: Id of the order to change status
+        - in: header
+          name: Authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
       requestBody:
         description: Order object where status is updated
         required: true
@@ -616,6 +623,13 @@ paths:
             format: int64
           required: true
           description: Id of order to change status
+        - in: header
+          name: Authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
       requestBody:
         description: Order object where status, prepTime and estimatedDeliveryTime are updated
         required: true
@@ -678,6 +692,13 @@ paths:
             format: int64
           required: true
           description: Id of order to change status
+        - in: header
+          name: Authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
       requestBody:
         description: Order object where status is updated
         required: true
