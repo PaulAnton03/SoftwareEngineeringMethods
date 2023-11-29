@@ -882,6 +882,7 @@ components:
   requestBodies:
     PreparingDTO:
       description: Request body for status change from accepted to preparing
+      required: true
       content:
         application/json:
           schema:
