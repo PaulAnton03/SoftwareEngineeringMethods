@@ -547,7 +547,7 @@ paths:
         '404':
           description: Unsuccessful, order not found
 
-  /status/[orderId]/accepted:
+  /status/{orderId}/accepted:
     put:
       tags:
         - Status
