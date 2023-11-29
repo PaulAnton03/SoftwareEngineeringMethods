@@ -1368,7 +1368,7 @@ paths:
             type: number
             format: int64
       requestBody:
-        $ref: '#/components/requestBodies/PreparingDTO'
+        $ref: '#/components/requestBodies/PreparingRequestBody'
       responses:
         '204':
           description: Successful update of status to preparing
@@ -1386,7 +1386,7 @@ paths:
         - Status
       description: Goes from “preparing” to [said by vendor] “given to courier” and set the courierID
       requestBody:
-        $ref: '#/components/requestBodies/GivenToCourierDTO'
+        $ref: '#/components/requestBodies/GivenToCourierRequestBody'
       parameters:
         - in: path
           name: orderId
@@ -1465,7 +1465,7 @@ paths:
             type: number
             format: int64
       requestBody:
-        $ref: '#/components/requestBodies/DeliveredDTO'
+        $ref: '#/components/requestBodies/DeliveredRequestBody'
       responses:
         '204':
           description: Successful update of status to delivered
@@ -1603,7 +1603,7 @@ components:
           example: 74.7099
 
   requestBodies:
-    PreparingDTO:
+    PreparingRequestBody:
       description: Request body for status change from accepted to preparing
       required: true
       content:
@@ -1620,7 +1620,7 @@ components:
                 type: string
                 format: date-time
                 description: the time the order will be planned to be delivered
-    GivenToCourierDTO:
+    GivenToCourierRequestBody:
       description: Request body for status change from preparing to given to courier
       required: true
       content:
@@ -1632,7 +1632,7 @@ components:
                 type: number
                 format: int64
                 example: 88
-    DeliveredDTO:
+    DeliveredRequestBody:
       description: Request body for status change from in-transit to delivered
       required: true
       content:
