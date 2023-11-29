@@ -866,7 +866,7 @@ components:
     NotDelivered:
       allOf:
         - $ref: '#/components/schemas/DeliveryException'
-    Rejected:
+    RejectedOrder:
       allOf:
         - $ref: '#/components/schemas/DeliveryException'
     Location:
