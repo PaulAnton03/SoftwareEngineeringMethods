@@ -377,7 +377,7 @@ paths:
             format: int64
       responses:
         '204':
-          description: Successful operation
+          description: Successful update of status to rejected
         '400':
           description: Invalid arguments
         '401':
@@ -439,7 +439,7 @@ paths:
             format: int64
       responses:
         '204':
-          description: Successful operation
+          description: Successful update of status to "given to courier"
         '400':
           description: Invalid arguments
         '401':
@@ -502,7 +502,7 @@ paths:
 
       responses:
         '204':
-          description: Successful operation
+          description: Successful update of status to delivered
         '400':
           description: Invalid arguments
         '401':
