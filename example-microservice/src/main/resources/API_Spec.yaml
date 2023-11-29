@@ -1,10 +1,10 @@
 openapi: 3.0.3
 info:
   title: Delivery Specification
-  description: Title
+  description: This is a microservice for managing delivery in the YumYumNow company.
   version: 1.0.0
 servers:
-  - url: 'https'
+  - url: 'https/'
 tags:
   - name: Order
   - name: Status
