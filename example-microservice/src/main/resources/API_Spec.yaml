@@ -18,7 +18,7 @@ paths:
       description: return a list of order objects
       responses:
         '200':
-          description: Successful response, order received
+          description: Successful response, orders received
           content:
             application/json:
               schema:
@@ -27,6 +27,223 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no orders were found
+  /order/{id}:
+    get:
+      summary: Retrieve an order given the order id
+      tags:
+        - Order
+      description: return the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, order received
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, order cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no order was found
+    put:
+      summary: Update an order given the order id
+      tags:
+        - Order
+      description: update the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order to update
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, order updated
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, order cannot be updated because of bad request
+        '404':
+          description: Unsuccessful, no order was found
+  /order/{id}/current:
+    get:
+      summary: Retrieve the current location of the courier with this order
+      tags:
+        - Order
+      description: return the location of the courier who has the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order with the location to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, location received
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Location'
+        '400':
+          description: Unsuccessful, location cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no location was found
+    put:
+      summary: Update the current location of the courier with this order
+      tags:
+        - Order
+      description: update the location of the courier who has the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order with the location to update
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Location object 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '200':
+          description: Successful response, location updated
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Location'
+        '400':
+          description: Unsuccessful, location cannot be updated because of bad request
+        '404':
+          description: Unsuccessful, no location was found
+  /order/{id}/distance:
+    get:
+      summary: Retrieve the current distance to the courier with this order
+      tags:
+        - Order
+      description: return the distance to the courier who has the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order with the distance to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, distance received
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+        '400':
+          description: Unsuccessful, distance cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no distance was found
+    put:
+      summary: Update the current distance of the courier with this order
+      tags:
+        - Order
+      description: update the distance of the courier who has the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order with the distance to update
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, distance updated
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+        '400':
+          description: Unsuccessful, distance cannot be updated because of bad request
+        '404':
+          description: Unsuccessful, no distance was found
+  /order/{vendorId}:
+    get:
+      summary: Retrieve a list of all orders that belong to a given vendor
+      tags:
+        - Order
+      description: return a list of order objects that are assigned to specific vendor
+      parameters:
+        - name: vendorId
+          in: path
+          description: id of the vendor to retrieve the orders from
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, orders received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no orders were found
+    put:
+      summary: Update a list of all orders that belong to a given vendor
+      tags:
+        - Order
+      description: update a list of order objects that are assigned to specific vendor
+      parameters:
+        - name: vendorId
+          in: path
+          description: id of the vendor to update the orders for
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, orders updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be updated because of bad request
         '404':
           description: Unsuccessful, no orders were found
 
