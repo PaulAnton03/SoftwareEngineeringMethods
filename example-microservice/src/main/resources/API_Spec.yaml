@@ -503,6 +503,13 @@ paths:
             format: int64
           required: true
           description: Id of the order to update rating
+        - in: header
+          name: Authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       requestBody:
         description: Order object where status, ratingNumber and ratingComment are updated
         required: true
