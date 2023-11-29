@@ -1337,13 +1337,13 @@ paths:
             format: int64
           required: true
           description: Id of the order to change status
-      requestBody:
-        description: Order object where status is updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
+        - in: header
+          name: Authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '204':
           description: Successful update of status to accepted
@@ -1375,13 +1375,6 @@ paths:
           schema:
             type: number
             format: int64
-      requestBody:
-        description: Order object where status is updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
       responses:
         '204':
           description: Successful update of status to rejected
@@ -1406,13 +1399,15 @@ paths:
             format: int64
           required: true
           description: Id of order to change status
+        - in: header
+          name: Authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
       requestBody:
-        description: Order object where status, prepTime and estimatedDeliveryTime are updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
+        $ref: '#/components/requestBodies/PreparingRequestBody'
       responses:
         '204':
           description: Successful update of status to preparing
@@ -1430,12 +1425,7 @@ paths:
         - Status
       description: Goes from “preparing” to [said by vendor] “given to courier” and set the courierID
       requestBody:
-        required: true
-        description: Order object where status and courierId are updated
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
+        $ref: '#/components/requestBodies/GivenToCourierRequestBody'
       parameters:
         - in: path
           name: orderId
@@ -1475,13 +1465,13 @@ paths:
             format: int64
           required: true
           description: Id of order to change status
-      requestBody:
-        description: Order object where status is updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
+        - in: header
+          name: Authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '204':
           description: Successful update of status to in-transit
@@ -1514,13 +1504,7 @@ paths:
             type: number
             format: int64
       requestBody:
-        description: Order object where status and actualDeliveryTime are updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-
+        $ref: '#/components/requestBodies/DeliveredRequestBody'
       responses:
         '204':
           description: Successful update of status to delivered
@@ -1582,7 +1566,7 @@ components:
           type: string
           format: date-time
           description: the time the order will be planned to be delivered
-        ActualDeliveryTime:
+        actualDeliveryTime:
           type: string
           format: date-time
           description: the time the order actually is delivered
@@ -1656,3 +1640,46 @@ components:
           type: number
           format: float
           example: 74.7099
+
+  requestBodies:
+    PreparingRequestBody:
+      description: Request body for status change from accepted to preparing
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              prepTime:
+                type: string
+                format: time
+                description: the time it takes to prepare the order in format "HH:MM:SS"
+                example: '01:30:00'
+              expectedDeliveryTime:
+                type: string
+                format: date-time
+                description: the time the order will be planned to be delivered
+    GivenToCourierRequestBody:
+      description: Request body for status change from preparing to given to courier
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              courierId:
+                type: number
+                format: int64
+                example: 88
+    DeliveredRequestBody:
+      description: Request body for status change from in-transit to delivered
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              actualDeliveryTime:
+                type: string
+                format: date-time
+                description: the time the order actually is delivered
