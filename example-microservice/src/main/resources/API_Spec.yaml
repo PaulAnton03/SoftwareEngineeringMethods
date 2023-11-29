@@ -122,6 +122,13 @@ paths:
           schema:
             type: number
             format: int64
+      requestBody:
+        description: Location object 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
       responses:
         '200':
           description: Successful response, location updated
