@@ -654,12 +654,12 @@ paths:
         - Status
       description: Goes from “preparing” to [said by vendor] “given to courier” and set the courierID
       requestBody:
+        description: GivenToCourierDTO object containing courierId
         required: true
-        description: Order object where status and courierId are updated
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
+              $ref: '#/components/requestBodies/GivenToCourierDTO'
       parameters:
         - in: path
           name: orderId
@@ -897,3 +897,15 @@ components:
                 type: string
                 format: date-time
                 description: the time the order will be planned to be delivered
+    GivenToCourierDTO:
+      description: Request body for status change from preparing to given to courier
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              courierId:
+                type: number
+                format: int64
+                example: 88
