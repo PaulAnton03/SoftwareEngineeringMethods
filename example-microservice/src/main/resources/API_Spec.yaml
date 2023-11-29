@@ -738,12 +738,12 @@ paths:
             type: number
             format: int64
       requestBody:
-        description: Order object where status and actualDeliveryTime are updated
+        description: DeliveredDTO object containing actualDeliveryTime
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
+              $ref: '#/components/requestBodies/DeliveredDTO'
       responses:
         '204':
           description: Successful update of status to delivered
@@ -909,3 +909,15 @@ components:
                 type: number
                 format: int64
                 example: 88
+    DeliveredDTO:
+      description: Request body for status change from in-transit to delivered
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              actualDeliveryTime:
+                type: string
+                format: date-time
+                description: the time the order actually is delivered
