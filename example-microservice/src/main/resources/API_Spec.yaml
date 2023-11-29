@@ -799,7 +799,7 @@ components:
           type: string
           format: date-time
           description: the time the order will be planned to be delivered
-        ActualDeliveryTime:
+        actualDeliveryTime:
           type: string
           format: date-time
           description: the time the order actually is delivered
