@@ -566,7 +566,7 @@ paths:
       operationId: getFinalDestination
       summary: Get the final destination of a specific order
       tags:
-        -Order
+        - Order
       description: Retrieve the final destination of an order
       parameters:
         - name: Authorization
