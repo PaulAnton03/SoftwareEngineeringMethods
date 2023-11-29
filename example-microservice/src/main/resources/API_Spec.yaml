@@ -547,7 +547,7 @@ paths:
         '404':
           description: Unsuccessful, order not found
 
-  /status/[orderId]/accepted:
+  /status/{orderId}/accepted:
     put:
       tags:
         - Status
@@ -592,6 +592,20 @@ paths:
           schema:
             type: number
             format: int64
+        - in: header
+          name: Authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Order object where status is updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
       responses:
         '204':
           description: Successful update of status to rejected
@@ -648,7 +662,7 @@ paths:
       description: Goes from “preparing” to [said by vendor] “given to courier” and set the courierID
       requestBody:
         required: true
-        description: Order which needs to be updated
+        description: Order object where status and courierId are updated
         content:
           application/json:
             schema:
@@ -657,6 +671,13 @@ paths:
         - in: path
           name: orderId
           description: Id of the order to change status
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: header
+          name: Authorization
+          description: the UserId to check if they have the rights to make this request
           required: true
           schema:
             type: number
@@ -723,8 +744,15 @@ paths:
           schema:
             type: number
             format: int64
+        - in: header
+          name: Authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       requestBody:
-        description: Order which needs to be updated
+        description: Order object where status and actualDeliveryTime are updated
         required: true
         content:
           application/json:
