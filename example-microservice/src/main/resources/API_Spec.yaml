@@ -253,6 +253,14 @@ paths:
       tags:
         - Admin
       description: Return a list of independent orders (orders from admin couriers) for admin
+      parameters:
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, independent orders received by admin
@@ -275,6 +283,14 @@ paths:
       tags:
         - Admin
       description: Return a list of all vendors for admin
+      parameters:
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, all vendors received by admin
@@ -297,6 +313,14 @@ paths:
       tags:
         - Admin
       description: Return a list of all couriers for admin
+      parameters:
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, all couriers received by admin
@@ -356,6 +380,14 @@ paths:
       tags:
         - Admin
       description: Return a list of dependent couriers (couriers that belong to a vendor) for admin
+      parameters:
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, dependent couriers for admin received
@@ -378,6 +410,14 @@ paths:
       tags:
         - Admin
       description: Return a list of independent couriers (couriers that do not depend on vendors) for admin
+      parameters:
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, independent couriers for admin received
@@ -400,6 +440,14 @@ paths:
       tags:
         - Admin
       description: Return a list of all customers that have placed an order for admin
+      parameters:
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, all customers for admin received
@@ -422,6 +470,14 @@ paths:
       tags:
         - Admin
       description: Return a list of all exceptions collected from orders for admin
+      parameters:
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, all exceptions for admin received
@@ -451,6 +507,13 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, exception for the specific order for admin received
@@ -477,6 +540,13 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
             format: int64
       responses:
         '200':
