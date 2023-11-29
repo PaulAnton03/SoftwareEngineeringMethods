@@ -313,6 +313,43 @@ paths:
         '404':
           description: Unsuccessful, no couriers were found
 
+  /couriers/{courierId}:
+    get:
+      summary: Retrieve a courier given the courier id
+      tags:
+        - Admin
+      description: return the courier corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the courier to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: header
+          name: Authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, courier received
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, courier cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no courier was found
+        '403':
+          description: Unauthorized
+
   /dependent-couriers:
     get:
       summary: Retrieve dependent couriers for admin
@@ -522,6 +559,8 @@ paths:
           description: Successful update of status to accepted
         '400':
           description: Invalid arguments
+        '403':
+          description: Unauthorized
         '404':
           description: Order not found
         '401':
