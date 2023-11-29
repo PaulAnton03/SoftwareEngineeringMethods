@@ -631,12 +631,7 @@ paths:
             type: number
             format: int64
       requestBody:
-        description: PreparingDTO object containing eta and prepTime
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/requestBodies/PreparingDTO'
+        $ref: '#/components/requestBodies/PreparingDTO'
       responses:
         '204':
           description: Successful update of status to preparing
@@ -654,12 +649,7 @@ paths:
         - Status
       description: Goes from “preparing” to [said by vendor] “given to courier” and set the courierID
       requestBody:
-        description: GivenToCourierDTO object containing courierId
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/requestBodies/GivenToCourierDTO'
+        $ref: '#/components/requestBodies/GivenToCourierDTO'
       parameters:
         - in: path
           name: orderId
@@ -738,12 +728,7 @@ paths:
             type: number
             format: int64
       requestBody:
-        description: DeliveredDTO object containing actualDeliveryTime
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/requestBodies/DeliveredDTO'
+        $ref: '#/components/requestBodies/DeliveredDTO'
       responses:
         '204':
           description: Successful update of status to delivered
@@ -879,6 +864,7 @@ components:
           type: number
           format: float
           example: 74.7099
+
   requestBodies:
     PreparingDTO:
       description: Request body for status change from accepted to preparing
