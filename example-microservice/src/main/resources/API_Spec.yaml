@@ -412,6 +412,93 @@ paths:
         '404':
           description: Unsuccessful, no orders were found
 
+  /order/{orderId}/rating:
+    get:
+      tags:
+        - Order
+      summary: Retrieve the rating of a specific order
+      description: Retrieve the rating details for a specific order
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to retrieve rating
+      responses:
+        '200':
+          description: Successful response, rating details for the specific order received
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  ratingNumber:
+                    type: number
+                  ratingComment:
+                    type: string
+        '404':
+          description: Unsuccessful, no rating details found for the specified order
+    put:
+      tags:
+        - Order
+      summary: Change the rating number and comment
+      description: Update both of the orders ratings
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to update rating
+      requestBody:
+        description: Order object where status, ratingNumber and ratingComment are updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '204':
+          description: Successful update of status to accepted
+        '400':
+          description: Invalid arguments
+        '404':
+          description: Order not found
+        '401':
+          description: Unauthorized
+
+  /order/{orderId}/ETA:
+    get:
+      summary: Get the ETA of an order
+      tags:
+        - Order
+      description: return the ETA of an order
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to get it's ETA
+      responses:
+        '200':
+          description: Successful response, order found
+          content:
+            application/json:
+              schema:
+                type: string
+                format: date-time
+        '400':
+          description: Invalid arguments
+        '404':
+          description: Unsuccessful, order not found
+
   /independent-orders:
     get:
       summary: Retrieve independent orders for admin
@@ -1219,71 +1306,6 @@ paths:
         '404':
           description: Unsuccessful, no specific radius for admin was found
 
-  /order/{orderId}/rating:
-    put:
-      tags:
-        - Order
-      summary: Change the rating number and comment
-      description: Update both of the orders ratings
-      parameters:
-        - in: path
-          name: orderId
-          schema:
-            type: number
-            format: int64
-          required: true
-          description: Id of the order to update rating
-        - in: header
-          name: Authorization
-          description: the UserId to check if they have the rights to make this request
-          required: true
-          schema:
-            type: number
-            format: int64
-      requestBody:
-        description: Order object where status, ratingNumber and ratingComment are updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-      responses:
-        '204':
-          description: Successful update of status to accepted
-        '400':
-          description: Invalid arguments
-        '404':
-          description: Order not found
-        '401':
-          description: Unauthorized
-
-  /order/{orderId}/ETA:
-    get:
-      summary: Get the ETA of an order
-      tags:
-        - Order
-      description: return the ETA of an order
-      parameters:
-        - in: path
-          name: orderId
-          schema:
-            type: number
-            format: int64
-          required: true
-          description: Id of the order to get it's ETA
-      responses:
-        '200':
-          description: Successful response, order found
-          content:
-            application/json:
-              schema:
-                type: string
-                format: date-time
-        '400':
-          description: Invalid arguments
-        '404':
-          description: Unsuccessful, order not found
-
   /status/{orderId}/accepted:
     put:
       tags:
@@ -1491,33 +1513,41 @@ components:
             - given to courier
             - on-transit
             - delivered
+          description: the current status of the order expressed as one of the above options
         id:
           type: number
           format: int64
+          description: the unique id of an order
         deliveryDestination:
           $ref: '#/components/schemas/Location'
         customerId:
           type: number
           format: int64
           example: 66
+          description: id of the customer that placed the order
         vendorId:
           type: number
           format: int64
           example: 77
+          description: the id of the vendor that is preparing the order
         courierId:
           type: number
           format: int64
           example: 88
+          description: the id of the courier that is delivering the order
         ratingNumber:
           type: integer
           example: 5
+          description: an integer out of 5 that rates how good the order was
         ratingComment:
           type: string
+          example: "horrible food, mean courier"
+          description: a small message to give opinions on the order
         orderTime:
           type: string
           format: date-time
           example: 2023-11-28T15:30:00Z
-          description: the time the order was made
+          description: the time the order was placed by the customer
         prepTime:
           type: string
           format: time
@@ -1545,22 +1575,25 @@ components:
         radius:
           type: number
           format: double
+          description: the maximum radius a vendor is able to take orders from
         location:
           $ref: '#/components/schemas/Location'
         hasCouriers:
           description: to indicate if a vendor has specific couriers that are assigned to them, and can only take requests from them
           type: boolean
-        independentOrders:
+        orders:
           type: array
-          description: a queue of all the ids of the independent orders
+          description: a queue of all the ids of the orders for that vendor, independent orders being
           items:
             type: number
             format: int64
     Customer:
+      description: user that places the order
       allOf:
         - $ref: '#/components/schemas/User'
         - type: object
     Courier:
+      description: The user that delivers the given order.
       allOf:
         - $ref: '#/components/schemas/User'
         - type: object
@@ -1571,7 +1604,9 @@ components:
           type: number
           format: int64
           example: 666
+          description: a reference to the specific vendor the courier works for, a reference to the admin (which is 1 person) if the courier is independent, meaning courier has a list of orders to choose from and is not dependent on a vendor
     DeliveryException:
+      description: General exception class more specific exceptions inherit from. Thrown whenever there is any kind of problem with the order
       properties:
         orderId:
           type: number
@@ -1582,15 +1617,19 @@ components:
           description: explanation of what went wrong with the order
           example: "Order was not delivered"
     LateDelivery:
+      description: Thrown when an order is delivered late, when the actual delivery time is bigger than estimated delivery time
       allOf:
         - $ref: '#/components/schemas/DeliveryException'
     NotDelivered:
+      description: Thrown when an order is not delivered at all
       allOf:
         - $ref: '#/components/schemas/DeliveryException'
-    RejectedOrder:
+    Rejected:
+      description: Thrown when an order is rejected by the vendor, possible by the courier in unforseen circumstances
       allOf:
         - $ref: '#/components/schemas/DeliveryException'
     Location:
+      description: Any kind of address expressed as a longtitude and latitude
       type: object
       properties:
         latitude:
