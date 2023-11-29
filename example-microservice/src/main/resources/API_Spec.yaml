@@ -599,13 +599,6 @@ paths:
           schema:
             type: number
             format: int64
-      requestBody:
-        description: Order object where status is updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
       responses:
         '204':
           description: Successful update of status to rejected
@@ -713,13 +706,6 @@ paths:
           schema:
             type: number
             format: int64
-      requestBody:
-        description: Order object where status is updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
       responses:
         '204':
           description: Successful update of status to in-transit
