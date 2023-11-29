@@ -65,6 +65,7 @@ paths:
           description: Unsuccessful, orders cannot be deleted because of bad request
         '404':
           description: Unsuccessful, no orders were found
+
   /order/{id}:
     get:
       summary: Retrieve an order given the order id
@@ -170,6 +171,7 @@ paths:
           description: Unsuccessful, order cannot be deleted because of bad request
         '404':
           description: Unsuccessful, no order was found
+
   /order/{id}/current:
     get:
       summary: Retrieve the current location of the courier with this order
@@ -230,6 +232,7 @@ paths:
           description: Unsuccessful, location cannot be updated because of bad request
         '404':
           description: Unsuccessful, no location was found
+
   /order/{id}/distance:
     get:
       summary: Retrieve the current distance to the courier with this order
@@ -306,6 +309,7 @@ paths:
           description: Unsuccessful, distance cannot be updated because of bad request
         '404':
           description: Unsuccessful, no distance was found
+
   /order/{vendorId}:
     get:
       summary: Retrieve a list of all orders that belong to a given vendor
