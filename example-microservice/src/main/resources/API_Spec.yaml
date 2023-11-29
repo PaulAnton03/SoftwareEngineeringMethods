@@ -358,7 +358,7 @@ paths:
           description: Invalid arguments
         '404':
           description: Order not found
-        '401':
+        '403':
           description: Unauthorized
 
   /status/{orderId}/rejected:
@@ -380,7 +380,7 @@ paths:
           description: Successful operation
         '400':
           description: Invalid arguments
-        '401':
+        '403':
           description: Unauthorized
         '404':
           description: Order not found
@@ -413,7 +413,7 @@ paths:
           description: Invalid arguments
         '404':
           description: Order not found
-        '401':
+        '403':
           description: Unauthorized
 
   /status/{orderId}/giventocourier:
@@ -442,7 +442,7 @@ paths:
           description: Successful operation
         '400':
           description: Invalid arguments
-        '401':
+        '403':
           description: Unauthorized
         '404':
           description: Order not found
@@ -475,7 +475,7 @@ paths:
           description: Invalid arguments
         '404':
           description: Order not found
-        '401':
+        '403':
           description: Unauthorized
 
   /status/{orderId}/delivered:
@@ -505,7 +505,7 @@ paths:
           description: Successful operation
         '400':
           description: Invalid arguments
-        '401':
+        '403':
           description: Unauthorized
         '404':
           description: Order not found
