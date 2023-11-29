@@ -29,6 +29,42 @@ paths:
           description: Unsuccessful, orders cannot be retrieved because of bad request
         '404':
           description: Unsuccessful, no orders were found
+    post:
+      summary: add a list of all orders
+      tags:
+        - Order
+      description: add a list of order objects
+      responses:
+        '200':
+          description: Successful response, orders added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be added because of bad request
+        '404':
+          description: Unsuccessful, no orders were found
+    delete:
+      summary: delete the list of all orders
+      tags:
+        - Order
+      description: delete the list of order objects
+      responses:
+        '200':
+          description: Successful response, orders deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be deleted because of bad request
+        '404':
+          description: Unsuccessful, no orders were found
   /order/{id}:
     get:
       summary: Retrieve an order given the order id
@@ -56,6 +92,32 @@ paths:
           description: Unsuccessful, order cannot be retrieved because of bad request
         '404':
           description: Unsuccessful, no order was found
+    post:
+      summary: add an order given the order id
+      tags:
+        - Order
+      description: add the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order to add
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, order added
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, order cannot be added because of bad request
+        '404':
+          description: Unsuccessful, no order was found
     put:
       summary: Update an order given the order id
       tags:
@@ -80,6 +142,32 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be updated because of bad request
+        '404':
+          description: Unsuccessful, no order was found
+    delete:
+      summary: Delete an order given the order id
+      tags:
+        - Order
+      description: delete the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order to delete
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, order deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, order cannot be deleted because of bad request
         '404':
           description: Unsuccessful, no order was found
   /order/{id}/current:
@@ -168,6 +256,31 @@ paths:
           description: Unsuccessful, distance cannot be retrieved because of bad request
         '404':
           description: Unsuccessful, no distance was found
+    post:
+      summary: Add the current distance of the courier with this order
+      tags:
+        - Order
+      description: add the distance of the courier who has the order corresponding to the id
+      parameters:
+        - name: id
+          in: path
+          description: id of the order with the distance to add
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, distance added
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+        '400':
+          description: Unsuccessful, distance cannot be added because of bad request
+        '404':
+          description: Unsuccessful, no distance was found
     put:
       summary: Update the current distance of the courier with this order
       tags:
@@ -220,6 +333,32 @@ paths:
           description: Unsuccessful, orders cannot be retrieved because of bad request
         '404':
           description: Unsuccessful, no orders were found
+    post:
+      summary: Add a list of all orders that belong to a given vendor
+      tags:
+        - Order
+      description: add a list of order objects that are assigned to specific vendor
+      parameters:
+        - name: vendorId
+          in: path
+          description: id of the vendor to add the orders for
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, orders added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be added because of bad request
+        '404':
+          description: Unsuccessful, no orders were found
     put:
       summary: Update a list of all orders that belong to a given vendor
       tags:
@@ -244,6 +383,32 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be updated because of bad request
+        '404':
+          description: Unsuccessful, no orders were found
+    delete:
+      summary: Delete a list of all orders that belong to a given vendor
+      tags:
+        - Order
+      description: delete a list of order objects that are assigned to specific vendor
+      parameters:
+        - name: vendorId
+          in: path
+          description: id of the vendor to delete the orders for
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, orders deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be deleted because of bad request
         '404':
           description: Unsuccessful, no orders were found
 
@@ -276,6 +441,66 @@ paths:
           description: Unsuccessful, entity does not have access rights to retrieve independent orders
         '404':
           description: Unsuccessful, no independent orders for admin were found
+    post:
+      summary: Add independent orders
+      tags:
+        - Admin
+      description: Add a list of independent orders (orders from admin couriers)
+      responses:
+        '200':
+          description: Successful response, independent orders added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, independent orders for admin cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add independent orders
+        '404':
+          description: Unsuccessful, no independent orders for admin were found
+    put:
+      summary: Update independent orders
+      tags:
+        - Admin
+      description: Update a list of independent orders (orders from admin couriers)
+      responses:
+        '200':
+          description: Successful response, independent orders updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, independent orders for admin cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update independent orders
+        '404':
+          description: Unsuccessful, no independent orders for admin were found
+    delete:
+      summary: Delete independent orders
+      tags:
+        - Admin
+      description: Delete a list of independent orders (orders from admin couriers)
+      responses:
+        '200':
+          description: Successful response, independent orders deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, independent orders for admin cannot be deleted because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete independent orders
+        '404':
+          description: Unsuccessful, no independent orders for admin were found
 
   /vendors:
     get:
@@ -304,6 +529,66 @@ paths:
           description: Unsuccessful, vendors cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve vendors
+        '404':
+          description: Unsuccessful, no vendors were found
+    post:
+      summary: Add all vendors
+      tags:
+        - Admin
+      description: Add a list of all vendors
+      responses:
+        '200':
+          description: Successful response, all vendors added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendor'
+        '400':
+          description: Unsuccessful, vendors cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add vendors
+        '404':
+          description: Unsuccessful, no vendors were found
+    put:
+      summary: Update all vendors
+      tags:
+        - Admin
+      description: Update a list of all vendors
+      responses:
+        '200':
+          description: Successful response, all vendors updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendor'
+        '400':
+          description: Unsuccessful, vendors cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update vendors
+        '404':
+          description: Unsuccessful, no vendors were found
+    delete:
+      summary: Delete all vendors
+      tags:
+        - Admin
+      description: Delete a list of all vendors
+      responses:
+        '200':
+          description: Successful response, all vendors deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendor'
+        '400':
+          description: Unsuccessful, vendors cannot be deleted because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete vendors
         '404':
           description: Unsuccessful, no vendors were found
 
@@ -336,6 +621,66 @@ paths:
           description: Unsuccessful, entity does not have access rights to retrieve couriers
         '404':
           description: Unsuccessful, no couriers were found
+    post:
+      summary: Add all couriers
+      tags:
+        - Admin
+      description: Add a list of all couriers
+      responses:
+        '200':
+          description: Successful response, all couriers added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, couriers cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add couriers
+        '404':
+          description: Unsuccessful, no couriers were found
+    put:
+      summary: Update all couriers
+      tags:
+        - Admin
+      description: Update a list of all couriers
+      responses:
+        '200':
+          description: Successful response, all couriers updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, couriers cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update couriers
+        '404':
+          description: Unsuccessful, no couriers were found
+    delete:
+      summary: Delete all couriers
+      tags:
+        - Admin
+      description: Delete a list of all couriers
+      responses:
+        '200':
+          description: Successful response, all couriers deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, couriers cannot be deleted because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete couriers
+        '404':
+          description: Unsuccessful, no couriers were found
 
   /dependent-couriers:
     get:
@@ -366,6 +711,66 @@ paths:
           description: Unsuccessful, entity does not have access rights to retrieve dependent couriers
         '404':
           description: Unsuccessful, no dependent couriers for admin were found
+    post:
+      summary: Add dependent couriers
+      tags:
+        - Admin
+      description: Add a list of dependent couriers (couriers that belong to a vendor)
+      responses:
+        '200':
+          description: Successful response, dependent couriers added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, dependent couriers cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add dependent couriers
+        '404':
+          description: Unsuccessful, no dependent couriers were found
+    put:
+      summary: Update dependent couriers
+      tags:
+        - Admin
+      description: Update a list of dependent couriers (couriers that belong to a vendor)
+      responses:
+        '200':
+          description: Successful response, dependent couriers updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, dependent couriers cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update dependent couriers
+        '404':
+          description: Unsuccessful, no dependent couriers were found
+    delete:
+      summary: Delete dependent couriers
+      tags:
+        - Admin
+      description: Delete a list of dependent couriers (couriers that belong to a vendor)
+      responses:
+        '200':
+          description: Successful response, dependent couriers deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, dependent couriers cannot be deleted because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete dependent couriers
+        '404':
+          description: Unsuccessful, no dependent couriers were found
 
   /independent-couriers:
     get:
@@ -396,6 +801,66 @@ paths:
           description: Unsuccessful, entity does not have access rights to retrieve independent couriers
         '404':
           description: Unsuccessful, no independent couriers for admin were found
+    post:
+      summary: Add independent couriers
+      tags:
+        - Admin
+      description: Add a list of independent couriers (couriers that do not depend on vendors)
+      responses:
+        '200':
+          description: Successful response, independent couriers added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, independent couriers cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add independent couriers
+        '404':
+          description: Unsuccessful, no independent couriers were found
+    put:
+      summary: Update independent couriers
+      tags:
+        - Admin
+      description: Update a list of independent couriers (couriers that do not depend on vendors)
+      responses:
+        '200':
+          description: Successful response, independent couriers updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, independent couriers cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update independent couriers
+        '404':
+          description: Unsuccessful, no independent couriers were found
+    delete:
+      summary: Delete independent couriers
+      tags:
+        - Admin
+      description: Delete a list of independent couriers (couriers that do not depend on vendors)
+      responses:
+        '200':
+          description: Successful response, independent couriers deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, independent couriers cannot be deleted because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete independent couriers
+        '404':
+          description: Unsuccessful, no independent couriers were found
 
   /customers:
     get:
@@ -426,6 +891,66 @@ paths:
           description: Unsuccessful, entity does not have access rights to retrieve customers
         '404':
           description: Unsuccessful, no customers for admin were found
+    post:
+      summary: Add all customers
+      tags:
+        - Admin
+      description: Add a list of all customers that have placed an order
+      responses:
+        '200':
+          description: Successful response, all customers added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        '400':
+          description: Unsuccessful, customers cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add customers
+        '404':
+          description: Unsuccessful, no customers were found
+    put:
+      summary: Update all customers
+      tags:
+        - Admin
+      description: Update a list of all customers that have placed an order
+      responses:
+        '200':
+          description: Successful response, all customers updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        '400':
+          description: Unsuccessful, customers cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update customers
+        '404':
+          description: Unsuccessful, no customers were found
+    delete:
+      summary: Delete all customers
+      tags:
+        - Admin
+      description: Delete a list of all customers that have placed an order
+      responses:
+        '200':
+          description: Successful response, all customers deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        '400':
+          description: Unsuccessful, customers cannot be deleted because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete customers
+        '404':
+          description: Unsuccessful, no customers were found
 
   /exceptions:
     get:
@@ -456,6 +981,66 @@ paths:
           description: Unsuccessful, entity does not have access rights to retrieve exceptions
         '404':
           description: Unsuccessful, no exceptions for admin were found
+    post:
+      summary: Add all exceptions
+      tags:
+        - Admin
+      description: Add a list of all exceptions collected from orders
+      responses:
+        '200':
+          description: Successful response, all exceptions added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, exceptions cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add exceptions
+        '404':
+          description: Unsuccessful, no exceptions were found
+    put:
+      summary: Update all exceptions
+      tags:
+        - Admin
+      description: Update a list of all exceptions collected from orders
+      responses:
+        '200':
+          description: Successful response, all exceptions updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, exceptions cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update exceptions
+        '404':
+          description: Unsuccessful, no exceptions were found
+    delete:
+      summary: Delete all exceptions
+      tags:
+        - Admin
+      description: Delete a list of all exceptions collected from orders
+      responses:
+        '200':
+          description: Successful response, all exceptions deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, exceptions cannot be deleted because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete exceptions
+        '404':
+          description: Unsuccessful, no exceptions were found
 
   /exceptions/{id}:
     get:
@@ -490,6 +1075,81 @@ paths:
           description: Unsuccessful, entity does not have access rights to retrieve specific exception
         '404':
           description: Unsuccessful, no specific exception for admin was found
+    post:
+      summary: Add exception for a specific order
+      tags:
+        - Admin
+      description: Add exception information for a specific order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response, exception for the specific order added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, specific exception cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add specific exception
+        '404':
+          description: Unsuccessful, no specific exception was found
+    put:
+      summary: Update exception for a specific order
+      tags:
+        - Admin
+      description: Update exception information for a specific order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response, exception for the specific order updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, specific exception cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update specific exception
+        '404':
+          description: Unsuccessful, no specific exception was found
+    delete:
+      summary: Delete exception for a specific order
+      tags:
+        - Admin
+      description: Delete exception information for a specific order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response, exception for the specific order deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, specific exception cannot be deleted because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete specific exception
+        '404':
+          description: Unsuccessful, no specific exception was found
 
   /vendor/radius/{id}:
     get:
