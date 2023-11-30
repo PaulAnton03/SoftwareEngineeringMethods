@@ -7,9 +7,13 @@ servers:
   - url: 'http://localhost:8080'
 tags:
   - name: Order
+    description: Order specific API
   - name: Status
+    description: Status specific API
   - name: User
+    description: User specific API
   - name: Admin
+    description: Admin specific API
 paths:
   /order:
     get:
