@@ -560,7 +560,7 @@ paths:
       summary: Retrieve vendor location of the order
       tags:
         - Order
-      description: Return the vendor location of the specified order for admin
+      description: Return the vendor location of the specified order
       parameters:
         - name: orderId
           in: path
@@ -697,11 +697,11 @@ paths:
 
   /independent-orders:
     get:
-      summary: Retrieve independent orders for admin
+      summary: Retrieve independent orders
       operationId: getIndependentOrders
       tags:
         - User
-      description: Return a list of independent orders (orders from independent couriers) for admin, independent orders being orders from vendors that do not have couriers of their own
+      description: Return a list of independent orders (orders from independent couriers), independent orders being orders from vendors that do not have couriers of their own. To be used by admin.
       parameters:
         - name: Authorization
           in: header
@@ -712,7 +712,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, independent orders received by admin
+          description: Successful response, independent orders received
           content:
             application/json:
               schema:
@@ -720,17 +720,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
         '400':
-          description: Unsuccessful, independent orders for admin cannot be retrieved because of a bad request
+          description: Unsuccessful, independent orders cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve independent orders
         '404':
-          description: Unsuccessful, no independent orders for admin were found
+          description: Unsuccessful, no independent orders were found
     post:
       summary: Add independent orders
       operationId: makeOrdersForVendor
       tags:
         - User
-      description: Add a list of independent orders (orders from independent vendors) for admin, independent orders being orders from vendors that do not have couriers of their own
+      description: Add a list of independent orders (orders from independent vendors), independent orders being orders from vendors that do not have couriers of their own. To be used by admin.
       requestBody:
         content:
           application/json:
@@ -748,17 +748,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
         '400':
-          description: Unsuccessful, independent orders for admin cannot be added because of a bad request
+          description: Unsuccessful, independent orders cannot be added because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to add independent orders
         '404':
-          description: Unsuccessful, no independent orders for admin were found
+          description: Unsuccessful, no independent orders were found
     put:
       summary: Update independent orders
       operationId: updateIndependentOrder
       tags:
         - User
-      description: Update a list of independent orders (orders from independent couriers) for admin, independent orders being orders from vendors that do not have couriers of their own
+      description: Update a list of independent orders (orders from independent couriers), independent orders being orders from vendors that do not have couriers of their own. To be used by admin.
       requestBody:
         content:
           application/json:
@@ -776,17 +776,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
         '400':
-          description: Unsuccessful, independent orders for admin cannot be updated because of a bad request
+          description: Unsuccessful, independent orders cannot be updated because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to update independent orders
         '404':
-          description: Unsuccessful, no independent orders for admin were found
+          description: Unsuccessful, no independent orders were found
     delete:
       summary: Delete independent orders,
       operationId: deleteIndependentOrders
       tags:
         - User
-      description: Delete a list of independent orders (orders from independent couriers) for admin, independent orders being orders from vendors that do not have couriers of their own
+      description: Delete a list of independent orders (orders from independent couriers), independent orders being orders from vendors that do not have couriers of their own. To be used by admin.
       responses:
         '200':
           description: Successful response, independent orders deleted
@@ -797,11 +797,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
         '400':
-          description: Unsuccessful, independent orders for admin cannot be deleted because of a bad request
+          description: Unsuccessful, independent orders cannot be deleted because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to delete independent orders
         '404':
-          description: Unsuccessful, no independent orders for admin were found
+          description: Unsuccessful, no independent orders were found
 
   /vendors:
     get:
@@ -809,7 +809,7 @@ paths:
       operationId: getVendors
       tags:
         - User
-      description: Return a list of all vendors currently known, used for admin
+      description: Return a list of all vendors currently known. To be used by admin.
       parameters:
         - name: Authorization
           in: header
@@ -838,7 +838,7 @@ paths:
       operationId: makeVendors
       tags:
         - User
-      description: Add a list of all current vendors to the database
+      description: Add a list of all current vendors to the database. To be used by admin.
       requestBody:
         content:
           application/json:
@@ -866,7 +866,7 @@ paths:
       operationId: updateVendors
       tags:
         - User
-      description: Update a list of all vendors
+      description: Update a list of all vendors. To be used by admin.
       requestBody:
         content:
           application/json:
@@ -894,7 +894,7 @@ paths:
       operationId: deleteAllVendors
       tags:
         - User
-      description: Delete the list of all vendors
+      description: Delete the list of all vendors. To be used by admin.
       responses:
         '200':
           description: Successful response, all vendors deleted
@@ -917,7 +917,7 @@ paths:
       operationId: getCouriers
       tags:
         - User
-      description: Return a list of all couriers for admin
+      description: Return a list of all couriers. To be used by admin.
       parameters:
         - name: Authorization
           in: header
@@ -946,7 +946,7 @@ paths:
       operationId: makeCouriers
       tags:
         - User
-      description: Add a list of all couriers to the database
+      description: Add a list of all couriers to the database. To be used by admin.
       requestBody:
         content:
           application/json:
@@ -974,7 +974,7 @@ paths:
       operationId: updateCouriers
       tags:
         - User
-      description: Update a list of all couriers
+      description: Update a list of all couriers. To be used by admin.
       requestBody:
         content:
           application/json:
@@ -1002,7 +1002,7 @@ paths:
       operationId: deleteCouriers
       tags:
         - User
-      description: Delete a list of all couriers
+      description: Delete a list of all couriers. To be used by admin.
       responses:
         '200':
           description: Successful response, all couriers deleted
@@ -1059,11 +1059,11 @@ paths:
 
   /dependent-couriers:
     get:
-      summary: Retrieve dependent couriers for admin
+      summary: Retrieve dependent couriers
       operationId: getDepCouriers
       tags:
         - User
-      description: Return a list of dependent couriers (couriers that belong to a vendor) used by admin, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      description: Return a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor. To be used by admin.
       parameters:
         - name: Authorization
           in: header
@@ -1074,7 +1074,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, dependent couriers for admin received
+          description: Successful response, dependent couriers received
           content:
             application/json:
               schema:
@@ -1082,16 +1082,16 @@ paths:
                 items:
                   $ref: '#/components/schemas/Courier'
         '400':
-          description: Unsuccessful, dependent couriers for admin cannot be retrieved because of a bad request
+          description: Unsuccessful, dependent couriers cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve dependent couriers
         '404':
-          description: Unsuccessful, no dependent couriers for admin were found
+          description: Unsuccessful, no dependent couriers were found
     post:
       summary: Add dependent couriers
       tags:
         - User
-      description: Add a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      description: Add a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor. To be used by admin.
       requestBody:
         content:
           application/json:
@@ -1119,7 +1119,7 @@ paths:
       operationId: updateDepCouriers
       tags:
         - User
-      description: Update a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      description: Update a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor. To be used by admin.
       requestBody:
         content:
           application/json:
@@ -1147,7 +1147,7 @@ paths:
       operationId: deleteDepCouriers
       tags:
         - User
-      description: Delete a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      description: Delete a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor. To be used by admin.
       responses:
         '200':
           description: Successful response, dependent couriers deleted
@@ -1166,11 +1166,11 @@ paths:
 
   /independent-couriers:
     get:
-      summary: Retrieve independent couriers for admin
+      summary: Retrieve independent couriers
       operationId: getIndCouriers
       tags:
         - User
-      description: Return a list of independent couriers (couriers that do not depend on vendors) for admin, , independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      description: Return a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take. To be used by admin.
       parameters:
         - name: Authorization
           in: header
@@ -1181,7 +1181,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, independent couriers for admin received
+          description: Successful response, independent couriers received
           content:
             application/json:
               schema:
@@ -1189,17 +1189,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/Courier'
         '400':
-          description: Unsuccessful, independent couriers for admin cannot be retrieved because of a bad request
+          description: Unsuccessful, independent couriers cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve independent couriers
         '404':
-          description: Unsuccessful, no independent couriers for admin were found
+          description: Unsuccessful, no independent couriers were found
     post:
       summary: Add independent couriers
       operationId: makeIndCouriers
       tags:
         - User
-      description: Add a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      description: Add a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take. To be used by admin.
       responses:
         '200':
           description: Successful response, independent couriers added
@@ -1220,7 +1220,7 @@ paths:
       operationId: updateIndCouriers
       tags:
         - User
-      description: Update a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      description: Update a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take. To be used by admin.
       responses:
         '200':
           description: Successful response, independent couriers updated
@@ -1241,7 +1241,7 @@ paths:
       operationId: deleteIndCouriers
       tags:
         - User
-      description: Delete a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      description: Delete a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take. To be used by admin.
       responses:
         '200':
           description: Successful response, independent couriers deleted
@@ -1260,11 +1260,11 @@ paths:
 
   /customers:
     get:
-      summary: Retrieve all customers for admin
+      summary: Retrieve all customers
       operationId: getCustomers
       tags:
         - User
-      description: Return a list of all customers that have placed an order for admin
+      description: Return a list of all customers that have placed an order. To be used by admin.
       parameters:
         - name: Authorization
           in: header
@@ -1275,7 +1275,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, all customers for admin received
+          description: Successful response, all customers received
           content:
             application/json:
               schema:
@@ -1283,17 +1283,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/Customer'
         '400':
-          description: Unsuccessful, customers for admin cannot be retrieved because of a bad request
+          description: Unsuccessful, customers cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve customers
         '404':
-          description: Unsuccessful, no customers for admin were found
+          description: Unsuccessful, no customers were found
     post:
       summary: Add all customers
       operationId: makeCustomers
       tags:
         - User
-      description: Add a list of all customers that have placed an order
+      description: Add a list of all customers that have placed an order. To be used by admin.
       responses:
         '200':
           description: Successful response, all customers added
@@ -1314,7 +1314,7 @@ paths:
       operationId: updateCustomers
       tags:
         - User
-      description: Update a list of all customers that have placed an order
+      description: Update a list of all customers that have placed an order. To be used by admin.
       responses:
         '200':
           description: Successful response, all customers updated
@@ -1334,7 +1334,7 @@ paths:
       summary: Delete all customers
       tags:
         - User
-      description: Delete a list of all customers that have placed an order
+      description: Delete a list of all customers that have placed an order. To be used by admin.
       responses:
         '200':
           description: Successful response, all customers deleted
@@ -1353,11 +1353,11 @@ paths:
 
   /exceptions:
     get:
-      summary: Retrieve all exceptions, used by admin
+      summary: Retrieve all exceptions
       operationId: getExceptions
       tags:
         - Admin
-      description: Return a list of all exceptions collected from orders for admin
+      description: Return a list of all exceptions collected from orders. To be used by admin.
       parameters:
         - name: Authorization
           in: header
@@ -1368,7 +1368,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, all exceptions for admin received
+          description: Successful response, all exceptions received
           content:
             application/json:
               schema:
@@ -1376,17 +1376,17 @@ paths:
                 items:
                   $ref: '#/components/schemas/DeliveryException'
         '400':
-          description: Unsuccessful, exceptions for admin cannot be retrieved because of a bad request
+          description: Unsuccessful, exceptions cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve exceptions
         '404':
-          description: Unsuccessful, no exceptions for admin were found
+          description: Unsuccessful, no exceptions were found
     post:
       summary: Add all exceptions
       operationId: makeExceptions
       tags:
         - Admin
-      description: Add a list of all exceptions collected from orders
+      description: Add a list of all exceptions collected from orders. To be used by admin.
       responses:
         '200':
           description: Successful response, all exceptions added
@@ -1407,7 +1407,7 @@ paths:
       operationId: updateExceptions
       tags:
         - Admin
-      description: Update a list of all exceptions collected from orders
+      description: Update a list of all exceptions collected from orders. To be used by admin.
       responses:
         '200':
           description: Successful response, all exceptions updated
@@ -1428,7 +1428,7 @@ paths:
       operationId: deleteExceptions
       tags:
         - Admin
-      description: Delete a list of all exceptions collected from orders
+      description: Delete a list of all exceptions collected from orders. To be used by admin.
       responses:
         '200':
           description: Successful response, all exceptions deleted
@@ -1447,11 +1447,11 @@ paths:
 
   /exceptions/{id}:
     get:
-      summary: Retrieve exception for a specific order for admin
+      summary: Retrieve exception for a specific order
       operationId: getExceptionForOrder
       tags:
         - Admin
-      description: Return exception information for a specific order for admin
+      description: Return exception information for a specific order. To be used by admin.
       parameters:
         - name: id
           in: path
@@ -1468,23 +1468,23 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, exception for the specific order for admin received
+          description: Successful response, exception for the specific order received
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeliveryException'
         '400':
-          description: Unsuccessful, specific exception for admin cannot be retrieved because of a bad request
+          description: Unsuccessful, specific exception cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve specific exception
         '404':
-          description: Unsuccessful, no specific exception for admin was found
+          description: Unsuccessful, no specific exception was found
     post:
       summary: Add exception for a specific order
       operationId: makeException
       tags:
         - Admin
-      description: Add exception information for a specific order
+      description: Add exception information for a specific order. To be used by admin.
       parameters:
         - name: id
           in: path
@@ -1510,7 +1510,7 @@ paths:
       operationId: updateException
       tags:
         - Admin
-      description: Update exception information for a specific order
+      description: Update exception information for a specific order. To be used by admin.
       parameters:
         - name: id
           in: path
@@ -1536,7 +1536,7 @@ paths:
       operationId: deleteException
       tags:
         - Admin
-      description: Delete exception information for a specific order
+      description: Delete exception information for a specific order. To be used by admin.
       parameters:
         - name: id
           in: path
@@ -1560,11 +1560,11 @@ paths:
 
   /vendor/radius/{id}:
     get:
-      summary: Retrieve radius from specific vendor for admin
+      summary: Retrieve radius from specific vendor
       operationId: getRadiusForVendor
       tags:
         - Admin
-      description: Return the maximum radius of delivery of a specific vendor for admin
+      description: Return the maximum radius of delivery of a specific vendor. To be used by admin.
       parameters:
         - name: id
           in: path
@@ -1581,7 +1581,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, radius for the specific vendor for admin received
+          description: Successful response, radius for the specific vendor received
           content:
             application/json:
               schema:
@@ -1591,17 +1591,17 @@ paths:
                     type: number
                     format: double
         '400':
-          description: Unsuccessful, specific radius for admin cannot be retrieved because of a bad request
+          description: Unsuccessful, specific radius cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve specific radius
         '404':
-          description: Unsuccessful, no specific radius for admin was found
+          description: Unsuccessful, no specific radius was found
     put:
-      summary: Update radius from specific vendor for admin
+      summary: Update radius from specific vendor
       operationId: updateRadiusForVendor
       tags:
         - Admin
-      description: Update radius of a specific vendor for admin
+      description: Update radius of a specific vendor. To be used by admin.
       parameters:
         - name: id
           in: path
@@ -1622,19 +1622,19 @@ paths:
                   format: double
       responses:
         '204':
-          description: Successful response, radius for the specific vendor for admin updated
+          description: Successful response, radius for the specific vendor updated
         '400':
-          description: Unsuccessful, specific radius for admin cannot be updated because of a bad request
+          description: Unsuccessful, specific radius cannot be updated because of a bad request
         '404':
-          description: Unsuccessful, no specific radius for admin was found
+          description: Unsuccessful, no specific radius was found
 
   /orders/status/delivered:
     get:
       operationId: getDeliveredOrders
-      summary: Retrieve delivered orders for admin
+      summary: Retrieve delivered orders
       tags:
         - Admin
-      description: Return a list of orders with a status of delivered for admin
+      description: Return a list of orders with a status of delivered. To be used by admin.
       parameters:
         - name: Authorization
           in: header
@@ -1653,11 +1653,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
         '400':
-          description: Unsuccessful, delivered orders for admin cannot be retrieved because of a bad request
+          description: Unsuccessful, delivered orders cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve delivered orders
         '404':
-          description: Unsuccessful, no delivered orders for admin were found
+          description: Unsuccessful, no delivered orders were found
 
   /status/{orderId}/accepted:
     put:
