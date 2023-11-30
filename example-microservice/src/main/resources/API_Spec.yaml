@@ -684,7 +684,7 @@ paths:
         '404':
           description: Unsuccessful, no courier was found
 
-  /exceptions:
+  /admin/exceptions:
     get:
       summary: Retrieve all exceptions
       operationId: getExceptions
@@ -802,7 +802,7 @@ paths:
         '404':
           description: Unsuccessful, no specific exception was found
 
-  /vendor/radius/{id}:
+  /admin/vendor/radius/{id}:
     get:
       summary: Retrieve radius from specific vendor
       operationId: getRadiusForVendor
@@ -874,7 +874,7 @@ paths:
         '404':
           description: Unsuccessful, no specific radius was found
 
-  /orders/status/delivered:
+  /admin/orders/status/delivered:
     get:
       operationId: getDeliveredOrders
       summary: Retrieve delivered orders

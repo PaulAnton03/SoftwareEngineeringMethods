@@ -119,3 +119,4 @@ pitest {
 	outputFormats = ['XML', 'HTML']
 	timestampedReports = false
 }
+
