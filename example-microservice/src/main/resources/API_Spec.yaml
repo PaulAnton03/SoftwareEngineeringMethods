@@ -402,7 +402,6 @@ paths:
           description: Unsuccessful, no distance was found
         '403':
           description: Unsuccessful, entity does not have access rights to update order distance
-
   /order/{vendorId}:
     get:
       summary: Retrieve a list of all orders that belong to a given vendor
@@ -774,7 +773,7 @@ paths:
           description: Unsuccessful, no independent orders were found
     post:
       summary: Add independent orders
-      operationId: makeOrdersForVendor
+      operationId: makeIndOrdersForVendor
       tags:
         - User
       description: Add a list of independent orders (orders from independent vendors), independent orders being orders from vendors that do not have couriers of their own. To be used by admin.
@@ -1074,7 +1073,7 @@ paths:
         - User
       description: return the courier corresponding to the id
       parameters:
-        - name: id
+        - name: courierId
           in: path
           description: id of the courier to retrieve
           required: true
