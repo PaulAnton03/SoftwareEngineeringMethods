@@ -282,7 +282,9 @@ paths:
       summary: Retrieve the current distance to the courier with this order
       tags:
         - Order
-      description: return the distance between final delivery location and the courier who has the order corresponding to the id
+      description: >-
+        return the distance between final delivery location and the courier 
+        who has the order corresponding to the id
       parameters:
         - name: orderId
           in: path
@@ -603,7 +605,9 @@ paths:
       operationId: updateBossOfCourier
       tags:
         - User
-      description: update the boss of the courier corresponding to the courierId. The boss can either be a vendor (if the courier works for that vendor) or the admin (if not).
+      description: >-
+        Update the boss of the courier corresponding to the courierId.
+        The boss can either be a vendor (if the courier works for that vendor) or the admin (if not).
       parameters:
         - name: courierId
           in: path
