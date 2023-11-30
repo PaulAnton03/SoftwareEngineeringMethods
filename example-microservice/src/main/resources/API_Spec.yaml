@@ -8,6 +8,7 @@ servers:
 tags:
   - name: Order
   - name: Status
+  - name: User
   - name: Admin
 paths:
   /order:
@@ -699,7 +700,7 @@ paths:
       summary: Retrieve independent orders for admin
       operationId: getIndependentOrders
       tags:
-        - Admin
+        - User
       description: Return a list of independent orders (orders from independent couriers) for admin, independent orders being orders from vendors that do not have couriers of their own
       parameters:
         - name: Authorization
@@ -728,7 +729,7 @@ paths:
       summary: Add independent orders
       operationId: makeOrdersForVendor
       tags:
-        - Admin
+        - User
       description: Add a list of independent orders (orders from independent vendors) for admin, independent orders being orders from vendors that do not have couriers of their own
       requestBody:
         content:
@@ -756,8 +757,8 @@ paths:
       summary: Update independent orders
       operationId: updateIndependentOrder
       tags:
-        - Admin
-      description: Update a list of independent orders (orders from independent couriers) for admin,, independent orders being orders from vendors that do not have couriers of their own
+        - User
+      description: Update a list of independent orders (orders from independent couriers) for admin, independent orders being orders from vendors that do not have couriers of their own
       requestBody:
         content:
           application/json:
@@ -784,7 +785,7 @@ paths:
       summary: Delete independent orders,
       operationId: deleteIndependentOrders
       tags:
-        - Admin
+        - User
       description: Delete a list of independent orders (orders from independent couriers) for admin, independent orders being orders from vendors that do not have couriers of their own
       responses:
         '200':
@@ -807,7 +808,7 @@ paths:
       summary: Retrieve all vendors
       operationId: getVendors
       tags:
-        - Admin
+        - User
       description: Return a list of all vendors currently known, used for admin
       parameters:
         - name: Authorization
@@ -836,7 +837,7 @@ paths:
       summary: Add all vendors
       operationId: makeVendors
       tags:
-        - Admin
+        - User
       description: Add a list of all current vendors to the database
       requestBody:
         content:
@@ -864,7 +865,7 @@ paths:
       summary: Update all vendors
       operationId: updateVendors
       tags:
-        - Admin
+        - User
       description: Update a list of all vendors
       requestBody:
         content:
@@ -892,7 +893,7 @@ paths:
       summary: Delete all vendors
       operationId: deleteAllVendors
       tags:
-        - Admin
+        - User
       description: Delete the list of all vendors
       responses:
         '200':
@@ -915,7 +916,7 @@ paths:
       summary: Retrieve all couriers
       operationId: getCouriers
       tags:
-        - Admin
+        - User
       description: Return a list of all couriers for admin
       parameters:
         - name: Authorization
@@ -944,7 +945,7 @@ paths:
       summary: Add all couriers
       operationId: makeCouriers
       tags:
-        - Admin
+        - User
       description: Add a list of all couriers to the database
       requestBody:
         content:
@@ -972,7 +973,7 @@ paths:
       summary: Update all couriers
       operationId: updateCouriers
       tags:
-        - Admin
+        - User
       description: Update a list of all couriers
       requestBody:
         content:
@@ -1000,7 +1001,7 @@ paths:
       summary: Delete all couriers
       operationId: deleteCouriers
       tags:
-        - Admin
+        - User
       description: Delete a list of all couriers
       responses:
         '200':
@@ -1023,7 +1024,7 @@ paths:
       summary: Retrieve a courier given the courier id
       operationId: getCourier
       tags:
-        - Admin
+        - User
       description: return the courier corresponding to the id
       parameters:
         - name: id
@@ -1061,7 +1062,7 @@ paths:
       summary: Retrieve dependent couriers for admin
       operationId: getDepCouriers
       tags:
-        - Admin
+        - User
       description: Return a list of dependent couriers (couriers that belong to a vendor) used by admin, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       parameters:
         - name: Authorization
@@ -1089,7 +1090,7 @@ paths:
     post:
       summary: Add dependent couriers
       tags:
-        - Admin
+        - User
       description: Add a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       requestBody:
         content:
@@ -1117,7 +1118,7 @@ paths:
       summary: Update dependent couriers
       operationId: updateDepCouriers
       tags:
-        - Admin
+        - User
       description: Update a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       requestBody:
         content:
@@ -1145,7 +1146,7 @@ paths:
       summary: Delete dependent couriers
       operationId: deleteDepCouriers
       tags:
-        - Admin
+        - User
       description: Delete a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       responses:
         '200':
@@ -1168,7 +1169,7 @@ paths:
       summary: Retrieve independent couriers for admin
       operationId: getIndCouriers
       tags:
-        - Admin
+        - User
       description: Return a list of independent couriers (couriers that do not depend on vendors) for admin, , independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
       parameters:
         - name: Authorization
@@ -1197,7 +1198,7 @@ paths:
       summary: Add independent couriers
       operationId: makeIndCouriers
       tags:
-        - Admin
+        - User
       description: Add a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
       responses:
         '200':
@@ -1218,7 +1219,7 @@ paths:
       summary: Update independent couriers
       operationId: updateIndCouriers
       tags:
-        - Admin
+        - User
       description: Update a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
       responses:
         '200':
@@ -1239,7 +1240,7 @@ paths:
       summary: Delete independent couriers
       operationId: deleteIndCouriers
       tags:
-        - Admin
+        - User
       description: Delete a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
       responses:
         '200':
@@ -1262,7 +1263,7 @@ paths:
       summary: Retrieve all customers for admin
       operationId: getCustomers
       tags:
-        - Admin
+        - User
       description: Return a list of all customers that have placed an order for admin
       parameters:
         - name: Authorization
@@ -1291,7 +1292,7 @@ paths:
       summary: Add all customers
       operationId: makeCustomers
       tags:
-        - Admin
+        - User
       description: Add a list of all customers that have placed an order
       responses:
         '200':
@@ -1312,7 +1313,7 @@ paths:
       summary: Update all customers
       operationId: updateCustomers
       tags:
-        - Admin
+        - User
       description: Update a list of all customers that have placed an order
       responses:
         '200':
@@ -1332,7 +1333,7 @@ paths:
     delete:
       summary: Delete all customers
       tags:
-        - Admin
+        - User
       description: Delete a list of all customers that have placed an order
       responses:
         '200':
