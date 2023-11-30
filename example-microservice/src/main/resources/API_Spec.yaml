@@ -55,7 +55,7 @@ paths:
         '404':
           description: Unsuccessful, no orders were found
 
-  /order/{id}:
+  /order/{orderId}:
     get:
       summary: Retrieve an order given the order id
       operationId: getOrder
@@ -63,7 +63,7 @@ paths:
         - Order
       description: return the order corresponding to the id
       parameters:
-        - name: id
+        - name: orderId
           in: path
           description: id of the order to retrieve
           required: true
@@ -92,7 +92,7 @@ paths:
         - Order
       description: add the order corresponding to the id
       parameters:
-        - name: id
+        - name: orderId
           in: path
           description: id of the order to add
           required: true
@@ -128,7 +128,7 @@ paths:
         - Order
       description: update the order corresponding to the id
       parameters:
-        - name: id
+        - name: orderId
           in: path
           description: id of the order to update
           required: true
@@ -158,7 +158,7 @@ paths:
         '404':
           description: Unsuccessful, no order was found
 
-  /order/{id}/current:
+  /order/{orderId}/current:
     get:
       summary: Retrieve the current location of the courier with this order
       operationId: getOrderLocation
@@ -166,7 +166,7 @@ paths:
         - Order
       description: return the location of the courier who has the order corresponding to the id
       parameters:
-        - name: id
+        - name: orderId
           in: path
           description: id of the order with the location to retrieve
           required: true
@@ -195,7 +195,7 @@ paths:
         - Order
       description: update the location of the courier who has the order corresponding to the id
       parameters:
-        - name: id
+        - name: orderId
           in: path
           description: id of the order with the location to update
           required: true
@@ -225,7 +225,7 @@ paths:
         '404':
           description: Unsuccessful, no location was found
 
-  /order/{id}/distance:
+  /order/{orderId}/distance:
     get:
       operationId: getOrderDistance
       summary: Retrieve the current distance to the courier with this order
@@ -233,7 +233,7 @@ paths:
         - Order
       description: return the distance between final delivery location and the courier who has the order corresponding to the id
       parameters:
-        - name: id
+        - name: orderId
           in: path
           description: id of the order with the distance to retrieve
           required: true
@@ -802,7 +802,7 @@ paths:
         '404':
           description: Unsuccessful, no specific exception was found
 
-  /admin/vendor/radius/{id}:
+  /admin/vendor/radius/{vendorId}:
     get:
       summary: Retrieve radius from specific vendor
       operationId: getRadiusForVendor
@@ -810,7 +810,7 @@ paths:
         - Admin
       description: Return the maximum radius of delivery of a specific vendor. To be used by admin.
       parameters:
-        - name: id
+        - name: vendorId
           in: path
           required: true
           schema:
@@ -847,7 +847,7 @@ paths:
         - Admin
       description: Update radius of a specific vendor. To be used by admin.
       parameters:
-        - name: id
+        - name: vendorId
           in: path
           required: true
           schema:
