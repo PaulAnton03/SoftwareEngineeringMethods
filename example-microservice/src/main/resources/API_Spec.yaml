@@ -1280,7 +1280,9 @@ components:
         - type: object
       properties:
         hasCouriers:
-          description: to indicate if a vendor has specific couriers that are assigned to them, and can only take requests from them
+          description: >-
+            Indicates if a vendor has specific couriers that are assigned to them,
+            and can only take requests from them
           type: boolean
     Courier:
       description: The user that delivers the given order.
@@ -1294,9 +1296,14 @@ components:
           type: number
           format: int64
           example: 666
-          description: a reference to the specific vendor the courier works for, a reference to the admin (which is 1 person) if the courier is independent, meaning courier has a list of orders to choose from and is not dependent on a vendor
+          description: >-
+            Reference to the specific vendor the courier works for.
+            A reference to the admin (which is 1 person) if the courier is independent,
+            meaning courier has a list of orders to choose from and is not dependent on a vendor
     DeliveryException:
-      description: General exception class more specific exceptions inherit from. Thrown whenever there is any kind of problem with the order
+      description: >-
+        General exception class more specific exceptions inherit from.
+        Thrown whenever there is any kind of problem with the order
       properties:
         orderId:
           type: number
