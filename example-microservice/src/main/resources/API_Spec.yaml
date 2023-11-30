@@ -29,6 +29,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be retrieved because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve all orders
         '404':
           description: Unsuccessful, no orders were found
     post:
@@ -48,6 +50,29 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be added because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add all orders
+        '404':
+          description: Unsuccessful, no orders were found
+    put:
+      summary: update the list of all orders
+      operationId: updateOrders
+      tags:
+        - Order
+      description: update the list of order objects
+      responses:
+        '200':
+          description: Successful response, orders updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be updated because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update all orders
         '404':
           description: Unsuccessful, no orders were found
     delete:
@@ -67,6 +92,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be deleted because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete all orders
         '404':
           description: Unsuccessful, no orders were found
 
@@ -96,6 +123,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be retrieved because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve order
         '404':
           description: Unsuccessful, no order was found
     post:
@@ -130,6 +159,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be added because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add order
         '404':
           description: Unsuccessful, no order was found
     put:
@@ -164,6 +195,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be updated because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update order
         '404':
           description: Unsuccessful, no order was found
     delete:
@@ -191,6 +224,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be deleted because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete order
         '404':
           description: Unsuccessful, no order was found
 
@@ -220,6 +255,8 @@ paths:
                   $ref: '#/components/schemas/Location'
         '400':
           description: Unsuccessful, location cannot be retrieved because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve order location
         '404':
           description: Unsuccessful, no location was found
     put:
@@ -254,6 +291,8 @@ paths:
                   $ref: '#/components/schemas/Location'
         '400':
           description: Unsuccessful, location cannot be updated because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update order location
         '404':
           description: Unsuccessful, no location was found
 
@@ -390,6 +429,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be retrieved because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve vendor orders
         '404':
           description: Unsuccessful, no orders were found
     post:
@@ -417,6 +458,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be added because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add vendor orders
         '404':
           description: Unsuccessful, no orders were found
     put:
@@ -444,6 +487,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be updated because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update vendor orders
         '404':
           description: Unsuccessful, no orders were found
     delete:
@@ -471,6 +516,8 @@ paths:
                   $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be deleted because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to delete vendor orders
         '404':
           description: Unsuccessful, no orders were found
 
@@ -1625,6 +1672,8 @@ paths:
           description: Successful response, radius for the specific vendor updated
         '400':
           description: Unsuccessful, specific radius cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update radius
         '404':
           description: Unsuccessful, no specific radius was found
 
