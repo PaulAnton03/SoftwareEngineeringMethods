@@ -17,6 +17,14 @@ paths:
       operationId: getOrders
       tags:
         - Order
+      parameters:
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       description: return a list of order objects
       responses:
         '200':
@@ -39,6 +47,14 @@ paths:
       tags:
         - Order
       description: add a list of order objects
+      parameters:
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, orders added
@@ -70,6 +86,13 @@ paths:
           schema:
             type: number
             format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, order received
@@ -95,6 +118,13 @@ paths:
         - name: id
           in: path
           description: id of the order to add
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
           required: true
           schema:
             type: number
@@ -131,6 +161,13 @@ paths:
         - name: id
           in: path
           description: id of the order to update
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
           required: true
           schema:
             type: number
@@ -173,6 +210,13 @@ paths:
           schema:
             type: number
             format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, location received
@@ -198,6 +242,13 @@ paths:
         - name: id
           in: path
           description: id of the order with the location to update
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
           required: true
           schema:
             type: number
@@ -273,6 +324,13 @@ paths:
         - name: vendorId
           in: path
           description: id of the vendor to retrieve the order from
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
           required: true
           schema:
             type: number
@@ -762,6 +820,13 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
       responses:
         '200':
           description: Successful response, exception for the specific order added
@@ -787,6 +852,13 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
             format: int64
       responses:
         '200':
@@ -852,6 +924,13 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
+        - name: authorization
+          in: header
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
             format: int64
       requestBody:
         description: Radius object where radius is updated
