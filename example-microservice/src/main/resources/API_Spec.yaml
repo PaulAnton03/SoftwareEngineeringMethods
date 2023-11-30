@@ -741,7 +741,7 @@ paths:
         '404':
           description: Unsuccessful, order not found
 
-  /independent-orders:
+  /user/independent-orders:
     get:
       summary: Retrieve independent orders
       operationId: getIndependentOrders
@@ -849,7 +849,7 @@ paths:
         '404':
           description: Unsuccessful, no independent orders were found
 
-  /vendors:
+  /user/vendors:
     get:
       summary: Retrieve all vendors
       operationId: getVendors
@@ -957,7 +957,7 @@ paths:
         '404':
           description: Unsuccessful, no vendors were found
 
-  /couriers:
+  /user/couriers:
     get:
       summary: Retrieve all couriers
       operationId: getCouriers
@@ -1065,7 +1065,7 @@ paths:
         '404':
           description: Unsuccessful, no couriers were found
 
-  /couriers/{courierId}:
+  /user/couriers/{courierId}:
     get:
       summary: Retrieve a courier given the courier id
       operationId: getCourier
@@ -1103,7 +1103,7 @@ paths:
         '403':
           description: Unauthorized
 
-  /dependent-couriers:
+  /user/dependent-couriers:
     get:
       summary: Retrieve dependent couriers
       operationId: getDepCouriers
@@ -1210,7 +1210,7 @@ paths:
         '404':
           description: Unsuccessful, no dependent couriers were found
 
-  /independent-couriers:
+  /user/independent-couriers:
     get:
       summary: Retrieve independent couriers
       operationId: getIndCouriers
@@ -1304,7 +1304,7 @@ paths:
         '404':
           description: Unsuccessful, no independent couriers were found
 
-  /customers:
+  /user/customers:
     get:
       summary: Retrieve all customers
       operationId: getCustomers
@@ -1397,7 +1397,7 @@ paths:
         '404':
           description: Unsuccessful, no customers were found
 
-  /exceptions:
+  /admin/exceptions:
     get:
       summary: Retrieve all exceptions
       operationId: getExceptions
@@ -1491,7 +1491,7 @@ paths:
         '404':
           description: Unsuccessful, no exceptions were found
 
-  /exceptions/{id}:
+  /admin/exceptions/{id}:
     get:
       summary: Retrieve exception for a specific order
       operationId: getExceptionForOrder
@@ -1604,7 +1604,7 @@ paths:
         '404':
           description: Unsuccessful, no specific exception was found
 
-  /vendor/radius/{id}:
+  /admin/vendor/radius/{id}:
     get:
       summary: Retrieve radius from specific vendor
       operationId: getRadiusForVendor
@@ -1676,7 +1676,7 @@ paths:
         '404':
           description: Unsuccessful, no specific radius was found
 
-  /orders/status/delivered:
+  /admin/orders/status/delivered:
     get:
       operationId: getDeliveredOrders
       summary: Retrieve delivered orders
