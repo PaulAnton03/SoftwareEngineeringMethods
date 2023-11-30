@@ -535,7 +535,7 @@ paths:
         '404':
           description: Unsuccessful, order not found
 
-  /vendor/{vendorId}:
+  /user/vendor/{vendorId}:
     post:
       summary: Add a vendor by only using the id
       operationId: makeVendorById
@@ -567,7 +567,7 @@ paths:
         '404':
           description: Unsuccessful, no vendor was found
 
-  /vendor/addWhole:
+  /user/vendor/addWhole:
     post:
       summary: Add a vendor
       operationId: makeVendor
@@ -599,7 +599,7 @@ paths:
         '404':
           description: Unsuccessful, no vendor was found
 
-  /courier/{courierId}/{bossId}:
+  /user/courier/{courierId}/{bossId}:
     put:
       summary: Update the boss of a courier given the courier id and vendor/admin id
       operationId: updateBossOfCourier
@@ -646,7 +646,7 @@ paths:
         '403':
           description: Unauthorized
 
-  /courier/{courierId}:
+  /user/courier/{courierId}:
     get:
       summary: Retrieve a courier given the courier id
       operationId: getCourier
@@ -714,7 +714,7 @@ paths:
         '404':
           description: Unsuccessful, no courier was found
 
-  /courier/addWhole:
+  /user/courier/addWhole:
     post:
       summary: Add a courier
       operationId: makeCourier
@@ -777,7 +777,7 @@ paths:
         '404':
           description: Unsuccessful, no exceptions were found
 
-  /exceptions/{orderId}:
+  /admin/exceptions/{orderId}:
     get:
       summary: Retrieve exception for a specific order
       operationId: getExceptionForOrder
