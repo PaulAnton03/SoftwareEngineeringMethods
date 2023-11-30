@@ -1288,6 +1288,9 @@ components:
             Indicates if a vendor has specific couriers that are assigned to them,
             and can only take requests from them
           type: boolean
+        radius:
+          type: number
+          format: double
     Courier:
       description: The user that delivers the given order.
       allOf:
