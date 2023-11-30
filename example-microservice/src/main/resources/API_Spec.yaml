@@ -13,6 +13,7 @@ paths:
   /order:
     get:
       summary: Retrieve a list of all orders
+      operationId: getOrders
       tags:
         - Order
       description: return a list of order objects
@@ -31,6 +32,7 @@ paths:
           description: Unsuccessful, no orders were found
     post:
       summary: add a list of all orders
+      operationId: postOrders
       tags:
         - Order
       description: add a list of order objects
@@ -49,6 +51,7 @@ paths:
           description: Unsuccessful, no orders were found
     delete:
       summary: delete the list of all orders
+      operationId: deleteOrders
       tags:
         - Order
       description: delete the list of order objects
@@ -69,6 +72,7 @@ paths:
   /order/{id}:
     get:
       summary: Retrieve an order given the order id
+      operationId: getOrder
       tags:
         - Order
       description: return the order corresponding to the id
@@ -95,6 +99,7 @@ paths:
           description: Unsuccessful, no order was found
     post:
       summary: add an order given the order id
+      operationId: makeOrder
       tags:
         - Order
       description: add the order corresponding to the id
@@ -106,6 +111,13 @@ paths:
           schema:
             type: number
             format: int64
+      requestBody:
+        description: Order object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: Successful response, order added
@@ -121,6 +133,7 @@ paths:
           description: Unsuccessful, no order was found
     put:
       summary: Update an order given the order id
+      operationId: uodateOrder
       tags:
         - Order
       description: update the order corresponding to the id
@@ -132,6 +145,13 @@ paths:
           schema:
             type: number
             format: int64
+      requestBody:
+        description: Order object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: Successful response, order updated
@@ -147,6 +167,7 @@ paths:
           description: Unsuccessful, no order was found
     delete:
       summary: Delete an order given the order id
+      operationId: deleteOrder
       tags:
         - Order
       description: delete the order corresponding to the id
@@ -175,6 +196,7 @@ paths:
   /order/{id}/current:
     get:
       summary: Retrieve the current location of the courier with this order
+      operationId: getOrderLocation
       tags:
         - Order
       description: return the location of the courier who has the order corresponding to the id
@@ -201,6 +223,7 @@ paths:
           description: Unsuccessful, no location was found
     put:
       summary: Update the current location of the courier with this order
+      operationId: updateLocation
       tags:
         - Order
       description: update the location of the courier who has the order corresponding to the id
@@ -239,7 +262,7 @@ paths:
       summary: Retrieve the current distance to the courier with this order
       tags:
         - Order
-      description: return the distance to the courier who has the order corresponding to the id
+      description: return the distance between final delivery location and the courier who has the order corresponding to the id
       parameters:
         - name: id
           in: path
@@ -343,6 +366,7 @@ paths:
   /order/{vendorId}:
     get:
       summary: Retrieve a list of all orders that belong to a given vendor
+      operationId: putOrdersForVendor
       tags:
         - Order
       description: return a list of order objects that are assigned to specific vendor
@@ -369,6 +393,7 @@ paths:
           description: Unsuccessful, no orders were found
     post:
       summary: Add a list of all orders that belong to a given vendor
+      operationId: makeOrdersForVendor
       tags:
         - Order
       description: add a list of order objects that are assigned to specific vendor
@@ -395,6 +420,7 @@ paths:
           description: Unsuccessful, no orders were found
     put:
       summary: Update a list of all orders that belong to a given vendor
+      operationId: updateOrdersForVendor
       tags:
         - Order
       description: update a list of order objects that are assigned to specific vendor
@@ -421,6 +447,7 @@ paths:
           description: Unsuccessful, no orders were found
     delete:
       summary: Delete a list of all orders that belong to a given vendor
+      operationId: deleteOrdersForVendor
       tags:
         - Order
       description: delete a list of order objects that are assigned to specific vendor
@@ -669,10 +696,11 @@ paths:
 
   /independent-orders:
     get:
-      summary: Retrieve independent orders for admin
+      summary: Retrieve independent orders for admin, independent orders being orders from vendors that do not have couriers of their own
+      operationId: getIndependentOrders
       tags:
         - Admin
-      description: Return a list of independent orders (orders from admin couriers) for admin
+      description: Return a list of independent orders (orders from independent couriers) for admin, independent couriers being couriers that are not assigned to a vendor
       parameters:
         - name: Authorization
           in: header
@@ -697,10 +725,18 @@ paths:
         '404':
           description: Unsuccessful, no independent orders for admin were found
     post:
-      summary: Add independent orders
+      summary: Add independent orders, independent orders being orders from vendors that do not have couriers of their own
+      operationId: makeOrdersForVendor
       tags:
         - Admin
-      description: Add a list of independent orders (orders from admin couriers)
+      description: Add a list of independent orders (orders from independent couriers) for admin, independent couriers being couriers that are not assigned to a vendor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: Successful response, independent orders added
@@ -717,10 +753,18 @@ paths:
         '404':
           description: Unsuccessful, no independent orders for admin were found
     put:
-      summary: Update independent orders
+      summary: Update independent orders, independent orders being orders from vendors that do not have couriers of their own
+      operationId: updateIndependentOrder
       tags:
         - Admin
-      description: Update a list of independent orders (orders from admin couriers)
+      description: Update a list of independent orders (orders from independent couriers) for admin, independent couriers being couriers that are not assigned to a vendor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: Successful response, independent orders updated
@@ -737,10 +781,11 @@ paths:
         '404':
           description: Unsuccessful, no independent orders for admin were found
     delete:
-      summary: Delete independent orders
+      summary: Delete independent orders, independent orders being orders from vendors that do not have couriers of their own
+      operationId: deleteIndependentOrders
       tags:
         - Admin
-      description: Delete a list of independent orders (orders from admin couriers)
+      description: Delete a list of independent orders (orders from independent couriers) for admin, independent couriers being couriers that are not assigned to a vendor
       responses:
         '200':
           description: Successful response, independent orders deleted
@@ -760,9 +805,10 @@ paths:
   /vendors:
     get:
       summary: Retrieve all vendors
+      operationId: getVendors
       tags:
         - Admin
-      description: Return a list of all vendors for admin
+      description: Return a list of all vendors currently known, used for admin
       parameters:
         - name: Authorization
           in: header
@@ -788,9 +834,17 @@ paths:
           description: Unsuccessful, no vendors were found
     post:
       summary: Add all vendors
+      operationId: makeVendors
       tags:
         - Admin
-      description: Add a list of all vendors
+      description: Add a list of all current vendors to the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Vendor'
       responses:
         '200':
           description: Successful response, all vendors added
@@ -808,9 +862,17 @@ paths:
           description: Unsuccessful, no vendors were found
     put:
       summary: Update all vendors
+      operationId: updateVendors
       tags:
         - Admin
       description: Update a list of all vendors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Vendor'
       responses:
         '200':
           description: Successful response, all vendors updated
@@ -828,9 +890,10 @@ paths:
           description: Unsuccessful, no vendors were found
     delete:
       summary: Delete all vendors
+      operationId: deleteAllVendors
       tags:
         - Admin
-      description: Delete a list of all vendors
+      description: Delete the list of all vendors
       responses:
         '200':
           description: Successful response, all vendors deleted
@@ -850,6 +913,7 @@ paths:
   /couriers:
     get:
       summary: Retrieve all couriers
+      operationId: getCouriers
       tags:
         - Admin
       description: Return a list of all couriers for admin
@@ -878,9 +942,17 @@ paths:
           description: Unsuccessful, no couriers were found
     post:
       summary: Add all couriers
+      operationId: makeCouriers
       tags:
         - Admin
-      description: Add a list of all couriers
+      description: Add a list of all couriers to the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Courier'
       responses:
         '200':
           description: Successful response, all couriers added
@@ -898,9 +970,17 @@ paths:
           description: Unsuccessful, no couriers were found
     put:
       summary: Update all couriers
+      operationId: updateCouriers
       tags:
         - Admin
       description: Update a list of all couriers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Courier'
       responses:
         '200':
           description: Successful response, all couriers updated
@@ -918,6 +998,7 @@ paths:
           description: Unsuccessful, no couriers were found
     delete:
       summary: Delete all couriers
+      operationId: deleteCouriers
       tags:
         - Admin
       description: Delete a list of all couriers
@@ -940,6 +1021,7 @@ paths:
   /couriers/{courierId}:
     get:
       summary: Retrieve a courier given the courier id
+      operationId: getCourier
       tags:
         - Admin
       description: return the courier corresponding to the id
@@ -976,10 +1058,11 @@ paths:
 
   /dependent-couriers:
     get:
-      summary: Retrieve dependent couriers for admin
+      summary: Retrieve dependent couriers for admin, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      operationId: getDepCouriers
       tags:
         - Admin
-      description: Return a list of dependent couriers (couriers that belong to a vendor) for admin
+      description: Return a list of dependent couriers (couriers that belong to a vendor) used by admin
       parameters:
         - name: Authorization
           in: header
@@ -1004,10 +1087,17 @@ paths:
         '404':
           description: Unsuccessful, no dependent couriers for admin were found
     post:
-      summary: Add dependent couriers
+      summary: Add dependent couriers, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       tags:
         - Admin
       description: Add a list of dependent couriers (couriers that belong to a vendor)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Courier'
       responses:
         '200':
           description: Successful response, dependent couriers added
@@ -1024,10 +1114,18 @@ paths:
         '404':
           description: Unsuccessful, no dependent couriers were found
     put:
-      summary: Update dependent couriers
+      summary: Update dependent couriers, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      operationId: updateDepCouriers
       tags:
         - Admin
       description: Update a list of dependent couriers (couriers that belong to a vendor)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Courier'
       responses:
         '200':
           description: Successful response, dependent couriers updated
@@ -1045,6 +1143,7 @@ paths:
           description: Unsuccessful, no dependent couriers were found
     delete:
       summary: Delete dependent couriers
+      operationId: deleteDepCouriers
       tags:
         - Admin
       description: Delete a list of dependent couriers (couriers that belong to a vendor)
@@ -1066,7 +1165,8 @@ paths:
 
   /independent-couriers:
     get:
-      summary: Retrieve independent couriers for admin
+      summary: Retrieve independent couriers for admin, independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      operationId: getIndCouriers
       tags:
         - Admin
       description: Return a list of independent couriers (couriers that do not depend on vendors) for admin
@@ -1094,7 +1194,8 @@ paths:
         '404':
           description: Unsuccessful, no independent couriers for admin were found
     post:
-      summary: Add independent couriers
+      summary: Add independent couriers, independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      operationId: makeIndCouriers
       tags:
         - Admin
       description: Add a list of independent couriers (couriers that do not depend on vendors)
@@ -1114,7 +1215,8 @@ paths:
         '404':
           description: Unsuccessful, no independent couriers were found
     put:
-      summary: Update independent couriers
+      summary: Update independent couriers, independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      operationId: updateIndCouriers
       tags:
         - Admin
       description: Update a list of independent couriers (couriers that do not depend on vendors)
@@ -1135,6 +1237,7 @@ paths:
           description: Unsuccessful, no independent couriers were found
     delete:
       summary: Delete independent couriers
+      operationId: deleteIndCouriers
       tags:
         - Admin
       description: Delete a list of independent couriers (couriers that do not depend on vendors)
@@ -1157,6 +1260,7 @@ paths:
   /customers:
     get:
       summary: Retrieve all customers for admin
+      operationId: getCustomers
       tags:
         - Admin
       description: Return a list of all customers that have placed an order for admin
@@ -1185,6 +1289,7 @@ paths:
           description: Unsuccessful, no customers for admin were found
     post:
       summary: Add all customers
+      operationId: makeCustomers
       tags:
         - Admin
       description: Add a list of all customers that have placed an order
@@ -1205,6 +1310,7 @@ paths:
           description: Unsuccessful, no customers were found
     put:
       summary: Update all customers
+      operationId: updateCustomers
       tags:
         - Admin
       description: Update a list of all customers that have placed an order
@@ -1246,7 +1352,8 @@ paths:
 
   /exceptions:
     get:
-      summary: Retrieve all exceptions for admin
+      summary: Retrieve all exceptions, used by admin
+      operationId: getExceptions
       tags:
         - Admin
       description: Return a list of all exceptions collected from orders for admin
@@ -1275,6 +1382,7 @@ paths:
           description: Unsuccessful, no exceptions for admin were found
     post:
       summary: Add all exceptions
+      operationId: makeExceptions
       tags:
         - Admin
       description: Add a list of all exceptions collected from orders
@@ -1295,6 +1403,7 @@ paths:
           description: Unsuccessful, no exceptions were found
     put:
       summary: Update all exceptions
+      operationId: updateExceptions
       tags:
         - Admin
       description: Update a list of all exceptions collected from orders
@@ -1315,6 +1424,7 @@ paths:
           description: Unsuccessful, no exceptions were found
     delete:
       summary: Delete all exceptions
+      operationId: deleteExceptions
       tags:
         - Admin
       description: Delete a list of all exceptions collected from orders
@@ -1337,6 +1447,7 @@ paths:
   /exceptions/{id}:
     get:
       summary: Retrieve exception for a specific order for admin
+      operationId: getExceptionForOrder
       tags:
         - Admin
       description: Return exception information for a specific order for admin
@@ -1369,6 +1480,7 @@ paths:
           description: Unsuccessful, no specific exception for admin was found
     post:
       summary: Add exception for a specific order
+      operationId: makeException
       tags:
         - Admin
       description: Add exception information for a specific order
@@ -1394,6 +1506,7 @@ paths:
           description: Unsuccessful, no specific exception was found
     put:
       summary: Update exception for a specific order
+      operationId: updateException
       tags:
         - Admin
       description: Update exception information for a specific order
@@ -1419,6 +1532,7 @@ paths:
           description: Unsuccessful, no specific exception was found
     delete:
       summary: Delete exception for a specific order
+      operationId: deleteException
       tags:
         - Admin
       description: Delete exception information for a specific order
@@ -1446,9 +1560,10 @@ paths:
   /vendor/radius/{id}:
     get:
       summary: Retrieve radius from specific vendor for admin
+      operationId: getRadiusForVendor
       tags:
         - Admin
-      description: Return radius of a specific vendor for admin
+      description: Return the maximum radius of delivery of a specific vendor for admin
       parameters:
         - name: id
           in: path
@@ -1482,6 +1597,7 @@ paths:
           description: Unsuccessful, no specific radius for admin was found
     put:
       summary: Update radius from specific vendor for admin
+      operationId: updateRadiusForVendor
       tags:
         - Admin
       description: Update radius of a specific vendor for admin
@@ -1547,6 +1663,7 @@ paths:
       tags:
         - Status
       summary: Change the order status from pending to accepted
+      operationId: updateToAccepted
       description: Update the order status to accepted
       parameters:
         - in: path
@@ -1576,6 +1693,7 @@ paths:
   /status/{orderId}/rejected:
     put:
       summary: Set status to “rejected”
+      operationId: updateToRejected
       tags:
         - Status
       description: Sends an exception, goes from “pending” to [said by vendor] “rejected”
@@ -1609,6 +1727,7 @@ paths:
       tags:
         - Status
       summary: Change the order status from accepted to preparing
+      operationId: updateToPreparing
       description: Update the order status to preparing
       parameters:
         - in: path
@@ -1640,6 +1759,7 @@ paths:
   /status/{orderId}/giventocourier:
     put:
       summary: Set status to “given to courier”
+      operationId: updateToGivenToCourier
       tags:
         - Status
       description: Goes from “preparing” to [said by vendor] “given to courier” and set the courierID
@@ -1676,6 +1796,7 @@ paths:
         - Status
       summary: Change the order status from accepted to in-transit
       description: Update the order status to in-transit
+      operationId: updateToInTransit
       parameters:
         - in: path
           name: orderId
@@ -1704,6 +1825,7 @@ paths:
   /status/{orderId}/delivered:
     put:
       summary: Set status to “delivered”
+      operationId: updateToDelivered
       tags:
         - Status
       description: Goes from “in transit” to [said by courier] “delivered” and set the actualDeliveryTime
