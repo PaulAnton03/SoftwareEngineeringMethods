@@ -133,7 +133,7 @@ paths:
           description: Unsuccessful, no order was found
     put:
       summary: Update an order given the order id
-      operationId: uodateOrder
+      operationId: updateOrder
       tags:
         - Order
       description: update the order corresponding to the id
@@ -696,11 +696,11 @@ paths:
 
   /independent-orders:
     get:
-      summary: Retrieve independent orders for admin, independent orders being orders from vendors that do not have couriers of their own
+      summary: Retrieve independent orders for admin
       operationId: getIndependentOrders
       tags:
         - Admin
-      description: Return a list of independent orders (orders from independent couriers) for admin, independent couriers being couriers that are not assigned to a vendor
+      description: Return a list of independent orders (orders from independent couriers) for admin, independent orders being orders from vendors that do not have couriers of their own
       parameters:
         - name: Authorization
           in: header
@@ -725,11 +725,11 @@ paths:
         '404':
           description: Unsuccessful, no independent orders for admin were found
     post:
-      summary: Add independent orders, independent orders being orders from vendors that do not have couriers of their own
+      summary: Add independent orders
       operationId: makeOrdersForVendor
       tags:
         - Admin
-      description: Add a list of independent orders (orders from independent couriers) for admin, independent couriers being couriers that are not assigned to a vendor
+      description: Add a list of independent orders (orders from independent vendors) for admin, independent orders being orders from vendors that do not have couriers of their own
       requestBody:
         content:
           application/json:
@@ -753,11 +753,11 @@ paths:
         '404':
           description: Unsuccessful, no independent orders for admin were found
     put:
-      summary: Update independent orders, independent orders being orders from vendors that do not have couriers of their own
+      summary: Update independent orders
       operationId: updateIndependentOrder
       tags:
         - Admin
-      description: Update a list of independent orders (orders from independent couriers) for admin, independent couriers being couriers that are not assigned to a vendor
+      description: Update a list of independent orders (orders from independent couriers) for admin,, independent orders being orders from vendors that do not have couriers of their own
       requestBody:
         content:
           application/json:
@@ -781,11 +781,11 @@ paths:
         '404':
           description: Unsuccessful, no independent orders for admin were found
     delete:
-      summary: Delete independent orders, independent orders being orders from vendors that do not have couriers of their own
+      summary: Delete independent orders,
       operationId: deleteIndependentOrders
       tags:
         - Admin
-      description: Delete a list of independent orders (orders from independent couriers) for admin, independent couriers being couriers that are not assigned to a vendor
+      description: Delete a list of independent orders (orders from independent couriers) for admin, independent orders being orders from vendors that do not have couriers of their own
       responses:
         '200':
           description: Successful response, independent orders deleted
@@ -1058,11 +1058,11 @@ paths:
 
   /dependent-couriers:
     get:
-      summary: Retrieve dependent couriers for admin, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      summary: Retrieve dependent couriers for admin
       operationId: getDepCouriers
       tags:
         - Admin
-      description: Return a list of dependent couriers (couriers that belong to a vendor) used by admin
+      description: Return a list of dependent couriers (couriers that belong to a vendor) used by admin, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       parameters:
         - name: Authorization
           in: header
@@ -1087,10 +1087,10 @@ paths:
         '404':
           description: Unsuccessful, no dependent couriers for admin were found
     post:
-      summary: Add dependent couriers, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      summary: Add dependent couriers
       tags:
         - Admin
-      description: Add a list of dependent couriers (couriers that belong to a vendor)
+      description: Add a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       requestBody:
         content:
           application/json:
@@ -1114,11 +1114,11 @@ paths:
         '404':
           description: Unsuccessful, no dependent couriers were found
     put:
-      summary: Update dependent couriers, dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
+      summary: Update dependent couriers
       operationId: updateDepCouriers
       tags:
         - Admin
-      description: Update a list of dependent couriers (couriers that belong to a vendor)
+      description: Update a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       requestBody:
         content:
           application/json:
@@ -1146,7 +1146,7 @@ paths:
       operationId: deleteDepCouriers
       tags:
         - Admin
-      description: Delete a list of dependent couriers (couriers that belong to a vendor)
+      description: Delete a list of dependent couriers (couriers that belong to a vendor), dependent courier being a courier that works for a specific vendor, they can only take orders from that vendor
       responses:
         '200':
           description: Successful response, dependent couriers deleted
@@ -1165,11 +1165,11 @@ paths:
 
   /independent-couriers:
     get:
-      summary: Retrieve independent couriers for admin, independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      summary: Retrieve independent couriers for admin
       operationId: getIndCouriers
       tags:
         - Admin
-      description: Return a list of independent couriers (couriers that do not depend on vendors) for admin
+      description: Return a list of independent couriers (couriers that do not depend on vendors) for admin, , independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
       parameters:
         - name: Authorization
           in: header
@@ -1194,11 +1194,11 @@ paths:
         '404':
           description: Unsuccessful, no independent couriers for admin were found
     post:
-      summary: Add independent couriers, independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      summary: Add independent couriers
       operationId: makeIndCouriers
       tags:
         - Admin
-      description: Add a list of independent couriers (couriers that do not depend on vendors)
+      description: Add a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
       responses:
         '200':
           description: Successful response, independent couriers added
@@ -1215,11 +1215,11 @@ paths:
         '404':
           description: Unsuccessful, no independent couriers were found
     put:
-      summary: Update independent couriers, independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
+      summary: Update independent couriers
       operationId: updateIndCouriers
       tags:
         - Admin
-      description: Update a list of independent couriers (couriers that do not depend on vendors)
+      description: Update a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
       responses:
         '200':
           description: Successful response, independent couriers updated
@@ -1240,7 +1240,7 @@ paths:
       operationId: deleteIndCouriers
       tags:
         - Admin
-      description: Delete a list of independent couriers (couriers that do not depend on vendors)
+      description: Delete a list of independent couriers (couriers that do not depend on vendors), independent couriers being couriers that do not belong to a vendor, they can chose whichever order they can take
       responses:
         '200':
           description: Successful response, independent couriers deleted
