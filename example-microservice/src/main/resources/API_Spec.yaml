@@ -1926,36 +1926,11 @@ components:
           type: number
           format: int64
           description: the unique id of an order
-        deliveryDestination:
-          $ref: '#/components/schemas/Location'
-        customerId:
-          type: number
-          format: int64
-          example: 66
-          description: id of the customer that placed the order
-        vendorId:
-          type: number
-          format: int64
-          example: 77
-          description: the id of the vendor that is preparing the order
         courierId:
           type: number
           format: int64
           example: 88
           description: the id of the courier that is delivering the order
-        ratingNumber:
-          type: integer
-          example: 5
-          description: an integer out of 5 that rates how good the order was
-        ratingComment:
-          type: string
-          example: "horrible food, mean courier"
-          description: a small message to give opinions on the order
-        orderTime:
-          type: string
-          format: date-time
-          example: 2023-11-28T15:30:00Z
-          description: the time the order was placed by the customer
         prepTime:
           type: string
           format: time
@@ -1980,21 +1955,9 @@ components:
         - $ref: '#/components/schemas/User'
         - type: object
       properties:
-        radius:
-          type: number
-          format: double
-          description: the maximum radius a vendor is able to take orders from
-        location:
-          $ref: '#/components/schemas/Location'
         hasCouriers:
           description: to indicate if a vendor has specific couriers that are assigned to them, and can only take requests from them
           type: boolean
-        orders:
-          type: array
-          description: a queue of all the ids of the orders for that vendor, independent orders being
-          items:
-            type: number
-            format: int64
     Customer:
       description: user that places the order
       allOf:
