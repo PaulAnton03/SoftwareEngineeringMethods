@@ -4,12 +4,16 @@ info:
   description: This is a microservice for managing delivery in the YumYumNow company.
   version: 1.0.0
 servers:
-  - url: 'http://localhost:8080'
+  - url: http://localhost:8080
 tags:
   - name: Order
+    description: Order specific API
   - name: Status
+    description: Status specific API
   - name: User
+    description: User specific API
   - name: Admin
+    description: Admin specific API
 paths:
   /order:
     get:
