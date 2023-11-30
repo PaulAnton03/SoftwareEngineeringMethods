@@ -59,15 +59,18 @@ paths:
           schema:
             type: number
             format: int64
+      requestBody:
+        description: a list of order objects
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: Successful response, orders added
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, orders cannot be added because of bad request
         '403':
@@ -103,9 +106,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Order'
+                $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be retrieved because of bad request
         '403':
@@ -143,12 +144,6 @@ paths:
       responses:
         '200':
           description: Successful response, order added
-          content:
-            application/json:
-              schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be added because of bad request
         '403':
@@ -186,12 +181,6 @@ paths:
       responses:
         '200':
           description: Successful response, order updated
-          content:
-            application/json:
-              schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be updated because of bad request
         '403':
@@ -227,9 +216,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Location'
+                $ref: '#/components/schemas/Location'
         '400':
           description: Unsuccessful, location cannot be retrieved because of bad request
         '403':
@@ -267,12 +254,6 @@ paths:
       responses:
         '200':
           description: Successful response, location updated
-          content:
-            application/json:
-              schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Location'
         '400':
           description: Unsuccessful, location cannot be updated because of bad request
         '403':
@@ -287,7 +268,7 @@ paths:
       tags:
         - Order
       description: >-
-        return the distance between final delivery location and the courier 
+        return the distance (given in meters) between final delivery location and the courier 
         who has the order corresponding to the id
       parameters:
         - name: orderId
@@ -312,6 +293,7 @@ paths:
               schema:
                 type: number
                 format: float
+                example: 240
         '400':
           description: Unsuccessful, distance cannot be retrieved because of bad request
         '404':
@@ -347,9 +329,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Order'
+                $ref: '#/components/schemas/Order'
         '400':
           description: Unsuccessful, order cannot be retrieved because of bad request
         '403':
@@ -381,18 +361,12 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, rating details for the specific order received
+          description: Successful response, rating number (out of 5) for the specific order received
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  ratingNumber:
-                    type: number
-                  ratingComment:
-                    type: string
+                type: number
+                format: int64
         '404':
           description: Unsuccessful, no rating details found for the specified order
         '403':
@@ -401,7 +375,7 @@ paths:
       operationId: putOrderRating
       tags:
         - Order
-      summary: Change the rating number and comment
+      summary: Change the rating number (out of 5)
       description: Update both of the orders ratings
       parameters:
         - in: path
@@ -419,12 +393,13 @@ paths:
             type: number
             format: int64
       requestBody:
-        description: Order object where status, ratingNumber and ratingComment are updated
+        description: Order object where ratingNumber is updated
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
+              type: number
+              format: int64
       responses:
         '200':
           description: Successful update of rating
@@ -497,6 +472,10 @@ paths:
       responses:
         '200':
           description: Successful response, order found and final destination can be retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve final destination
         '404':
@@ -545,7 +524,9 @@ paths:
       operationId: makeVendorById
       tags:
         - User
-      description: Add a vendor to the database. Only input needed is the id. To be used by admin.
+      description: >-
+        Add a vendor to the database. Only input needed is the id. The other fields will be set to
+        a default value. To be used by admin.
       parameters:
         - name: authorization
           in: query
@@ -590,9 +571,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              items:
-                $ref: '#/components/schemas/Vendor'
+              $ref: '#/components/schemas/Vendor'
       responses:
         '200':
           description: Successful response, vendor added
@@ -637,12 +616,6 @@ paths:
       responses:
         '200':
           description: Successful response, courier received
-          content:
-            application/json:
-              schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Courier'
         '400':
           description: Unsuccessful, courier updated be retrieved because of bad request
         '404':
@@ -678,9 +651,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/Courier'
+                $ref: '#/components/schemas/Courier'
         '400':
           description: Unsuccessful, courier cannot be retrieved because of bad request
         '404':
@@ -692,7 +663,9 @@ paths:
       operationId: makeCourierById
       tags:
         - User
-      description: Add a courier to the database. Only input needed is the id. To be used by admin.
+      description: >-
+        Add a courier to the database. Only input needed is the id. The other fields will be set to 
+        a default value. To be used by admin.
       parameters:
         - name: authorization
           in: query
@@ -737,9 +710,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              items:
-                $ref: '#/components/schemas/Courier'
+              $ref: '#/components/schemas/Courier'
       responses:
         '200':
           description: Successful response, courier added
@@ -835,13 +806,14 @@ paths:
           schema:
             type: number
             format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryException'
       responses:
         '200':
           description: Successful response, exception for the specific order added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeliveryException'
         '400':
           description: Unsuccessful, specific exception cannot be added because of a bad request
         '403':
@@ -868,13 +840,14 @@ paths:
           schema:
             type: number
             format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryException'
       responses:
         '200':
           description: Successful response, exception for the specific order updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeliveryException'
         '400':
           description: Unsuccessful, specific exception cannot be updated because of a bad request
         '403':
@@ -909,11 +882,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  radius:
-                    type: number
-                    format: double
+                type: number
+                format: double
         '400':
           description: Unsuccessful, specific radius cannot be retrieved because of a bad request
         '403':
@@ -941,16 +911,13 @@ paths:
             type: number
             format: int64
       requestBody:
-        description: Radius object where radius is updated
+        description: Radius in meters to be set as a new value
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                radius:
-                  type: number
-                  format: double
+              type: number
+              format: double
       responses:
         '200':
           description: Successful response, radius for the specific vendor updated
@@ -1319,7 +1286,7 @@ components:
         message:
           type: string
           description: explanation of what went wrong with the order
-          example: "Order was not delivered"
+          example: "Order was delivered laaaate"
         isResolved:
           type: boolean
           example: true
