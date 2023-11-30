@@ -1316,22 +1316,15 @@ components:
         isResolved:
           type: boolean
           example: true
-    LateDelivery:
-      description: >-
-        Thrown when an order is delivered late,
-        when the actual delivery time is bigger than estimated delivery time
-      allOf:
-        - $ref: '#/components/schemas/DeliveryException'
-    NotDelivered:
-      description: Thrown when an order is not delivered at all
-      allOf:
-        - $ref: '#/components/schemas/DeliveryException'
-    Rejected:
-      description: >-
-        Thrown when an order is rejected by the vendor,
-        possible by the courier in unforeseen circumstances
-      allOf:
-        - $ref: '#/components/schemas/DeliveryException'
+        exceptionType:
+          type: string
+          enum:
+            - LateDelivery
+            - NotDelivered
+            - Rejected
+            - Other
+          description: The kind of unforeseen situation of the order
+          example: LateDelivery
     Location:
       description: Any kind of address expressed as a longitude and latitude
       type: object
