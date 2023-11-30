@@ -1317,7 +1317,9 @@ components:
           type: boolean
           example: true
     LateDelivery:
-      description: Thrown when an order is delivered late, when the actual delivery time is bigger than estimated delivery time
+      description: >-
+        Thrown when an order is delivered late,
+        when the actual delivery time is bigger than estimated delivery time
       allOf:
         - $ref: '#/components/schemas/DeliveryException'
     NotDelivered:
@@ -1325,7 +1327,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/DeliveryException'
     Rejected:
-      description: Thrown when an order is rejected by the vendor, possible by the courier in unforeseen circumstances
+      description: >-
+        Thrown when an order is rejected by the vendor,
+        possible by the courier in unforeseen circumstances
       allOf:
         - $ref: '#/components/schemas/DeliveryException'
     Location:
