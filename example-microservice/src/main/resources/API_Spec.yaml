@@ -19,7 +19,7 @@ paths:
         - Order
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -49,7 +49,7 @@ paths:
       description: add a list of order objects
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -87,7 +87,7 @@ paths:
             type: number
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -123,7 +123,7 @@ paths:
             type: number
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -166,7 +166,7 @@ paths:
             type: number
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -211,7 +211,7 @@ paths:
             type: number
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -247,7 +247,7 @@ paths:
             type: number
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -294,7 +294,7 @@ paths:
             type: number
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -331,7 +331,7 @@ paths:
             type: number
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -369,7 +369,7 @@ paths:
           required: true
           description: Id of the order to retrieve rating
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -408,7 +408,7 @@ paths:
           required: true
           description: Id of the order to update rating
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -448,7 +448,7 @@ paths:
             type: integer
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -477,7 +477,7 @@ paths:
       description: Retrieve the final destination of an order
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -507,7 +507,7 @@ paths:
       description: return the ETA of an order
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -544,7 +544,7 @@ paths:
       description: Add a vendor to the database. Only input needed is the id. To be used by admin.
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -576,7 +576,7 @@ paths:
       description: Add a vendor to the database. One needs to provide the whole object. To be used by admin.
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -623,7 +623,7 @@ paths:
           schema:
             type: number
             format: int64
-        - in: header
+        - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
@@ -661,7 +661,7 @@ paths:
           schema:
             type: number
             format: int64
-        - in: header
+        - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
@@ -691,7 +691,7 @@ paths:
       description: Add a courier to the database. Only input needed is the id. To be used by admin.
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -723,7 +723,7 @@ paths:
       description: Add a courier to the database. One needs to provide the whole object. To be used by admin.
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -755,7 +755,7 @@ paths:
       description: Return a list of all exceptions collected from orders. To be used by admin.
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: the userId to check if they have the rights to make this request
           required: true
           schema:
@@ -792,7 +792,7 @@ paths:
             type: integer
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: the userId to check if they have the rights to make this request
           required: true
           schema:
@@ -825,7 +825,7 @@ paths:
             type: integer
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -858,7 +858,7 @@ paths:
             type: integer
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -893,7 +893,7 @@ paths:
             type: integer
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: the userId to check if they have the rights to make this request
           required: true
           schema:
@@ -930,7 +930,7 @@ paths:
             type: integer
             format: int64
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -966,7 +966,7 @@ paths:
       description: Return a list of orders with a status of delivered. To be used by admin.
       parameters:
         - name: authorization
-          in: header
+          in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
@@ -1003,7 +1003,7 @@ paths:
             format: int64
           required: true
           description: Id of the order to get status from
-        - in: header
+        - in: query
           name: authorization
           description: The userId to check if they have the rights to make a request
           required: true
@@ -1047,7 +1047,7 @@ paths:
             format: int64
           required: true
           description: Id of the order to change status
-        - in: header
+        - in: query
           name: authorization
           description: The userId to check if they have the rights to make a request
           required: true
@@ -1079,7 +1079,7 @@ paths:
           schema:
             type: number
             format: int64
-        - in: header
+        - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
@@ -1111,7 +1111,7 @@ paths:
             format: int64
           required: true
           description: Id of order to change status
-        - in: header
+        - in: query
           name: authorization
           description: The userId to check if they have the rights to make a request
           required: true
@@ -1147,7 +1147,7 @@ paths:
           schema:
             type: number
             format: int64
-        - in: header
+        - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
@@ -1179,7 +1179,7 @@ paths:
             format: int64
           required: true
           description: Id of order to change status
-        - in: header
+        - in: query
           name: authorization
           description: The userId to check if they have the rights to make a request
           required: true
@@ -1211,7 +1211,7 @@ paths:
           schema:
             type: number
             format: int64
-        - in: header
+        - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
