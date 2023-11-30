@@ -1,0 +1,1389 @@
+openapi: 3.0.3
+info:
+  title: Delivery Specification
+  description: This is a microservice for managing delivery in the YumYumNow company.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Order
+    description: Order specific API
+  - name: Status
+    description: Status specific API
+  - name: User
+    description: User specific API
+  - name: Admin
+    description: Admin specific API
+paths:
+  /order:
+    get:
+      summary: Retrieve a list of all orders
+      operationId: getOrders
+      tags:
+        - Order
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      description: return a list of order objects
+      responses:
+        '200':
+          description: Successful response, orders received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be retrieved because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve all orders
+        '404':
+          description: Unsuccessful, no orders were found
+    post:
+      summary: add a list of all orders
+      operationId: postOrders
+      tags:
+        - Order
+      description: add a list of order objects
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, orders added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, orders cannot be added because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add all orders
+        '404':
+          description: Unsuccessful, no orders were found
+
+  /order/{orderId}:
+    get:
+      summary: Retrieve an order given the order id
+      operationId: getOrder
+      tags:
+        - Order
+      description: return the order corresponding to the id
+      parameters:
+        - name: orderId
+          in: path
+          description: id of the order to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, order received
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, order cannot be retrieved because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve order
+        '404':
+          description: Unsuccessful, no order was found
+    post:
+      summary: add an order given the order id
+      operationId: makeOrder
+      tags:
+        - Order
+      description: add the order corresponding to the id
+      parameters:
+        - name: orderId
+          in: path
+          description: id of the order to add
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Order object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Successful response, order added
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, order cannot be added because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add order
+        '404':
+          description: Unsuccessful, no order was found
+    put:
+      summary: Update an order given the order id
+      operationId: updateOrder
+      tags:
+        - Order
+      description: update the order corresponding to the id
+      parameters:
+        - name: orderId
+          in: path
+          description: id of the order to update
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Order object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Successful response, order updated
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, order cannot be updated because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update order
+        '404':
+          description: Unsuccessful, no order was found
+
+  /order/{orderId}/current:
+    get:
+      summary: Retrieve the current location of the courier with this order
+      operationId: getOrderLocation
+      tags:
+        - Order
+      description: return the location of the courier who has the order corresponding to the id
+      parameters:
+        - name: orderId
+          in: path
+          description: id of the order with the location to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, location received
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Location'
+        '400':
+          description: Unsuccessful, location cannot be retrieved because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve order location
+        '404':
+          description: Unsuccessful, no location was found
+    put:
+      summary: Update the current location of the courier with this order
+      operationId: updateLocation
+      tags:
+        - Order
+      description: update the location of the courier who has the order corresponding to the id
+      parameters:
+        - name: orderId
+          in: path
+          description: id of the order with the location to update
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Location object 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '200':
+          description: Successful response, location updated
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Location'
+        '400':
+          description: Unsuccessful, location cannot be updated because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update order location
+        '404':
+          description: Unsuccessful, no location was found
+
+  /order/{orderId}/distance:
+    get:
+      operationId: getOrderDistance
+      summary: Retrieve the current distance to the courier with this order
+      tags:
+        - Order
+      description: >-
+        return the distance between final delivery location and the courier 
+        who has the order corresponding to the id
+      parameters:
+        - name: orderId
+          in: path
+          description: id of the order with the distance to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, distance received
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+        '400':
+          description: Unsuccessful, distance cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no distance was found
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve order distance
+
+  /order/{vendorId}:
+    get:
+      summary: Retrieve the next order that belongs to a given vendor
+      operationId: getNextOrderForVendor
+      tags:
+        - Order
+      description: return the next order object that is assigned to specific vendor
+      parameters:
+        - name: vendorId
+          in: path
+          description: id of the vendor to retrieve the order from
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, order received
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, order cannot be retrieved because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve vendor order
+        '404':
+          description: Unsuccessful, no order was found
+
+  /order/{orderId}/rating:
+    get:
+      operationId: getOrderRating
+      tags:
+        - Order
+      summary: Retrieve the rating of a specific order
+      description: Retrieve the rating details for a specific order
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to retrieve rating
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, rating details for the specific order received
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  ratingNumber:
+                    type: number
+                  ratingComment:
+                    type: string
+        '404':
+          description: Unsuccessful, no rating details found for the specified order
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve order rating
+    put:
+      operationId: putOrderRating
+      tags:
+        - Order
+      summary: Change the rating number and comment
+      description: Update both of the orders ratings
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to update rating
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Order object where status, ratingNumber and ratingComment are updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Successful update of rating
+        '400':
+          description: Invalid arguments offered
+        '404':
+          description: OrderId was not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Unsuccessful, entity does not have access rights to update order rating
+
+  /order/{orderId}/pickupDestination:
+    get:
+      operationId: getPickupDestination
+      summary: Retrieve vendor location of the order
+      tags:
+        - Order
+      description: Return the vendor location of the specified order
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, vendor location of the order received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '400':
+          description: Unsuccessful, vendor location of the order cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve vendor location
+        '404':
+          description: Unsuccessful, vendor location for the order not found
+
+  /order/{orderId}/finalDestination:
+    get:
+      operationId: getFinalDestination
+      summary: Get the final destination of a specific order
+      tags:
+        - Order
+      description: Retrieve the final destination of an order
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to get its final destination
+      responses:
+        '200':
+          description: Successful response, order found and final destination can be retrieved
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve final destination
+        '404':
+          description: Unsuccessful, order not found by id
+
+  /order/{orderId}/ETA:
+    get:
+      operationId: getETA
+      summary: Get the ETA of an order
+      tags:
+        - Order
+      description: return the ETA of an order
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to get it's ETA
+      responses:
+        '200':
+          description: Successful response, order found
+          content:
+            application/json:
+              schema:
+                type: string
+                format: date-time
+        '400':
+          description: Invalid arguments
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve estimated time of arrival
+        '404':
+          description: Unsuccessful, order not found
+
+  /user/vendor/{vendorId}:
+    post:
+      summary: Add a vendor by only using the id
+      operationId: makeVendorById
+      tags:
+        - User
+      description: Add a vendor to the database. Only input needed is the id. To be used by admin.
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: path
+          name: vendorId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the vendor to create
+      responses:
+        '200':
+          description: Successful response, vendor added
+        '400':
+          description: Unsuccessful, vendor cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add vendor
+        '404':
+          description: Unsuccessful, no vendor was found
+
+  /user/vendor/addWhole:
+    post:
+      summary: Add a vendor
+      operationId: makeVendor
+      tags:
+        - User
+      description: Add a vendor to the database. One needs to provide the whole object. To be used by admin.
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              items:
+                $ref: '#/components/schemas/Vendor'
+      responses:
+        '200':
+          description: Successful response, vendor added
+        '400':
+          description: Unsuccessful, vendor cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add vendor
+        '404':
+          description: Unsuccessful, no vendor was found
+
+  /user/courier/{courierId}/{bossId}:
+    put:
+      summary: Update the boss of a courier given the courier id and vendor/admin id
+      operationId: updateBossOfCourier
+      tags:
+        - User
+      description: >-
+        Update the boss of the courier corresponding to the courierId.
+        The boss can either be a vendor (if the courier works for that vendor) or the admin (if not).
+      parameters:
+        - name: courierId
+          in: path
+          description: id of the courier to update
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: bossId
+          in: path
+          description: id of the vendor or admin that this courier works for
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: query
+          name: authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, courier received
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, courier updated be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no courier was found
+        '403':
+          description: Unauthorized
+
+  /user/courier/{courierId}:
+    get:
+      summary: Retrieve a courier given the courier id
+      operationId: getCourier
+      tags:
+        - User
+      description: return the courier corresponding to the id
+      parameters:
+        - name: courierId
+          in: path
+          description: id of the courier to retrieve
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: query
+          name: authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, courier received
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Courier'
+        '400':
+          description: Unsuccessful, courier cannot be retrieved because of bad request
+        '404':
+          description: Unsuccessful, no courier was found
+        '403':
+          description: Unauthorized
+    post:
+      summary: Add a courier by only using the id
+      operationId: makeCourierById
+      tags:
+        - User
+      description: Add a courier to the database. Only input needed is the id. To be used by admin.
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: path
+          name: courierId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the courier to create
+      responses:
+        '200':
+          description: Successful response, courier added
+        '400':
+          description: Unsuccessful, courier cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add courier
+        '404':
+          description: Unsuccessful, no courier was found
+
+  /user/courier/addWhole:
+    post:
+      summary: Add a courier
+      operationId: makeCourier
+      tags:
+        - User
+      description: Add a courier to the database. One needs to provide the whole object. To be used by admin.
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              items:
+                $ref: '#/components/schemas/Courier'
+      responses:
+        '200':
+          description: Successful response, courier added
+        '400':
+          description: Unsuccessful, courier cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add courier
+        '404':
+          description: Unsuccessful, no courier was found
+
+  /admin/exceptions:
+    get:
+      summary: Retrieve all exceptions
+      operationId: getExceptions
+      tags:
+        - Admin
+      description: Return a list of all exceptions collected from orders. To be used by admin.
+      parameters:
+        - name: authorization
+          in: query
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, all exceptions received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, exceptions cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve exceptions
+        '404':
+          description: Unsuccessful, no exceptions were found
+
+  /admin/exceptions/{orderId}:
+    get:
+      summary: Retrieve exception for a specific order
+      operationId: getExceptionForOrder
+      tags:
+        - Admin
+      description: Return exception information for a specific order. To be used by admin.
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: authorization
+          in: query
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, exception for the specific order received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, specific exception cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve specific exception
+        '404':
+          description: Unsuccessful, no specific exception was found
+    post:
+      summary: Add exception for a specific order
+      operationId: makeException
+      tags:
+        - Admin
+      description: Add exception information for a specific order. To be used by admin.
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, exception for the specific order added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, specific exception cannot be added because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to add specific exception
+        '404':
+          description: Unsuccessful, no specific exception was found
+    put:
+      summary: Update exception for a specific order
+      operationId: updateException
+      tags:
+        - Admin
+      description: Update exception information for a specific order. To be used by admin.
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, exception for the specific order updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryException'
+        '400':
+          description: Unsuccessful, specific exception cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update specific exception
+        '404':
+          description: Unsuccessful, no specific exception was found
+
+  /admin/vendor/radius/{vendorId}:
+    get:
+      summary: Retrieve radius from specific vendor
+      operationId: getRadiusForVendor
+      tags:
+        - Admin
+      description: Return the maximum radius of delivery of a specific vendor. To be used by admin.
+      parameters:
+        - name: vendorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: authorization
+          in: query
+          description: the userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, radius for the specific vendor received
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  radius:
+                    type: number
+                    format: double
+        '400':
+          description: Unsuccessful, specific radius cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve specific radius
+        '404':
+          description: Unsuccessful, no specific radius was found
+    put:
+      summary: Update radius from specific vendor
+      operationId: updateRadiusForVendor
+      tags:
+        - Admin
+      description: Update radius of a specific vendor. To be used by admin.
+      parameters:
+        - name: vendorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Radius object where radius is updated
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                radius:
+                  type: number
+                  format: double
+      responses:
+        '200':
+          description: Successful response, radius for the specific vendor updated
+        '400':
+          description: Unsuccessful, specific radius cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update radius
+        '404':
+          description: Unsuccessful, no specific radius was found
+
+  /admin/orders/status/delivered:
+    get:
+      operationId: getDeliveredOrders
+      summary: Retrieve delivered orders
+      tags:
+        - Admin
+      description: Return a list of orders with a status of delivered. To be used by admin.
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, delivered orders received by admin
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, delivered orders cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve delivered orders
+        '404':
+          description: Unsuccessful, no delivered orders were found
+
+  /status/{orderId}:
+    get:
+      tags:
+        - Status
+      summary: Get the order status
+      operationId: getStatus
+      description: Get the status of an order
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to get status from
+        - in: query
+          name: authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the order
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                  - pending
+                  - accepted
+                  - rejected
+                  - preparing
+                  - given-to-courier
+                  - in-transit
+                  - delivered
+        '400':
+          description: Invalid arguments
+        '404':
+          description: Order not found
+        '403':
+          description: Unauthorized
+
+  /status/{orderId}/accepted:
+    put:
+      tags:
+        - Status
+      summary: Change the order status from pending to accepted
+      operationId: updateToAccepted
+      description: Update the order status to accepted
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of the order to change status
+        - in: query
+          name: authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful update of status to accepted
+        '400':
+          description: Invalid arguments
+        '404':
+          description: Order not found
+        '403':
+          description: Unauthorized
+
+  /status/{orderId}/rejected:
+    put:
+      summary: Set status to “rejected”
+      operationId: updateToRejected
+      tags:
+        - Status
+      description: Sends an exception, goes from “pending” to [said by vendor] “rejected”
+      parameters:
+        - in: path
+          name: orderId
+          description: Id of the order to change status
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: query
+          name: authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful update of status to rejected
+        '400':
+          description: Invalid arguments
+        '403':
+          description: Unauthorized
+        '404':
+          description: Order not found
+
+  /status/{orderId}/preparing:
+    put:
+      tags:
+        - Status
+      summary: Change the order status from accepted to preparing
+      operationId: updateToPreparing
+      description: Update the order status to preparing
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of order to change status
+        - in: query
+          name: authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/PreparingRequestBody'
+      responses:
+        '200':
+          description: Successful update of status to preparing
+        '400':
+          description: Invalid arguments
+        '404':
+          description: Order not found
+        '403':
+          description: Unauthorized
+
+  /status/{orderId}/giventocourier:
+    put:
+      summary: Set status to “given to courier”
+      operationId: updateToGivenToCourier
+      tags:
+        - Status
+      description: Goes from “preparing” to [said by vendor] “given to courier” and set the courierID
+      requestBody:
+        $ref: '#/components/requestBodies/GivenToCourierRequestBody'
+      parameters:
+        - in: path
+          name: orderId
+          description: Id of the order to change status
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: query
+          name: authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful update of status to "given to courier"
+        '400':
+          description: Invalid arguments
+        '403':
+          description: Unauthorized
+        '404':
+          description: Order not found
+
+  /status/{orderId}/intransit:
+    put:
+      tags:
+        - Status
+      summary: Change the order status from accepted to in-transit
+      description: Update the order status to in-transit
+      operationId: updateToInTransit
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: Id of order to change status
+        - in: query
+          name: authorization
+          description: The userId to check if they have the rights to make a request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful update of status to in-transit
+        '400':
+          description: Invalid arguments
+        '404':
+          description: Order not found
+        '403':
+          description: Unauthorized
+
+  /status/{orderId}/delivered:
+    put:
+      summary: Set status to “delivered”
+      operationId: updateToDelivered
+      tags:
+        - Status
+      description: Goes from “in transit” to [said by courier] “delivered” and set the actualDeliveryTime
+      parameters:
+        - in: path
+          name: orderId
+          description: Id of the order to change status
+          required: true
+          schema:
+            type: number
+            format: int64
+        - in: query
+          name: authorization
+          description: the UserId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/DeliveredRequestBody'
+      responses:
+        '200':
+          description: Successful update of status to delivered
+        '400':
+          description: Invalid arguments
+        '403':
+          description: Unauthorized
+        '404':
+          description: Order not found
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - pending
+            - accepted
+            - rejected
+            - preparing
+            - given-to-courier
+            - in-transit
+            - delivered
+          description: the current status of the order expressed as one of the above options
+        id:
+          type: number
+          format: int64
+          description: the unique id of an order
+        courierId:
+          type: number
+          format: int64
+          example: 88
+          description: the id of the courier that is delivering the order
+        prepTime:
+          type: string
+          format: time
+          description: the time it takes to prepare the order in format "HH:MM:SS"
+          example: '01:30:00'
+        expectedDeliveryTime:
+          type: string
+          format: date-time
+          description: the time the order will be planned to be delivered
+        actualDeliveryTime:
+          type: string
+          format: date-time
+          description: the time the order actually is delivered
+    User:
+      properties:
+        id:
+          type: number
+          format: int64
+          example: 66
+    Vendor:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+      properties:
+        hasCouriers:
+          description: >-
+            Indicates if a vendor has specific couriers that are assigned to them,
+            and can only take requests from them
+          type: boolean
+        radius:
+          type: number
+          format: double
+    Courier:
+      description: The user that delivers the given order.
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+      properties:
+        currentLocation:
+          $ref: '#/components/schemas/Location'
+        bossId:
+          type: number
+          format: int64
+          example: 666
+          description: >-
+            Reference to the specific vendor the courier works for.
+            A reference to the admin (which is 1 person) if the courier is independent,
+            meaning courier has a list of orders to choose from and is not dependent on a vendor
+    DeliveryException:
+      description: >-
+        General exception class more specific exceptions inherit from.
+        Thrown whenever there is any kind of problem with the order
+      properties:
+        orderId:
+          type: number
+          format: int64
+          description: the id of the order that the exception happened on
+        message:
+          type: string
+          description: explanation of what went wrong with the order
+          example: "Order was not delivered"
+        isResolved:
+          type: boolean
+          example: true
+        exceptionType:
+          type: string
+          enum:
+            - LateDelivery
+            - NotDelivered
+            - Rejected
+            - Other
+          description: The kind of unforeseen situation of the order
+          example: LateDelivery
+    Location:
+      description: Any kind of address expressed as a longitude and latitude
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: float
+          example: 23.92488
+        longitude:
+          type: number
+          format: float
+          example: 74.7099
+
+  requestBodies:
+    PreparingRequestBody:
+      description: Request body for status change from accepted to preparing
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              prepTime:
+                type: string
+                format: time
+                description: the time it takes to prepare the order in format "HH:MM:SS"
+                example: '01:30:00'
+              expectedDeliveryTime:
+                type: string
+                format: date-time
+                description: the time the order will be planned to be delivered
+    GivenToCourierRequestBody:
+      description: Request body for status change from preparing to given to courier
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              courierId:
+                type: number
+                format: int64
+                example: 88
+    DeliveredRequestBody:
+      description: Request body for status change from in-transit to delivered
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              actualDeliveryTime:
+                type: string
+                format: date-time
+                description: the time the order actually is delivered
