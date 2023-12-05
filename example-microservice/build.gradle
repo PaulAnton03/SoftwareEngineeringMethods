@@ -131,7 +131,7 @@ pitest {
 	//adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
 	junit5PluginVersion = '0.12'
 
-	targetClasses = ['org.order.*']  //by default "${project.group}.*"
+	targetClasses = ['nl.tudelft.sem.template.*']  //by default "${project.group}.*"
 	pitestVersion = '1.5.1' //not needed when a default PIT version should be used
 	threads = 4
 	outputFormats = ['XML', 'HTML']
@@ -143,8 +143,8 @@ openApiGenerate {
 	generatorName.set("spring")
 	inputSpec.set("$rootDir/example-microservice/src/main/resources/openapi.yaml")
 	outputDir.set("$buildDir/generated")
-	apiPackage.set("com.example.api")
-	modelPackage.set("com.example.model")
+	apiPackage.set("nl.tudelft.sem.template.api")
+	modelPackage.set("nl.tudelft.sem.template.model")
 	configOptions.set([
 			dateLibrary: "java15"
 	])
