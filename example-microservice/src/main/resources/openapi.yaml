@@ -45,13 +45,29 @@ paths:
           description: Unsuccessful, entity does not have access rights to retrieve all orders
         '404':
           description: Unsuccessful, no orders were found
-    post:
-      summary: add a list of all orders
-      operationId: postOrders
+
+  /order/{orderId}/courier/{courierId}:
+    put:
+      summary: Set courier id of this order
+      operationId: setCourierId
       tags:
         - Order
-      description: add a list of order objects
+      description: update the courier id of the order
       parameters:
+        - name: orderId
+          in: path
+          description: id of the order to update
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: courierId
+          in: path
+          description: id of the courier to set
+          required: true
+          schema:
+            type: number
+            format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
@@ -60,23 +76,94 @@ paths:
             type: number
             format: int64
       requestBody:
-        description: a list of order objects
+        description: Order object
         required: true
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Order'
+              $ref: '#/components/schemas/Order'
       responses:
         '200':
-          description: Successful response, orders added
+          description: Successful response, courier id of order set
         '400':
-          description: Unsuccessful, orders cannot be added because of bad request
+          description: Unsuccessful, courier id cannot be updated because of bad request
         '403':
-          description: Unsuccessful, entity does not have access rights to add all orders
+          description: Unsuccessful, entity does not have access rights to update courier id
         '404':
-          description: Unsuccessful, no orders were found
+          description: Unsuccessful, no order or courier id was found
+
+  /order/{orderId}/preparation-time:
+    put:
+      summary: Set the preparation time of an order
+      operationId: setDeliverTime
+      tags:
+        - Order
+      description: update the preparation time of the order
+      parameters:
+        - name: orderId
+          in: path
+          description: id of the order to update
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Order object
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              format: time
+      responses:
+        '200':
+          description: Successful response, preparation time of order set
+        '400':
+          description: Unsuccessful, preparation time cannot be updated because of bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update preparation time
+        '404':
+          description: Unsuccessful, no preparation time was found
+
+  /order/unassigned:
+    get:
+      operationId: getIndependentOrders
+      summary: Retrieve all independent and unassigned orders
+      tags:
+        - Admin
+      description: >-
+        Return a list of all independent and unassigned orders. Independent orders are orders that belong 
+        to a vendor without own couriers.
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, independent and unassigned orders received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Unsuccessful, independent and unassigned orders cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve independent and unassigned orders
+        '404':
+          description: Unsuccessful, no independent and unassigned orders were found
 
   /order/{orderId}:
     get:
@@ -412,7 +499,7 @@ paths:
         '403':
           description: Unsuccessful, entity does not have access rights to update order rating
 
-  /order/{orderId}/pickupDestination:
+  /order/{orderId}/pickup-destination:
     get:
       operationId: getPickupDestination
       summary: Retrieve vendor location of the order
@@ -447,7 +534,7 @@ paths:
         '404':
           description: Unsuccessful, vendor location for the order not found
 
-  /order/{orderId}/finalDestination:
+  /order/{orderId}/final-destination:
     get:
       operationId: getFinalDestination
       summary: Get the final destination of a specific order
@@ -552,7 +639,7 @@ paths:
         '404':
           description: Unsuccessful, no vendor was found
 
-  /user/vendor/addWhole:
+  /user/vendor/add-whole:
     post:
       summary: Add a vendor
       operationId: makeVendor
@@ -581,6 +668,67 @@ paths:
           description: Unsuccessful, entity does not have access rights to add vendor
         '404':
           description: Unsuccessful, no vendor was found
+
+  /user/vendor/radius:
+    get:
+      summary: Retrieve the specific radius for any vendors
+      operationId: getSpecificRadius
+      tags:
+        - User
+      description: Return the specific radius of the vendor.
+      parameters:
+        - name: authorization
+          in: query
+          description: the userId to check if they have the rights to make this request, also the vendor id to set.
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, radius received.
+          content:
+            application/json:
+              schema:
+                type: number
+                format: double
+        '400':
+          description: Unsuccessful, specific radius cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve specific radius
+        '404':
+          description: Unsuccessful, no specific radius was found
+    put:
+      summary: Update the specific radius for a vendor
+      operationId: updateSpecificRadius
+      tags:
+        - User
+      description: Update the specific radius of a vendor. To be used by that vendor.
+      parameters:
+        - name: authorization
+          in: query
+          description: The userId to check if they have the rights to make this request, also the vendor id to set.
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: Radius in meters to be set as a new value
+        required: true
+        content:
+          application/json:
+            schema:
+              type: number
+              format: double
+      responses:
+        '200':
+          description: Successful response, specific radius updated.
+        '400':
+          description: Unsuccessful, specific radius cannot be updated because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to update radius.
+        '404':
+          description: Unsuccessful, no specific radius was found.
 
   /user/courier/{courierId}/{bossId}:
     put:
@@ -691,7 +839,7 @@ paths:
         '404':
           description: Unsuccessful, no courier was found
 
-  /user/courier/addWhole:
+  /user/courier/add-whole:
     post:
       summary: Add a courier
       operationId: makeCourier
@@ -855,20 +1003,113 @@ paths:
         '404':
           description: Unsuccessful, no specific exception was found
 
-  /admin/vendor/radius/{vendorId}:
+  /admin/analytics/courier-efficiency:
     get:
-      summary: Retrieve radius from specific vendor
-      operationId: getRadiusForVendor
+      summary: Retrieve the courier efficiencies of all couriers
+      operationId: getCourierEfficiencies
       tags:
         - Admin
-      description: Return the maximum radius of delivery of a specific vendor. To be used by admin.
+      description: Return the all courier efficiencies.
       parameters:
-        - name: vendorId
-          in: path
+        - name: authorization
+          in: query
+          description: the userId to check if they have the rights to make this request, only admin is allowed.
           required: true
           schema:
-            type: integer
+            type: number
             format: int64
+      responses:
+        '200':
+          description: Successful response, driver efficiencies received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+                  format: int64
+                  description: the number represents a percentage of a particular driver's efficiency
+        '400':
+          description: Unsuccessful, driver efficiencies cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve driver efficiencies
+        '404':
+          description: Unsuccessful, driver efficiencies were not found
+
+  /admin/analytics/all-ratings:
+    get:
+      summary: Retrieve a list of all ratings
+      operationId: getAllRatings
+      tags:
+        - Admin
+      description: Return rating of all of the orders.
+      parameters:
+        - name: authorization
+          in: query
+          description: the userId to check if they have the rights to make this request, only admin is allowed.
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, ratings received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+                  format: int64
+        '400':
+          description: Unsuccessful, ratings cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve ratings
+        '404':
+          description: Unsuccessful, ratings were not found
+
+  /admin/analytics/delivery-times:
+    get:
+      summary: Retrieve a list of all delivery times
+      operationId: getAllDeliveryTimes
+      tags:
+        - Admin
+      description: >- 
+        Return delivery times of all of the orders. The difference in time between ETA and actual time arrival.
+      parameters:
+        - name: authorization
+          in: query
+          description: the userId to check if they have the rights to make this request, only admin is allowed.
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Successful response, delivery times received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: time
+                  description: The difference in time between ETA and actual time arrival.
+        '400':
+          description: Unsuccessful, delivery times cannot be retrieved because of a bad request
+        '403':
+          description: Unsuccessful, entity does not have access rights to retrieve delivery times
+        '404':
+          description: Unsuccessful, delivery times were not found
+
+  /admin/vendor/radius:
+    get:
+      summary: Retrieve the default radius for vendors that don't have their own couriers (independent vendors)
+      operationId: getDefaultRadius
+      tags:
+        - Admin
+      description: Return the default radius of all independent vendors. To be used by admin.
+      parameters:
         - name: authorization
           in: query
           description: the userId to check if they have the rights to make this request
@@ -878,31 +1119,25 @@ paths:
             format: int64
       responses:
         '200':
-          description: Successful response, radius for the specific vendor received
+          description: Successful response, default radius of vendors with independent couriers received
           content:
             application/json:
               schema:
                 type: number
                 format: double
         '400':
-          description: Unsuccessful, specific radius cannot be retrieved because of a bad request
+          description: Unsuccessful, default radius cannot be retrieved because of a bad request
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve specific radius
         '404':
           description: Unsuccessful, no specific radius was found
     put:
-      summary: Update radius from specific vendor
-      operationId: updateRadiusForVendor
+      summary: Update the default radius for vendors that don't have their own couriers (independent vendors)
+      operationId: updateDefaultRadius
       tags:
         - Admin
-      description: Update radius of a specific vendor. To be used by admin.
+      description: Update the default radius of all independent vendors. To be used by admin.
       parameters:
-        - name: vendorId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
@@ -920,13 +1155,13 @@ paths:
               format: double
       responses:
         '200':
-          description: Successful response, radius for the specific vendor updated
+          description: Successful response, default radius of vendors with independent couriers updated
         '400':
-          description: Unsuccessful, specific radius cannot be updated because of a bad request
+          description: Unsuccessful, default radius cannot be updated because of a bad request
         '403':
-          description: Unsuccessful, entity does not have access rights to update radius
+          description: Unsuccessful, entity does not have access rights to update radius. Only admins have this right.
         '404':
-          description: Unsuccessful, no specific radius was found
+          description: Unsuccessful, no default radius was found
 
   /admin/orders/status/delivered:
     get:
@@ -1239,17 +1474,28 @@ components:
           type: string
           format: date-time
           description: the time the order actually is delivered
-    User:
+        orderTime:
+          type: string
+          format: date-time
+          description: the time the order was placed
+        deliveryDestination:
+          $ref: '#/components/schemas/Location'
+        vendorId:
+          type: number
+          format: int64
+          example: 99
+          description: the id of the vendor that prepares the order
+        ratingNumber:
+          type: number
+          format: int64
+          description: a number out of five (0-5 stars)
+
+    Vendor:
       properties:
         id:
           type: number
           format: int64
           example: 66
-    Vendor:
-      allOf:
-        - $ref: '#/components/schemas/User'
-        - type: object
-      properties:
         hasCouriers:
           description: >-
             Indicates if a vendor has specific couriers that are assigned to them,
@@ -1258,22 +1504,27 @@ components:
         radius:
           type: number
           format: double
+        location:
+          $ref: "#/components/schemas/Location"
+
     Courier:
       description: The user that delivers the given order.
-      allOf:
-        - $ref: '#/components/schemas/User'
-        - type: object
       properties:
+        id:
+          type: number
+          format: int64
+          example: 66
         currentLocation:
           $ref: '#/components/schemas/Location'
         bossId:
           type: number
           format: int64
-          example: 666
+          example: 668
           description: >-
             Reference to the specific vendor the courier works for.
             A reference to the admin (which is 1 person) if the courier is independent,
             meaning courier has a list of orders to choose from and is not dependent on a vendor
+
     DeliveryException:
       description: >-
         General exception class more specific exceptions inherit from.
@@ -1299,6 +1550,7 @@ components:
             - Other
           description: The kind of unforeseen situation of the order
           example: LateDelivery
+
     Location:
       description: Any kind of address expressed as a longitude and latitude
       type: object
