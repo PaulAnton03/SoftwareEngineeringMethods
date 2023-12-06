@@ -1440,6 +1440,7 @@ components:
   schemas:
     Order:
       type: object
+      x-class-extra-annotation: "@javax.persistence.Entity"
       properties:
         status:
           type: string
@@ -1456,6 +1457,7 @@ components:
           type: number
           format: int64
           description: the unique id of an order
+          x-field-extra-annotation: "@javax.persistence.Id"
         courierId:
           type: number
           format: int64
@@ -1491,11 +1493,13 @@ components:
           description: a number out of five (0-5 stars)
 
     Vendor:
+      x-class-extra-annotation: "@javax.persistence.Entity"
       properties:
         id:
           type: number
           format: int64
           example: 66
+          x-field-extra-annotation: "@javax.persistence.Id"
         hasCouriers:
           description: >-
             Indicates if a vendor has specific couriers that are assigned to them,
@@ -1509,11 +1513,13 @@ components:
 
     Courier:
       description: The user that delivers the given order.
+      x-class-extra-annotation: "@javax.persistence.Entity"
       properties:
         id:
           type: number
           format: int64
           example: 66
+          x-field-extra-annotation: "@javax.persistence.Id"
         currentLocation:
           $ref: '#/components/schemas/Location'
         bossId:
@@ -1529,11 +1535,13 @@ components:
       description: >-
         General exception class more specific exceptions inherit from.
         Thrown whenever there is any kind of problem with the order
+      x-class-extra-annotation: "@javax.persistence.Entity"
       properties:
         orderId:
           type: number
           format: int64
           description: the id of the order that the exception happened on
+          x-field-extra-annotation: "@javax.persistence.Id"
         message:
           type: string
           description: explanation of what went wrong with the order
@@ -1554,6 +1562,7 @@ components:
     Location:
       description: Any kind of address expressed as a longitude and latitude
       type: object
+      x-class-extra-annotation: "@javax.persistence.Entity"
       properties:
         latitude:
           type: number
