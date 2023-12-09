@@ -1441,6 +1441,7 @@ components:
     Order:
       type: object
       x-class-extra-annotation: "@javax.persistence.Entity"
+      x-table-name: "order_table"
       properties:
         status:
           type: string
@@ -1494,6 +1495,7 @@ components:
 
     Vendor:
       x-class-extra-annotation: "@javax.persistence.Entity"
+      x-table-name: "vendor_table"
       properties:
         id:
           type: number
@@ -1514,6 +1516,7 @@ components:
     Courier:
       description: The user that delivers the given order.
       x-class-extra-annotation: "@javax.persistence.Entity"
+      x-table-name: "courier_table"
       properties:
         id:
           type: number
@@ -1560,9 +1563,11 @@ components:
           example: LateDelivery
 
     Location:
+#      x-field-extra-annotation: "@javax.persistence.ManyToOne(cascade = javax.persistence.CascadeType.ALL) @javax.persistence.JoinColumn(name =\"id\")"
       description: Any kind of address expressed as a longitude and latitude
       type: object
-      x-class-extra-annotation: "@javax.persistence.Entity"
+      x-class-extra-annotation: "@javax.persistence.Embeddable"
+      x-field-extra-annotation: "@javax.persistence.Embedded"
       properties:
         latitude:
           type: number
