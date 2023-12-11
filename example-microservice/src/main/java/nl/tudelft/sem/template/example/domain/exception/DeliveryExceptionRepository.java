@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.example.domain;
+package nl.tudelft.sem.template.example.domain.exception;
 
 import nl.tudelft.sem.template.model.DeliveryException;
 import org.springframework.data.jpa.repository.JpaRepository;
