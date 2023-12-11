@@ -1440,6 +1440,8 @@ components:
   schemas:
     Order:
       type: object
+      x-class-extra-annotation: "@javax.persistence.Entity"
+      x-table-name: "order_table"
       properties:
         status:
           type: string
@@ -1456,46 +1458,35 @@ components:
           type: number
           format: int64
           description: the unique id of an order
+          x-field-extra-annotation: "@javax.persistence.Id"
         courierId:
           type: number
           format: int64
           example: 88
           description: the id of the courier that is delivering the order
-        prepTime:
-          type: string
-          format: time
-          description: the time it takes to prepare the order in format "HH:MM:SS"
-          example: '01:30:00'
-        expectedDeliveryTime:
-          type: string
-          format: date-time
-          description: the time the order will be planned to be delivered
-        actualDeliveryTime:
-          type: string
-          format: date-time
-          description: the time the order actually is delivered
-        orderTime:
-          type: string
-          format: date-time
-          description: the time the order was placed
-        deliveryDestination:
-          $ref: '#/components/schemas/Location'
         vendorId:
           type: number
           format: int64
           example: 99
           description: the id of the vendor that prepares the order
+        deliveryDestination:
+          $ref: '#/components/schemas/Location'
+        timeValues:
+          $ref: '#/components/schemas/Time'
         ratingNumber:
           type: number
           format: int64
           description: a number out of five (0-5 stars)
 
     Vendor:
+      x-class-extra-annotation: "@javax.persistence.Entity"
+      x-table-name: "vendor_table"
       properties:
         id:
           type: number
           format: int64
           example: 66
+          x-field-extra-annotation: "@javax.persistence.Id"
         hasCouriers:
           description: >-
             Indicates if a vendor has specific couriers that are assigned to them,
@@ -1509,11 +1500,14 @@ components:
 
     Courier:
       description: The user that delivers the given order.
+      x-class-extra-annotation: "@javax.persistence.Entity"
+      x-table-name: "courier_table"
       properties:
         id:
           type: number
           format: int64
           example: 66
+          x-field-extra-annotation: "@javax.persistence.Id"
         currentLocation:
           $ref: '#/components/schemas/Location'
         bossId:
@@ -1529,11 +1523,13 @@ components:
       description: >-
         General exception class more specific exceptions inherit from.
         Thrown whenever there is any kind of problem with the order
+      x-class-extra-annotation: "@javax.persistence.Entity"
       properties:
         orderId:
           type: number
           format: int64
           description: the id of the order that the exception happened on
+          x-field-extra-annotation: "@javax.persistence.Id"
         message:
           type: string
           description: explanation of what went wrong with the order
@@ -1552,8 +1548,11 @@ components:
           example: LateDelivery
 
     Location:
+#      x-field-extra-annotation: "@javax.persistence.ManyToOne(cascade = javax.persistence.CascadeType.ALL) @javax.persistence.JoinColumn(name =\"id\")"
       description: Any kind of address expressed as a longitude and latitude
       type: object
+      x-class-extra-annotation: "@javax.persistence.Embeddable"
+      x-field-extra-annotation: "@javax.persistence.Embedded"
       properties:
         latitude:
           type: number
@@ -1563,6 +1562,29 @@ components:
           type: number
           format: float
           example: 74.7099
+    Time:
+      description: Collection of time attributes of an order
+      type: object
+      x-class-extra-annotation: "@javax.persistence.Embeddable"
+      x-field-extra-annotation: "@javax.persistence.Embedded"
+      properties:
+        prepTime:
+          type: string
+          format: time
+          description: the time it takes to prepare the order in format "HH:MM:SS"
+          example: '01:30:00'
+        expectedDeliveryTime:
+          type: string
+          format: date-time
+          description: the time the order will be planned to be delivered
+        actualDeliveryTime:
+          type: string
+          format: date-time
+          description: the time the order actually is delivered
+        orderTime:
+          type: string
+          format: date-time
+          description: the time the order was placed
 
   requestBodies:
     PreparingRequestBody:
