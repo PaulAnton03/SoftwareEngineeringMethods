@@ -27,7 +27,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       description: return a list of order objects
       responses:
@@ -59,21 +59,21 @@ paths:
           description: id of the order to update
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: courierId
           in: path
           description: id of the courier to set
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         description: Order object
@@ -105,14 +105,14 @@ paths:
           description: id of the order to update
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         description: Order object
@@ -147,7 +147,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -178,14 +178,14 @@ paths:
           description: id of the order to retrieve
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -212,14 +212,14 @@ paths:
           description: id of the order to add
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         description: Order object
@@ -249,14 +249,14 @@ paths:
           description: id of the order to update
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         description: Order object
@@ -288,14 +288,14 @@ paths:
           description: id of the order with the location to retrieve
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -322,14 +322,14 @@ paths:
           description: id of the order with the location to update
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         description: Location object 
@@ -363,14 +363,14 @@ paths:
           description: id of the order with the distance to retrieve
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -378,7 +378,7 @@ paths:
           content:
             application/json:
               schema:
-                type: number
+                type: integer
                 format: float
                 example: 240
         '400':
@@ -401,14 +401,14 @@ paths:
           description: id of the vendor to retrieve the order from
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: authorization
           in: query
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -435,7 +435,7 @@ paths:
         - in: path
           name: orderId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of the order to retrieve rating
@@ -444,7 +444,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -452,7 +452,7 @@ paths:
           content:
             application/json:
               schema:
-                type: number
+                type: integer
                 format: int64
         '404':
           description: Unsuccessful, no rating details found for the specified order
@@ -468,7 +468,7 @@ paths:
         - in: path
           name: orderId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of the order to update rating
@@ -477,7 +477,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         description: Order object where ratingNumber is updated
@@ -485,7 +485,7 @@ paths:
         content:
           application/json:
             schema:
-              type: number
+              type: integer
               format: int64
       responses:
         '200':
@@ -518,7 +518,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -547,12 +547,12 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: path
           name: orderId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of the order to get its final destination
@@ -581,12 +581,12 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: path
           name: orderId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of the order to get it's ETA
@@ -620,12 +620,12 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: path
           name: vendorId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of the vendor to create
@@ -652,7 +652,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         content:
@@ -682,7 +682,7 @@ paths:
           description: the userId to check if they have the rights to make this request, also the vendor id to set.
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -710,7 +710,7 @@ paths:
           description: The userId to check if they have the rights to make this request, also the vendor id to set.
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         description: Radius in meters to be set as a new value
@@ -745,21 +745,21 @@ paths:
           description: id of the courier to update
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - name: bossId
           in: path
           description: id of the vendor or admin that this courier works for
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -784,14 +784,14 @@ paths:
           description: id of the courier to retrieve
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -820,12 +820,12 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: path
           name: courierId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of the courier to create
@@ -852,7 +852,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         content:
@@ -882,7 +882,7 @@ paths:
           description: the userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -919,7 +919,7 @@ paths:
           description: the userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -952,7 +952,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         content:
@@ -986,7 +986,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         content:
@@ -1016,7 +1016,7 @@ paths:
           description: the userId to check if they have the rights to make this request, only admin is allowed.
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1026,7 +1026,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: number
+                  type: integer
                   format: int64
                   description: the number represents a percentage of a particular driver's efficiency
         '400':
@@ -1049,7 +1049,7 @@ paths:
           description: the userId to check if they have the rights to make this request, only admin is allowed.
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1059,7 +1059,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: number
+                  type: integer
                   format: int64
         '400':
           description: Unsuccessful, ratings cannot be retrieved because of a bad request
@@ -1082,7 +1082,7 @@ paths:
           description: the userId to check if they have the rights to make this request, only admin is allowed.
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1115,7 +1115,7 @@ paths:
           description: the userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1143,7 +1143,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         description: Radius in meters to be set as a new value
@@ -1176,7 +1176,7 @@ paths:
           description: The userId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1205,7 +1205,7 @@ paths:
         - in: path
           name: orderId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of the order to get status from
@@ -1214,7 +1214,7 @@ paths:
           description: The userId to check if they have the rights to make a request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1249,7 +1249,7 @@ paths:
         - in: path
           name: orderId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of the order to change status
@@ -1258,7 +1258,7 @@ paths:
           description: The userId to check if they have the rights to make a request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1283,14 +1283,14 @@ paths:
           description: Id of the order to change status
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1313,7 +1313,7 @@ paths:
         - in: path
           name: orderId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of order to change status
@@ -1322,7 +1322,7 @@ paths:
           description: The userId to check if they have the rights to make a request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         $ref: '#/components/requestBodies/PreparingRequestBody'
@@ -1351,14 +1351,14 @@ paths:
           description: Id of the order to change status
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1381,7 +1381,7 @@ paths:
         - in: path
           name: orderId
           schema:
-            type: number
+            type: integer
             format: int64
           required: true
           description: Id of order to change status
@@ -1390,7 +1390,7 @@ paths:
           description: The userId to check if they have the rights to make a request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       responses:
         '200':
@@ -1415,14 +1415,14 @@ paths:
           description: Id of the order to change status
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
         - in: query
           name: authorization
           description: the UserId to check if they have the rights to make this request
           required: true
           schema:
-            type: number
+            type: integer
             format: int64
       requestBody:
         $ref: '#/components/requestBodies/DeliveredRequestBody'
@@ -1455,17 +1455,17 @@ components:
             - delivered
           description: the current status of the order expressed as one of the above options
         id:
-          type: number
+          type: integer
           format: int64
           description: the unique id of an order
           x-field-extra-annotation: "@javax.persistence.Id"
         courierId:
-          type: number
+          type: integer
           format: int64
           example: 88
           description: the id of the courier that is delivering the order
         vendorId:
-          type: number
+          type: integer
           format: int64
           example: 99
           description: the id of the vendor that prepares the order
@@ -1474,7 +1474,7 @@ components:
         timeValues:
           $ref: '#/components/schemas/Time'
         ratingNumber:
-          type: number
+          type: integer
           format: int64
           description: a number out of five (0-5 stars)
 
@@ -1483,7 +1483,7 @@ components:
       x-table-name: "vendor_table"
       properties:
         id:
-          type: number
+          type: integer
           format: int64
           example: 66
           x-field-extra-annotation: "@javax.persistence.Id"
@@ -1504,14 +1504,14 @@ components:
       x-table-name: "courier_table"
       properties:
         id:
-          type: number
+          type: integer
           format: int64
           example: 66
           x-field-extra-annotation: "@javax.persistence.Id"
         currentLocation:
           $ref: '#/components/schemas/Location'
         bossId:
-          type: number
+          type: integer
           format: int64
           example: 668
           description: >-
@@ -1526,7 +1526,7 @@ components:
       x-class-extra-annotation: "@javax.persistence.Entity"
       properties:
         orderId:
-          type: number
+          type: integer
           format: int64
           description: the id of the order that the exception happened on
           x-field-extra-annotation: "@javax.persistence.Id"
@@ -1613,7 +1613,7 @@ components:
             type: object
             properties:
               courierId:
-                type: number
+                type: integer
                 format: int64
                 example: 88
     DeliveredRequestBody:
