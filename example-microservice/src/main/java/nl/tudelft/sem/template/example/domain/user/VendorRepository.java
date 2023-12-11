@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.example.domain;
+package nl.tudelft.sem.template.example.domain.user;
 
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;

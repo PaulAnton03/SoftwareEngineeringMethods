@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.example.domain;
+package nl.tudelft.sem.template.example.domain.order;
 
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
