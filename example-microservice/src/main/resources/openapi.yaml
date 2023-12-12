@@ -378,7 +378,7 @@ paths:
           content:
             application/json:
               schema:
-                type: integer
+                type: number
                 format: float
                 example: 240
         '400':
@@ -452,8 +452,8 @@ paths:
           content:
             application/json:
               schema:
-                type: integer
-                format: int64
+                type: number
+                format: Long
         '404':
           description: Unsuccessful, no rating details found for the specified order
         '403':
@@ -485,8 +485,8 @@ paths:
         content:
           application/json:
             schema:
-              type: integer
-              format: int64
+              type: number
+              format: Long
       responses:
         '200':
           description: Successful update of rating
@@ -1026,8 +1026,8 @@ paths:
               schema:
                 type: array
                 items:
-                  type: integer
-                  format: int64
+                  type: number
+                  format: Long
                   description: the number represents a percentage of a particular driver's efficiency
         '400':
           description: Unsuccessful, driver efficiencies cannot be retrieved because of a bad request
@@ -1059,8 +1059,8 @@ paths:
               schema:
                 type: array
                 items:
-                  type: integer
-                  format: int64
+                  type: number
+                  format: Long
         '400':
           description: Unsuccessful, ratings cannot be retrieved because of a bad request
         '403':
@@ -1474,8 +1474,8 @@ components:
         timeValues:
           $ref: '#/components/schemas/Time'
         ratingNumber:
-          type: integer
-          format: int64
+          type: number
+          format: Long
           description: a number out of five (0-5 stars)
 
     Vendor:
