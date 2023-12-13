@@ -1,7 +1,8 @@
-package nl.tudelft.sem.template.example.domain.order;
+package nl.tudelft.sem.template.example.controllers;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.api.OrderApi;
+import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.model.Location;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
