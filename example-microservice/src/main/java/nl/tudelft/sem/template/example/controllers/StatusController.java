@@ -36,6 +36,6 @@ public class StatusController implements StatusApi {
         if(order.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return StatusApi.super.updateToAccepted(orderId, authorization);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
