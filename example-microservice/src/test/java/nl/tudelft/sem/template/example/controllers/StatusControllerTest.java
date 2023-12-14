@@ -1,11 +1,13 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -57,6 +59,31 @@ public class StatusControllerTest {
         var res = controller.getStatus(1L, 1L);
         assertEquals(new ResponseEntity<>("accepted", HttpStatus.OK), res);
 
+    }
+
+
+    @Test
+    void updateStatusToGivenToCourier200() {
+        UpdateToGivenToCourierRequest req = new UpdateToGivenToCourierRequest();
+        req.courierId(3L);
+
+        Mockito.when(statusService.getOrderStatus(2L)).thenReturn(
+                Optional.of(Order.StatusEnum.PREPARING));
+        Mockito.when(statusService.updateStatusToGivenToCourier(2L, req)).thenReturn(
+                Optional.of(new Order().id(2L).status(Order.StatusEnum.GIVEN_TO_COURIER)));
+
+        var res = controller.updateToGivenToCourier(2L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateStatusToGivenToCourier404() {
+        Mockito.when(statusService.updateStatusToGivenToCourier(anyLong(), any())).thenReturn(Optional.empty());
+
+        UpdateToGivenToCourierRequest req = new UpdateToGivenToCourierRequest();
+        req.courierId(3L);
+        var res = controller.updateToGivenToCourier(2L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
 
