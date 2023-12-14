@@ -32,6 +32,9 @@ public class StatusController implements StatusApi {
 
         // TODO: authentication
 
+        // TODO: once OrderService is merged add check if order status before change is equal to PENDING,
+        //  if not throw 400 ?
+
         Optional<Order> order = statusService.updateStatusToAccepted(orderId);
 
         if(order.isEmpty()) {
@@ -52,6 +55,9 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
 
         // TODO: authentication
+
+        // TODO: once OrderService is merged add check if order status before change is equal to GIVEN_TO_COURIER,
+        //  if not throw 400 ?
 
         Optional<Order> order = statusService.updateStatusToInTransit(orderId);
 
