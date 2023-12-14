@@ -32,6 +32,16 @@ public class StatusController implements StatusApi {
 
         // TODO: authentication
 
+        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
+
+        if (currentStatus.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (currentStatus.get() != Order.StatusEnum.PENDING) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         Optional<Order> order = statusService.updateStatusToAccepted(orderId);
 
         if (order.isEmpty()) {

@@ -16,6 +16,18 @@ public class StatusService {
     }
 
     /**
+     * Attempts to get the status of order.
+     * Everyone can use this.
+     *
+     * @param orderId the id of the order
+     * @return the optional of updated order object, empty if the order was not found
+     */
+    public Optional<Order.StatusEnum> getOrderStatus(Long orderId) {
+        Optional<Order> o = orderRepo.findById(orderId);
+        return o.map(Order::getStatus);
+    }
+
+    /**
      * Attempts to update the status of order to accepted.
      * Vendors use this.
      *
