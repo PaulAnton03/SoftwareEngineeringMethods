@@ -4,6 +4,7 @@ import java.util.Optional;
 import nl.tudelft.sem.template.api.StatusApi;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +52,39 @@ public class StatusController implements StatusApi {
 
 
     /**
+     * Handles put request for (/status/{orderId}/giventocourier).
+     *
+     * @param orderId id of the order to update its status to given_to_courier (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @return a response entity with nothing, 404 if not found  403 if not authorized, only for vendors
+     */
+    @Override
+    public ResponseEntity<Void> updateToGivenToCourier(Long orderId, Long authorization,
+                                                       UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
+
+        // TODO: authentication
+
+        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
+
+        if (currentStatus.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (currentStatus.get() != Order.StatusEnum.PREPARING) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Order> order = statusService.updateStatusToGivenToCourier(orderId, updateToGivenToCourierRequest);
+
+        if (order.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    /**
      * Handles put request for (/status/{orderId}/intransit).
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
@@ -80,6 +114,7 @@ public class StatusController implements StatusApi {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     /**
      * Handles get request for (/status/{orderId}).

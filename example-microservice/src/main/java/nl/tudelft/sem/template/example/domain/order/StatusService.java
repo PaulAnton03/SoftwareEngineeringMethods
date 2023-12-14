@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.example.domain.order;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,6 +44,27 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.ACCEPTED);
+        return Optional.of(orderRepo.save(order));
+    }
+
+
+    /**
+     * Attempts to update the status of order to given_to_courier.
+     * Vendors use this.
+     *
+     * @param orderId the id of the order
+     * @return the optional of updated order object, empty if the order was not found
+     */
+    public Optional<Order> updateStatusToGivenToCourier(Long orderId, UpdateToGivenToCourierRequest req) {
+        Optional<Order> o = orderRepo.findById(orderId);
+
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order order = o.get();
+        order.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
+        order.courierId(req.getCourierId());
         return Optional.of(orderRepo.save(order));
     }
 

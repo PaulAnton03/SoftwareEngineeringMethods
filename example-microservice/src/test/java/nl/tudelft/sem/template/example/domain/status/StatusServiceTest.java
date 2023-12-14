@@ -9,6 +9,7 @@ import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,6 +23,8 @@ public class StatusServiceTest {
 
     public Order order2;
 
+    public Order order3;
+
     public StatusService ss;
 
     @BeforeEach
@@ -29,6 +32,7 @@ public class StatusServiceTest {
         this.orderRepo = mock(OrderRepository.class);
         this.order1 = new Order().id(1L).status(Order.StatusEnum.PENDING);
         this.order2 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER);
+        this.order3 = new Order().id(1L).status(Order.StatusEnum.PREPARING);
         this.ss = new StatusService(orderRepo);
     }
 
@@ -50,6 +54,33 @@ public class StatusServiceTest {
         Mockito.when(orderRepo.getOne(anyLong())).thenThrow(new javax.persistence.EntityNotFoundException());
 
         Optional<Order> ret = ss.updateStatusToAccepted(order1.getId());
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
+    void updateStatusToGivenToCourier200() {
+        Order order33 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER);
+        UpdateToGivenToCourierRequest req = new UpdateToGivenToCourierRequest();
+        req.courierId(3L);
+
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.ofNullable(order3));
+        Mockito.lenient().when(orderRepo.save(order3)).thenReturn(order33);
+
+        assertEquals(order3.getStatus(), Order.StatusEnum.PREPARING);
+
+        ss.updateStatusToGivenToCourier(order3.getId(), req);
+        assertEquals(order3.getStatus(), Order.StatusEnum.GIVEN_TO_COURIER);
+        assertEquals(order3.getCourierId(), 3L);
+    }
+
+    @Test
+    void updateStatusToGivenToCourier404() {
+        UpdateToGivenToCourierRequest req = new UpdateToGivenToCourierRequest();
+        req.courierId(3L);
+
+        Mockito.when(orderRepo.getOne(anyLong())).thenThrow(new javax.persistence.EntityNotFoundException());
+
+        Optional<Order> ret = ss.updateStatusToGivenToCourier(order3.getId(), req);
         assertTrue(ret.isEmpty());
     }
 
