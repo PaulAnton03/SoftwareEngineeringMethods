@@ -31,6 +31,8 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
 
+        // TODO: authentication
+
         Optional<Order> order = statusService.updateStatusToAccepted(orderId);
 
         if(order.isEmpty()) {
