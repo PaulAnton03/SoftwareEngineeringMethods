@@ -45,6 +45,23 @@ class OrderControllerTest {
     @Test
     void getFinalDestinationGives403() {
         // todo add a test for authentication when it is implemented
+    }
 
+    @Test
+    void getPickUpDestinationWorks() {
+        var proper = Optional.of(new Location().longitude(11f).latitude(22f));
+        Mockito.when(orderService.getPickupDestination(anyLong())).thenReturn(proper);
+
+        var res = controller.getPickupDestination(1L, 22L);
+        assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getPickUpDestinationGives404() {
+        Optional<Location> proper = Optional.empty();
+        Mockito.when(orderService.getPickupDestination(anyLong())).thenReturn(proper);
+
+        var res = controller.getPickupDestination(1L, 22L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 }

@@ -21,11 +21,14 @@ public class OrderController implements OrderApi {
     }
 
     /**
-     * Handles get request for (/order/{orderId}/final-destination).
+     * GET /order/{orderId}/final-destination : Get the final destination of a specific order
+     * Retrieve the final destination of an order.
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param orderId id of the order to get its final destination (required)
-     * @return a response entity with location, 404 if not found  403 if not authorized, only for couriers and admin
+     * @param orderId       Id of the order to get its final destination (required)
+     * @return Successful response, order found and final destination can be retrieved (status code 200)
+     *         or Unsuccessful, entity does not have access rights to retrieve final destination (status code 403)
+     *         or Unsuccessful, order not found by id (status code 404)
      */
     @Override
     public ResponseEntity<Location> getFinalDestination(Long authorization, Long orderId) {
@@ -41,4 +44,26 @@ public class OrderController implements OrderApi {
 
     }
 
+    /**
+     * GET /order/{orderId}/pickup-destination : Retrieve vendor location of the order
+     * Return the vendor location of the specified order.
+     *
+     * @param orderId       (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @return Successful response, vendor location of the order received (status code 200)
+     *         or Unsuccessful, vendor location of the order cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve vendor location (status code 403)
+     *         or Unsuccessful, vendor location for the order not found (status code 404)
+     */
+    @Override
+    public ResponseEntity<Location> getPickupDestination(Long orderId, Long authorization) {
+        // todo add authorization check for couriers
+        Optional<Location> pickup = orderService.getPickupDestination(orderId);
+
+        if (pickup.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(pickup.get(), HttpStatus.OK);
+    }
 }
