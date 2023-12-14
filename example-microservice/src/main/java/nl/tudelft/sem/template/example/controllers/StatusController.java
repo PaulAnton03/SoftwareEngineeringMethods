@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.api.StatusApi;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
@@ -7,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/status")
@@ -35,9 +34,10 @@ public class StatusController implements StatusApi {
 
         Optional<Order> order = statusService.updateStatusToAccepted(orderId);
 
-        if(order.isEmpty()) {
+        if (order.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

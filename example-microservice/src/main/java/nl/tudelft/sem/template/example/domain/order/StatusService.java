@@ -1,9 +1,8 @@
 package nl.tudelft.sem.template.example.domain.order;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class StatusService {
@@ -17,8 +16,8 @@ public class StatusService {
     }
 
     /**
-     * Attempts to update the status of order to accepted
-     * Vendors use this
+     * Attempts to update the status of order to accepted.
+     * Vendors use this.
      *
      * @param orderId the id of the order
      * @return the optional of updated order object, empty if the order was not found
