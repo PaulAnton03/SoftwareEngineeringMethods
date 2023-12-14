@@ -1,5 +1,11 @@
 package nl.tudelft.sem.template.example.domain.status;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+
+import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
@@ -7,12 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
 
 public class StatusServiceTest {
 
@@ -34,10 +34,10 @@ public class StatusServiceTest {
 
     @Test
     void updateStatusToAccepted200() {
-        Order order_1 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED);
+        Order order11 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED);
 
         Mockito.when(orderRepo.getOne(anyLong())).thenReturn(order1);
-        Mockito.lenient().when(orderRepo.save(order1)).thenReturn(order_1);
+        Mockito.lenient().when(orderRepo.save(order1)).thenReturn(order11);
 
         assertEquals(order1.getStatus(), Order.StatusEnum.PENDING);
 
@@ -56,10 +56,10 @@ public class StatusServiceTest {
 
     @Test
     void updateStatusToInTransit200() {
-        Order order_2 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT);
+        Order order22 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT);
 
         Mockito.when(orderRepo.getOne(anyLong())).thenReturn(order2);
-        Mockito.lenient().when(orderRepo.save(order2)).thenReturn(order_2);
+        Mockito.lenient().when(orderRepo.save(order2)).thenReturn(order22);
 
         assertEquals(order2.getStatus(), Order.StatusEnum.GIVEN_TO_COURIER);
 
