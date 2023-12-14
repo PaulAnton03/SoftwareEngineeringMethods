@@ -62,8 +62,15 @@ public class StatusController implements StatusApi {
 
         // TODO: authentication
 
-        // TODO: once OrderService is merged add check if order status before change is equal to GIVEN_TO_COURIER,
-        //  if not throw 400 ?
+        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
+
+        if (currentStatus.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (currentStatus.get() != Order.StatusEnum.GIVEN_TO_COURIER) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         Optional<Order> order = statusService.updateStatusToInTransit(orderId);
 
