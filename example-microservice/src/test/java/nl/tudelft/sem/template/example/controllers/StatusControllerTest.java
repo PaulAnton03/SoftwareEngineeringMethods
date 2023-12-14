@@ -43,4 +43,22 @@ public class StatusControllerTest {
     }
 
 
+    @Test
+    void updateStatusToInTransit200() {
+        Mockito.when(statusService.updateStatusToInTransit(11L)).thenReturn(
+                Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED)));
+
+        var res = controller.updateToInTransit(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateStatusToInTransit404() {
+        Mockito.when(statusService.updateStatusToInTransit(anyLong())).thenReturn(Optional.empty());
+
+        var res = controller.updateToInTransit(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+
 }
