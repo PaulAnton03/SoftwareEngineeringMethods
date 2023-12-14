@@ -55,12 +55,13 @@ public class StatusService {
      * @return the optional of updated order object, empty if the order was not found
      */
     public Optional<Order> updateStatusToInTransit(Long orderId) {
-        try {
-            Order o = orderRepo.getOne(orderId);
-            o.setStatus(Order.StatusEnum.IN_TRANSIT);
-            return Optional.of(orderRepo.save(o));
-        } catch (javax.persistence.EntityNotFoundException e) {
+        Optional<Order> o = orderRepo.findById(orderId);
+
+        if (o.isEmpty()) {
             return Optional.empty();
         }
+
+        Order order = o.get();
+        order.setStatus(Order.StatusEnum.IN_TRANSIT);
     }
 }
