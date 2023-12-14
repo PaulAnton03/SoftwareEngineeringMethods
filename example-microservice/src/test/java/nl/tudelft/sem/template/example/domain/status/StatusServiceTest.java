@@ -33,7 +33,7 @@ public class StatusServiceTest {
     void updateStatusToAccepted200() {
         Order order11 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED);
 
-        Mockito.when(orderRepo.getOne(anyLong())).thenReturn(order1);
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         Mockito.lenient().when(orderRepo.save(order1)).thenReturn(order11);
 
         assertEquals(order1.getStatus(), Order.StatusEnum.PENDING);
