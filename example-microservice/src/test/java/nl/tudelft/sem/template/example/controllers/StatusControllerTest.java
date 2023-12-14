@@ -27,6 +27,8 @@ public class StatusControllerTest {
 
     @Test
     void updateStatusToAccepted200() {
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+                Optional.of(Order.StatusEnum.PENDING));
         Mockito.when(statusService.updateStatusToAccepted(11L)).thenReturn(
                 Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED)));
 
