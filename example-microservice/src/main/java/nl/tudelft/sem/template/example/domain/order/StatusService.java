@@ -63,5 +63,6 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.IN_TRANSIT);
+        return Optional.of(orderRepo.save(order));
     }
 }
