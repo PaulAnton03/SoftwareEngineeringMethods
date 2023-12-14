@@ -47,6 +47,8 @@ public class StatusControllerTest {
 
     @Test
     void updateStatusToInTransit200() {
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+                Optional.of(Order.StatusEnum.GIVEN_TO_COURIER));
         Mockito.when(statusService.updateStatusToInTransit(11L)).thenReturn(
                 Optional.of(new Order().id(11L).status(Order.StatusEnum.IN_TRANSIT)));
 

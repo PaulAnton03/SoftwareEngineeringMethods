@@ -57,7 +57,7 @@ public class StatusServiceTest {
     void updateStatusToInTransit200() {
         Order order22 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT);
 
-        Mockito.when(orderRepo.getOne(anyLong())).thenReturn(order2);
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.ofNullable(order2));
         Mockito.lenient().when(orderRepo.save(order2)).thenReturn(order22);
 
         assertEquals(order2.getStatus(), Order.StatusEnum.GIVEN_TO_COURIER);
