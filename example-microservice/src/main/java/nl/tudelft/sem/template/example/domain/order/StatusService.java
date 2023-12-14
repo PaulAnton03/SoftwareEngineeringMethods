@@ -46,4 +46,23 @@ public class StatusService {
         return Optional.of(orderRepo.save(order));
     }
 
+
+    /**
+     * Attempts to update the status of order to in_transit.
+     * Couriers use this.
+     *
+     * @param orderId the id of the order
+     * @return the optional of updated order object, empty if the order was not found
+     */
+    public Optional<Order> updateStatusToInTransit(Long orderId) {
+        Optional<Order> o = orderRepo.findById(orderId);
+
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order order = o.get();
+        order.setStatus(Order.StatusEnum.IN_TRANSIT);
+        return Optional.of(orderRepo.save(order));
+    }
 }

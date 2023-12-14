@@ -26,7 +26,6 @@ public class StatusController implements StatusApi {
      * @param orderId id of the order to update its status to accepted (required)
      * @return a response entity with nothing, 404 if not found  403 if not authorized, only for vendors
      */
-
     @Override
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
 
@@ -43,6 +42,37 @@ public class StatusController implements StatusApi {
         }
 
         Optional<Order> order = statusService.updateStatusToAccepted(orderId);
+
+        if (order.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    /**
+     * Handles put request for (/status/{orderId}/intransit).
+     *
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param orderId id of the order to update its status to in_transit (required)
+     * @return a response entity with nothing, 404 if not found  403 if not authorized, only for couriers
+     */
+    @Override
+    public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
+
+        // TODO: authentication
+
+        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
+
+        if (currentStatus.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (currentStatus.get() != Order.StatusEnum.GIVEN_TO_COURIER) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Order> order = statusService.updateStatusToInTransit(orderId);
 
         if (order.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
