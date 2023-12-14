@@ -44,5 +44,20 @@ public class StatusControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
+    @Test
+    void getStatus404() {
+        Mockito.when(statusService.getOrderStatus(anyLong())).thenReturn(Optional.empty());
+        var res = controller.getStatus(1L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getStatus200() {
+        Mockito.when(statusService.getOrderStatus(1L)).thenReturn(Optional.of(Order.StatusEnum.ACCEPTED));
+        var res = controller.getStatus(1L, 1L);
+        assertEquals(new ResponseEntity<>("accepted", HttpStatus.OK), res);
+
+    }
+
 
 }
