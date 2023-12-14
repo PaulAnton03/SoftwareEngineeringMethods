@@ -51,4 +51,24 @@ public class StatusServiceTest {
     }
 
 
+    @Test
+    void getOrderStatus200() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+
+        Optional<Order.StatusEnum> status = ss.getOrderStatus(1L);
+
+        assertTrue(status.isPresent());
+        assertEquals(status.get(), Order.StatusEnum.PENDING);
+    }
+
+    @Test
+    void getOrderStatus404() {
+        Mockito.when(orderRepo.getOne(anyLong())).thenThrow(new javax.persistence.EntityNotFoundException());
+
+        Optional<Order.StatusEnum> status = ss.getOrderStatus(1L);
+
+        assertTrue(status.isEmpty());
+    }
+
+
 }
