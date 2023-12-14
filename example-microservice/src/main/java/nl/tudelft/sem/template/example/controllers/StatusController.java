@@ -50,4 +50,24 @@ public class StatusController implements StatusApi {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    /**
+     * Handles get request for (/status/{orderId}).
+     *
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param orderId       id of the order to update its status to accepted (required)
+     * @return a response entity with a String, 200 if found, 404 if not found,  403 if not authorized
+     */
+
+    @Override
+    public ResponseEntity<String> getStatus(Long orderId, Long authorization) {
+
+        // TODO: authentication
+
+        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
+
+        return currentStatus.map(statusEnum -> new ResponseEntity<>(statusEnum.toString(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+    }
+
 }
