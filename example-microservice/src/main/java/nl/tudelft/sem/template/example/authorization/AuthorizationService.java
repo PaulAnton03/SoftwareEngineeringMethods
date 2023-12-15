@@ -23,7 +23,7 @@ public class AuthorizationService {
     }
 
     // Maps method names to the user types that are allowed to call them
-    private HashMap<String,List<UserType>>permissions = new HashMap<>();
+    private HashMap<String,List<UserType>>permissions;
 
     // Default constructor. Use this one in test cases if you want to ignore authorization.
     public AuthorizationService(){
