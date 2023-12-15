@@ -28,7 +28,7 @@ class OrderControllerTest {
         WireMockConfig.startUserServer();
         WireMockConfig.ignoreAuthorization();
         this.orderService = Mockito.mock(OrderService.class);
-        this.controller = new OrderController(orderService,authorizationService);
+        this.controller = new OrderController(orderService, authorizationService);
     }
 
     @Test

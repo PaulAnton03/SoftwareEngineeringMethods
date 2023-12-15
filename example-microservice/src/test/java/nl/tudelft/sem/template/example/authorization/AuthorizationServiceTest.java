@@ -21,7 +21,6 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import wiremock.org.apache.hc.client5.http.impl.Wire;
 
 public class AuthorizationServiceTest {
 
@@ -40,7 +39,7 @@ public class AuthorizationServiceTest {
     void setUp() {
         WireMockConfig.startUserServer();
         this.orderService = Mockito.mock(OrderService.class);
-        this.controller = new OrderController(orderService,authorizationService);
+        this.controller = new OrderController(orderService, authorizationService);
     }
 
     @Test
@@ -72,7 +71,7 @@ public class AuthorizationServiceTest {
     }
 
     @Test
-    void userMicroServiceIsDown(){
+    void userMicroServiceIsDown() {
         WireMockConfig.stopUserServer();
         Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
         Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);

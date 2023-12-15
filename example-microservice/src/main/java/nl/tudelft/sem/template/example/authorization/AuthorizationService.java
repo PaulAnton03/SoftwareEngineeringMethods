@@ -2,11 +2,10 @@ package nl.tudelft.sem.template.example.authorization;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.ResponseEntity;
 
 @Service
 public class AuthorizationService {
@@ -23,14 +22,14 @@ public class AuthorizationService {
     }
 
     // Maps method names to the user types that are allowed to call them
-    private HashMap<String,List<UserType>>permissions;
+    private HashMap<String, List<UserType>> permissions;
 
     // Default constructor. Use this one in test cases if you want to ignore authorization.
     public AuthorizationService(){
 
     }
 
-    public AuthorizationService(HashMap<String,List<UserType>> permissions){
+    public AuthorizationService(HashMap<String, List<UserType>> permissions) {
         this.permissions = permissions;
     }
 
@@ -43,10 +42,12 @@ public class AuthorizationService {
      */
     public Optional<ResponseEntity> authorize(Long userId, String methodName) {
         UserType actualUserType = getUserTypeFromService(userId);
-        if(actualUserType == UserType.NAN)
+        if (actualUserType == UserType.NAN) {
             return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
-        if (actualUserType != UserType.ADMIN && !permissions.get(methodName).contains(actualUserType))
+        }
+        if (actualUserType != UserType.ADMIN && !permissions.get(methodName).contains(actualUserType)) {
             return Optional.of(ResponseEntity.status(403).body("User with id " + userId + " does not have access rights"));
+        }
         return Optional.empty();
     }
 
@@ -58,7 +59,7 @@ public class AuthorizationService {
      */
     private UserType getUserTypeFromService(Long userId) {
         RestTemplate restTemplate = new RestTemplate();
-        String userTypeServiceEndpoint = "http://localhost:"+USER_SERVER_PORT+"/user/" + userId + "/type";
+        String userTypeServiceEndpoint = "http://localhost:" + USER_SERVER_PORT + "/user/" + userId + "/type";
         try {
             String actualUserType = restTemplate.getForObject(userTypeServiceEndpoint, String.class);
             return parseUserType(actualUserType);
