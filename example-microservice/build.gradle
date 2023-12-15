@@ -51,8 +51,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+	testImplementation "com.github.tomakehurst:wiremock-jre8-standalone:2.33.2"
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-
+	testImplementation "org.wiremock:wiremock:3.3.1"
 
 	// Local test database (in-memory)
 	implementation 'com.h2database:h2'
@@ -109,10 +110,26 @@ jacocoTestCoverageVerification() {
 
 checkstyle {
 	toolVersion "8.37"
-	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
-	ignoreFailures = false
-	maxErrors = 0
-	maxWarnings = 0
+	// Link Checkstyle task to customCheckstyle
+	configFile = file("${projectDir}/../config/checkstyle/checkstyle.xml")
+	ignoreFailures = false // Set to true if you want the build to ignore Checkstyle failures
+	showViolations = true // Set to true to display Checkstyle violations in the console
+
+	checkstyleMain {
+		source = project.sourceSets.main.allJava.filter { file ->
+			// Exclude directories or files associated with generated code
+			!file.path.contains('generated') // Example condition, modify as per your generated code path
+		}
+		excludes = ['**/generated/.*']
+	}
+
+	checkstyleTest {
+		source = project.sourceSets.test.allJava.filter { file ->
+			// Exclude directories or files associated with generated code
+			!file.path.contains('generated') // Example condition, modify as per your generated code path
+		}
+		excludes = ['**/generated/.*']
+	}
 }
 
 checkstyleMain.source = "src"

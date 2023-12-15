@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.util.Optional;
+import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
 import nl.tudelft.sem.template.model.Location;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,11 +20,15 @@ class OrderControllerTest {
     private OrderService orderService;
     private OrderController controller;
 
+    private final AuthorizationService authorizationService = new AuthorizationService();
+
 
     @BeforeEach
     void setUp() {
+        WireMockConfig.startUserServer();
+        WireMockConfig.ignoreAuthorization();
         this.orderService = Mockito.mock(OrderService.class);
-        this.controller = new OrderController(orderService);
+        this.controller = new OrderController(orderService, authorizationService);
     }
 
     @Test
@@ -43,11 +50,6 @@ class OrderControllerTest {
     }
 
     @Test
-    void getFinalDestinationGives403() {
-        // todo add a test for authentication when it is implemented
-    }
-
-    @Test
     void getPickUpDestinationWorks() {
         var proper = Optional.of(new Location().longitude(11f).latitude(22f));
         Mockito.when(orderService.getPickupDestination(anyLong())).thenReturn(proper);
@@ -63,5 +65,10 @@ class OrderControllerTest {
 
         var res = controller.getPickupDestination(1L, 22L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @AfterEach
+    void tearDown() {
+        WireMockConfig.stopUserServer();
     }
 }
