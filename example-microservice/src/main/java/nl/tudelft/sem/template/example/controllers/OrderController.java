@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.example.controllers;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.api.OrderApi;
+import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.model.Location;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,11 @@ public class OrderController implements OrderApi {
 
     public OrderService orderService;
 
-    public OrderController(OrderService orderService) {
+    public AuthorizationService authorizationService;
+
+    public OrderController(OrderService orderService,AuthorizationService authorizationService) {
         this.orderService = orderService;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -25,15 +29,16 @@ public class OrderController implements OrderApi {
      * Retrieve the final destination of an order.
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param orderId       Id of the order to get its final destination (required)
+     * @param orderId       id of the order to get its final destination (required)
      * @return Successful response, order found and final destination can be retrieved (status code 200)
-     *         or Unsuccessful, entity does not have access rights to retrieve final destination (status code 403)
-     *         or Unsuccessful, order not found by id (status code 404)
+     * or Unsuccessful, entity does not have access rights to retrieve final destination (status code 403)
+     * or Unsuccessful, order not found by id (status code 404)
      */
     @Override
-    public ResponseEntity<Location> getFinalDestination(Long authorization, Long orderId) {
-        // todo add verification to check if the authorization belongs to a courier once the auth service is implemented
-        //  return 403 if not authorized
+    public ResponseEntity getFinalDestination(Long authorization, Long orderId) {
+        Optional<ResponseEntity> authorizationResponse = authorizationService.authorize(authorization,"getFinalDestination");
+        if(authorizationResponse.isPresent())
+            return authorizationResponse.get();
         Optional<Location> location = orderService.getFinalDestinationOfOrder(orderId);
 
         if (location.isEmpty()) {
@@ -51,13 +56,15 @@ public class OrderController implements OrderApi {
      * @param orderId       (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, vendor location of the order received (status code 200)
-     *         or Unsuccessful, vendor location of the order cannot be retrieved because of a bad request (status code 400)
-     *         or Unsuccessful, entity does not have access rights to retrieve vendor location (status code 403)
-     *         or Unsuccessful, vendor location for the order not found (status code 404)
+     * or Unsuccessful, vendor location of the order cannot be retrieved because of a bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve vendor location (status code 403)
+     * or Unsuccessful, vendor location for the order not found (status code 404)
      */
     @Override
-    public ResponseEntity<Location> getPickupDestination(Long orderId, Long authorization) {
-        // todo add authorization check for couriers
+    public ResponseEntity getPickupDestination(Long orderId, Long authorization) {
+        Optional<ResponseEntity> authorizationResponse = authorizationService.authorize(authorization,"getPickupDestination");
+        if(authorizationResponse.isPresent())
+            return authorizationResponse.get();
         Optional<Location> pickup = orderService.getPickupDestination(orderId);
 
         if (pickup.isEmpty()) {

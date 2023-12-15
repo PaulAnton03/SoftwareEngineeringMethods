@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.example.authorization;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,18 +22,30 @@ public class AuthorizationService {
         NAN
     }
 
+    // Maps method names to the user types that are allowed to call them
+    private HashMap<String,List<UserType>>permissions = new HashMap<>();
+
+    // Default constructor. Use this one in test cases if you want to ignore authorization.
+    public AuthorizationService(){
+
+    }
+
+    public AuthorizationService(HashMap<String,List<UserType>> permissions){
+        this.permissions = permissions;
+    }
+
     /**
      * Authorizes a user based on the provided user ID and required user type.
      *
      * @param userId          The ID of the user to be authorized.
-     * @param requiredUserType The required user type for authorization.
+     * @param methodName      Name of the method that was called.
      * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
      */
-    public Optional<ResponseEntity> authorize(Long userId, UserType requiredUserType) {
+    public Optional<ResponseEntity> authorize(Long userId, String methodName) {
         UserType actualUserType = getUserTypeFromService(userId);
         if(actualUserType == UserType.NAN)
             return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
-        if (actualUserType != UserType.ADMIN && actualUserType != requiredUserType)
+        if (actualUserType != UserType.ADMIN && !permissions.get(methodName).contains(actualUserType))
             return Optional.of(ResponseEntity.status(403).body("User with id " + userId + " does not have access rights"));
         return Optional.empty();
     }
