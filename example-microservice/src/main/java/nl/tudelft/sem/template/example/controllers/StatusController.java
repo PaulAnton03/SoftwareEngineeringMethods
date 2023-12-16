@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import nl.tudelft.sem.template.api.StatusApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
@@ -22,19 +23,18 @@ public class StatusController implements StatusApi {
 
     public AuthorizationService authorizationService;
 
-
     public StatusController(StatusService statusService) {
         this.statusService = statusService;
         HashMap<String, List<AuthorizationService.UserType>> authMapping = new HashMap<>() {{
-                    put("updateToAccepted",
-                            List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
-                    put("updateToGivenToCourier",
-                            List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
-                    put("updateToInTransit",
-                            List.of(AuthorizationService.UserType.COURIER, AuthorizationService.UserType.ADMIN));
-                    put("getStatus",
-                            List.of(AuthorizationService.UserType.CUSTOMER, AuthorizationService.UserType.ADMIN));
-                }};
+            put("updateToAccepted",
+                    List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
+            put("updateToGivenToCourier",
+                    List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
+            put("updateToInTransit",
+                    List.of(AuthorizationService.UserType.COURIER, AuthorizationService.UserType.ADMIN));
+            put("getStatus",
+                    List.of(AuthorizationService.UserType.CUSTOMER, AuthorizationService.UserType.ADMIN));
+        }};
 
         this.authorizationService = new AuthorizationService(authMapping);
     }
@@ -43,7 +43,7 @@ public class StatusController implements StatusApi {
      * Handles put request for (/status/{orderId}/accepted).
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param orderId id of the order to update its status to accepted (required)
+     * @param orderId       id of the order to update its status to accepted (required)
      * @return a response entity with nothing,
      * 400 if previous status doesn't match method,
      * 404 if not found,
@@ -86,7 +86,7 @@ public class StatusController implements StatusApi {
     /**
      * Handles put request for (/status/{orderId}/giventocourier).
      *
-     * @param orderId id of the order to update its status to given_to_courier (required)
+     * @param orderId       id of the order to update its status to given_to_courier (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return a response entity with nothing,
      * 400 if previous status doesn't match method,
@@ -133,7 +133,7 @@ public class StatusController implements StatusApi {
      * Handles put request for (/status/{orderId}/intransit).
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param orderId id of the order to update its status to in_transit (required)
+     * @param orderId       id of the order to update its status to in_transit (required)
      * @return a response entity with nothing,
      * 400 if previous status doesn't match method,
      * 404 if not found,

@@ -12,25 +12,34 @@ import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 
 public class StatusControllerTest {
 
+    @Mock
     private StatusService statusService;
+    @Mock
+    private AuthorizationService authorizationService;
+    @InjectMocks
     private StatusController controller;
 
 
     @BeforeEach
     void setUp() {
-        this.statusService = Mockito.mock(StatusService.class);
-        this.controller = new StatusController(statusService);
+        MockitoAnnotations.openMocks(this);
+        controller.authorizationService = authorizationService;
     }
 
     @Test
     void updateStatusToAccepted200() {
+        Mockito.when(authorizationService.authorize(1L, "updateToAccepted"))
+                .thenReturn(Optional.empty());
         Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
                 Optional.of(Order.StatusEnum.PENDING));
         Mockito.when(statusService.updateStatusToAccepted(11L)).thenReturn(
@@ -42,10 +51,38 @@ public class StatusControllerTest {
 
     @Test
     void updateStatusToAccepted404() {
+        Mockito.when(authorizationService.authorize(1L, "updateToAccepted"))
+                .thenReturn(Optional.empty());
         Mockito.when(statusService.updateStatusToAccepted(anyLong())).thenReturn(Optional.empty());
 
         var res = controller.updateToAccepted(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateStatusToAccepted500() {
+        Mockito.when(authorizationService.authorize(1L, "updateToAccepted"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
+        var res = controller.updateToAccepted(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR), res);
+    }
+
+    @Test
+    void updateStatusToAccepted403() {
+        Mockito.when(authorizationService.authorize(1L, "updateToAccepted"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        var res = controller.updateToAccepted(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void updateStatusToAccepted400() {
+        Mockito.when(authorizationService.authorize(1L, "updateToAccepted"))
+                .thenReturn(Optional.empty());
+        Mockito.when(statusService.getOrderStatus(11L))
+                .thenReturn(Optional.of(Order.StatusEnum.DELIVERED));
+        var res = controller.updateToAccepted(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
     @Test
