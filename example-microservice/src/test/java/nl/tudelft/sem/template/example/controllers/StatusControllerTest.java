@@ -20,15 +20,13 @@ import org.springframework.http.ResponseEntity;
 public class StatusControllerTest {
 
     private StatusService statusService;
-    private AuthorizationService authorizationService;
     private StatusController controller;
 
 
     @BeforeEach
     void setUp() {
         this.statusService = Mockito.mock(StatusService.class);
-        this.authorizationService = new AuthorizationService();
-        this.controller = new StatusController(statusService, authorizationService);
+        this.controller = new StatusController(statusService);
     }
 
     @Test

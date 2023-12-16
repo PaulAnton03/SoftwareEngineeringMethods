@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import nl.tudelft.sem.template.api.StatusApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
@@ -19,9 +22,21 @@ public class StatusController implements StatusApi {
 
     public AuthorizationService authorizationService;
 
-    public StatusController(StatusService statusService, AuthorizationService authorizationService) {
+
+    public StatusController(StatusService statusService) {
         this.statusService = statusService;
-        this.authorizationService = authorizationService;
+        HashMap<String, List<AuthorizationService.UserType>> authMapping = new HashMap<>() {{
+                    put("updateToAccepted",
+                            List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
+                    put("updateToGivenToCourier",
+                            List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
+                    put("updateToInTransit",
+                            List.of(AuthorizationService.UserType.COURIER, AuthorizationService.UserType.ADMIN));
+                    put("getStatus",
+                            List.of(AuthorizationService.UserType.CUSTOMER, AuthorizationService.UserType.ADMIN));
+                }};
+
+        this.authorizationService = new AuthorizationService(authMapping);
     }
 
     /**
@@ -35,6 +50,7 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
 
         // TODO: authentication
+
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
