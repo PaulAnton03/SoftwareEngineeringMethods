@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.example.controllers;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.api.StatusApi;
+import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
@@ -16,8 +17,11 @@ public class StatusController implements StatusApi {
 
     public StatusService statusService;
 
-    public StatusController(StatusService statusService) {
+    public AuthorizationService authorizationService;
+
+    public StatusController(StatusService statusService, AuthorizationService authorizationService) {
         this.statusService = statusService;
+        this.authorizationService = authorizationService;
     }
 
     /**
