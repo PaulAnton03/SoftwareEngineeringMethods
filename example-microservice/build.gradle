@@ -76,7 +76,7 @@ test {
 	useJUnitPlatform()
 	jacoco {
 		enabled = true
-		includes = ['org.order.*']
+		includes = ['nl.tudelft.sem.template.*']
 		excludes = []
 	}
 }
