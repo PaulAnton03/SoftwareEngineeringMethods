@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.controllers.OrderController;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
 import nl.tudelft.sem.template.model.Location;
 import org.junit.jupiter.api.AfterEach;
@@ -27,12 +28,14 @@ public class AuthorizationServiceTest {
     private OrderService orderService;
     private OrderController controller;
 
+    private UserExternalService userExternalService = new UserExternalService();
+
     private HashMap<String, List<AuthorizationService.UserType>> permissions = new HashMap<>(
         Map.of("getFinalDestination", List.of(AuthorizationService.UserType.CUSTOMER),
             "getPickupDestination", List.of(AuthorizationService.UserType.VENDOR))
     );
 
-    private AuthorizationService authorizationService = new AuthorizationService(permissions);
+    private AuthorizationService authorizationService = new AuthorizationService(userExternalService, permissions);
 
 
     @BeforeEach

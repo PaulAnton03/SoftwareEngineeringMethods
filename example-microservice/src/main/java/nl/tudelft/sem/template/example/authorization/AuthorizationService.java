@@ -3,14 +3,11 @@ package nl.tudelft.sem.template.example.authorization;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 @Service
 public class AuthorizationService {
-
-    private static final int USER_SERVER_PORT = 5000;
 
     public enum UserType {
         VENDOR,
@@ -24,12 +21,15 @@ public class AuthorizationService {
     // Maps method names to the user types that are allowed to call them
     private HashMap<String, List<UserType>> permissions;
 
+    private UserExternalService userExternalService;
+
     // Default constructor. Use this one in test cases if you want to ignore authorization.
     public AuthorizationService(){
-
+        userExternalService = new UserExternalService();
     }
 
-    public AuthorizationService(HashMap<String, List<UserType>> permissions) {
+    public AuthorizationService(UserExternalService userExternalService, HashMap<String, List<UserType>> permissions) {
+        this.userExternalService = userExternalService;
         this.permissions = permissions;
     }
 
@@ -41,7 +41,7 @@ public class AuthorizationService {
      * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
      */
     public Optional<ResponseEntity> authorize(Long userId, String methodName) {
-        UserType actualUserType = getUserTypeFromService(userId);
+        UserType actualUserType = getUserType(userId);
         if (actualUserType == UserType.NAN) {
             return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
         }
@@ -57,12 +57,9 @@ public class AuthorizationService {
      * @param userId The ID of the user.
      * @return The user type obtained from the user service, or UserType.NAN if an error occurs.
      */
-    private UserType getUserTypeFromService(Long userId) {
-        RestTemplate restTemplate = new RestTemplate();
-        String userTypeServiceEndpoint = "http://localhost:" + USER_SERVER_PORT + "/user/" + userId + "/type";
+    private UserType getUserType(Long userId) {
         try {
-            String actualUserType = restTemplate.getForObject(userTypeServiceEndpoint, String.class);
-            return parseUserType(actualUserType);
+            return parseUserType(userExternalService.getUserTypeFromService(userId));
         } catch (Exception e) {
             return UserType.NAN;
         }
