@@ -2,10 +2,13 @@ package nl.tudelft.sem.template.example.authorization;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import javax.annotation.PostConstruct;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 @Service
 public class AuthorizationService {
 
@@ -24,7 +27,7 @@ public class AuthorizationService {
     private UserExternalService userExternalService;
 
     // Default constructor. Use this one in test cases if you want to ignore authorization.
-    public AuthorizationService(){
+    public AuthorizationService() {
         userExternalService = new UserExternalService();
     }
 
@@ -80,6 +83,19 @@ public class AuthorizationService {
             case "customer" -> UserType.CUSTOMER;
             default -> throw new IllegalArgumentException("Invalid user type: " + userType);
         };
+    }
+
+    /**
+     * Initializes the permissions map with default values if it is null.
+     */
+    @PostConstruct
+    private void init() {
+        if (permissions == null) {
+            permissions = new HashMap<>(
+                Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
+                )
+            );
+        }
     }
 
 }
