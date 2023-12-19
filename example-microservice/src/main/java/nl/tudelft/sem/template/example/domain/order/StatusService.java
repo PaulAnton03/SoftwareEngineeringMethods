@@ -1,15 +1,18 @@
 package nl.tudelft.sem.template.example.domain.order;
 
 import java.util.Optional;
+import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
+import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StatusService {
 
-
-    public OrderRepository orderRepo;
+    private DeliveryExceptionRepository exceptionRepo;
+    private OrderRepository orderRepo;
 
 
     public StatusService(OrderRepository orderRepo) {
@@ -105,5 +108,19 @@ public class StatusService {
         Order order = o.get();
         order.setStatus(Order.StatusEnum.IN_TRANSIT);
         return Optional.of(orderRepo.save(order));
+    }
+
+    /**
+     * Adds an exception to the DeliveryExceptionRepo.
+     *
+     * @return the HttpStatus of the request
+     */
+    public Optional<DeliveryException> addDeliveryException(DeliveryException e) {
+
+        if (e == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(exceptionRepo.saveAndFlush(e));
     }
 }

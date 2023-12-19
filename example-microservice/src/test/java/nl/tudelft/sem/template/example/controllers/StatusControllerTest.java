@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.util.Optional;
+
+import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
@@ -16,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 
 
 public class StatusControllerTest {
-
     private StatusService statusService;
     private StatusController controller;
 
@@ -39,11 +40,40 @@ public class StatusControllerTest {
     }
 
     @Test
+    void updateStatusToRejected200() {
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+                Optional.of(Order.StatusEnum.PENDING));
+        Mockito.when(statusService.updateStatusToRejected(11L)).thenReturn(
+                Optional.of(new Order().id(11L).status(Order.StatusEnum.REJECTED)));
+
+        var res = controller.updateToRejected(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
     void updateStatusToAccepted404() {
         Mockito.when(statusService.updateStatusToAccepted(anyLong())).thenReturn(Optional.empty());
 
         var res = controller.updateToAccepted(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateStatusToRejected404() {
+        Mockito.when(statusService.updateStatusToRejected(anyLong())).thenReturn(Optional.empty());
+
+        var res = controller.updateToRejected(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateStatusToRejected400() {
+        Mockito.when(statusService.updateStatusToAccepted(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(statusService.getOrderStatus(anyLong()))
+                .thenReturn(Optional.of(Order.StatusEnum.GIVEN_TO_COURIER));
+
+        var res = controller.updateToRejected(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
     @Test
