@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.example.controllers;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.api.StatusApi;
+import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class StatusController implements StatusApi {
 
     public StatusService statusService;
+    private AuthorizationService authorizationService;
 
-    public StatusController(StatusService statusService) {
+    public StatusController(StatusService statusService, AuthorizationService authorizationService) {
         this.statusService = statusService;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -61,7 +64,11 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToRejected(Long orderId, Long authorization) {
 
-        // TODO: authentication
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "methodN");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 

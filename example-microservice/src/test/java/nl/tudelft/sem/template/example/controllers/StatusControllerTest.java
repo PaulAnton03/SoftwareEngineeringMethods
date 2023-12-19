@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.util.Optional;
+
+import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
@@ -17,13 +19,14 @@ import org.springframework.http.ResponseEntity;
 
 public class StatusControllerTest {
     private StatusService statusService;
+    private AuthorizationService authorizationService;
     private StatusController controller;
 
 
     @BeforeEach
     void setUp() {
         this.statusService = Mockito.mock(StatusService.class);
-        this.controller = new StatusController(statusService);
+        this.controller = new StatusController(statusService, authorizationService);
     }
 
     @Test
