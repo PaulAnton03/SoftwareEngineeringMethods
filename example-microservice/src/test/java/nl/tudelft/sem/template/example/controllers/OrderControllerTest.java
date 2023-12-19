@@ -99,8 +99,44 @@ class OrderControllerTest {
         Mockito.when(authorizationService.authorize(1L, "getOrder"))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
-
         var res = controller.getOrder(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void updateOrder200() {
+        Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
+        Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
+        Mockito.when(orderService.updateOrderById(11L, updated)).thenReturn(Optional.of(updated));
+        Mockito.when(authorizationService.authorize(1L, "updateOrder"))
+                .thenReturn(Optional.empty());
+
+
+        var res = controller.updateOrder(11L, 1L, updated);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateOrder404() {
+        Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
+        Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
+        Mockito.when(orderService.updateOrderById(11L, updated)).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(1L, "updateOrder"))
+                .thenReturn(Optional.empty());
+
+
+        var res = controller.updateOrder(11L, 1L, updated);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateOrder403() {
+        Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
+        Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
+        Mockito.when(authorizationService.authorize(1L, "updateOrder"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.updateOrder(11L, 1L, updated);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
