@@ -6,6 +6,7 @@ import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -75,5 +76,21 @@ public class OrderService {
      */
     public Optional<Order> getOrderById(Long orderId) {
         return orderRepo.findById(orderId);
+    }
+
+    /**
+     * Updated the order based on id and updated object.
+     *
+     * @param orderId the id of the order
+     * @param order the updated order object
+     * @return empty optional if order  DNE, optional of order otherwise
+     */
+    public Optional<Order> updateOrderById(Long orderId, Order order) {
+        Optional<Order> o = orderRepo.findById(orderId);
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(orderRepo.save(order));
     }
 }

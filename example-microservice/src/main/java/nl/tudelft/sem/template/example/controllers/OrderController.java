@@ -115,4 +115,33 @@ public class OrderController implements OrderApi {
 
         return new ResponseEntity<>(pickup.get(), HttpStatus.OK);
     }
+
+    /**
+     * PUT /order/{orderId} : Retrieve order based on orderId.
+     * Return the status of the update.
+     *
+     * @param orderId       (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param order The updated object of the order
+     * @return Successful response, order updated (status code 200)
+     *         or Unsuccessful, order cannot be updated because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to update order (status code 403)
+     *         or Unsuccessful, no order was found" (status code 404)
+     */
+    @Override
+    public ResponseEntity<Void> updateOrder(Long orderId, Long authorization, Order order) {
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "updateOrder");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Order> response = orderService.updateOrderById(orderId, order);
+
+        if (response.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
