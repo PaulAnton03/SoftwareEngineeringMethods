@@ -29,7 +29,7 @@ public class StatusControllerTest {
     @BeforeEach
     void setUp() {
         this.statusService = Mockito.mock(StatusService.class);
-        this.authorizationService = Mockito.mock(AuthorizationService.class)
+        this.authorizationService = Mockito.mock(AuthorizationService.class);
         this.controller = new StatusController(statusService, authorizationService);
     }
 
