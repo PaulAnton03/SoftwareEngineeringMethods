@@ -98,4 +98,19 @@ class OrderServiceTest {
         Optional<Order> res = os.getOrderById(order1.getId());
         assertEquals(res, Optional.empty());
     }
+
+    @Test
+    void updateOrder200() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Mockito.when(orderRepo.save(order1)).thenReturn(order1);
+        Optional<Order> res = os.updateOrderById(order1.getId(), order1);
+        assertEquals(res, Optional.of(order1));
+    }
+
+    @Test
+    void updateOrder400() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<Order> res = os.updateOrderById(order1.getId(), order1);
+        assertEquals(res, Optional.empty());
+    }
 }
