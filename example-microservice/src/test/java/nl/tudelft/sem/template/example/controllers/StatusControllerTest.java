@@ -182,7 +182,7 @@ public class StatusControllerTest {
         Mockito.when(statusService.getOrderStatus(11L))
                 .thenReturn(Optional.of(Order.StatusEnum.DELIVERED));
 
-        var res = controller.updateToAccepted(11L, 1L);
+        var res = controller.updateToGivenToCourier(11L, 1L, req);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
