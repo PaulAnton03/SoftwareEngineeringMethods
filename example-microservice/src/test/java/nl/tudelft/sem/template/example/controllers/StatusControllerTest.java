@@ -12,27 +12,25 @@ import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 
 public class StatusControllerTest {
 
-    @Mock
     private StatusService statusService;
-    @Mock
+
     private AuthorizationService authorizationService;
-    @InjectMocks
+
     private StatusController controller;
 
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        this.statusService = Mockito.mock(StatusService.class);
+        this.authorizationService = Mockito.mock(AuthorizationService.class)
+        this.controller = new StatusController(statusService, authorizationService);
     }
 
     @Test

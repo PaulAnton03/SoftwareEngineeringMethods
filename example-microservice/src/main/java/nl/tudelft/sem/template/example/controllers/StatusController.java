@@ -1,8 +1,5 @@
 package nl.tudelft.sem.template.example.controllers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import nl.tudelft.sem.template.api.StatusApi;
@@ -25,16 +22,6 @@ public class StatusController implements StatusApi {
 
     public StatusController(StatusService statusService, AuthorizationService authorizationService) {
         this.statusService = statusService;
-//        HashMap<String, List<AuthorizationService.UserType>> permissions = new HashMap<>() {{
-//            put("updateToAccepted",
-//                    List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
-//            put("updateToGivenToCourier",
-//                    List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
-//            put("updateToInTransit",
-//                    List.of(AuthorizationService.UserType.COURIER, AuthorizationService.UserType.ADMIN));
-//            put("getStatus",
-//                    List.of(AuthorizationService.UserType.CUSTOMER, AuthorizationService.UserType.ADMIN));
-//        }};
         this.authorizationService = authorizationService;
     }
 
