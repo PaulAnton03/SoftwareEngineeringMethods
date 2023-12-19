@@ -33,7 +33,6 @@ public class StatusControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        controller.authorizationService = authorizationService;
     }
 
     @Test

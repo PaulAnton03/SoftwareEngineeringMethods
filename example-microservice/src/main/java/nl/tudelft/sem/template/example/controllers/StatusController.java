@@ -23,20 +23,19 @@ public class StatusController implements StatusApi {
 
     public AuthorizationService authorizationService;
 
-    public StatusController(StatusService statusService) {
+    public StatusController(StatusService statusService, AuthorizationService authorizationService) {
         this.statusService = statusService;
-        HashMap<String, List<AuthorizationService.UserType>> authMapping = new HashMap<>() {{
-            put("updateToAccepted",
-                    List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
-            put("updateToGivenToCourier",
-                    List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
-            put("updateToInTransit",
-                    List.of(AuthorizationService.UserType.COURIER, AuthorizationService.UserType.ADMIN));
-            put("getStatus",
-                    List.of(AuthorizationService.UserType.CUSTOMER, AuthorizationService.UserType.ADMIN));
-        }};
-
-        this.authorizationService = new AuthorizationService(authMapping);
+//        HashMap<String, List<AuthorizationService.UserType>> permissions = new HashMap<>() {{
+//            put("updateToAccepted",
+//                    List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
+//            put("updateToGivenToCourier",
+//                    List.of(AuthorizationService.UserType.VENDOR, AuthorizationService.UserType.ADMIN));
+//            put("updateToInTransit",
+//                    List.of(AuthorizationService.UserType.COURIER, AuthorizationService.UserType.ADMIN));
+//            put("getStatus",
+//                    List.of(AuthorizationService.UserType.CUSTOMER, AuthorizationService.UserType.ADMIN));
+//        }};
+        this.authorizationService = authorizationService;
     }
 
     /**
