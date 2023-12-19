@@ -3,10 +3,12 @@ package nl.tudelft.sem.template.example.controllers;
 import java.util.Optional;
 
 import nl.tudelft.sem.template.api.StatusApi;
+import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +20,11 @@ public class StatusController implements StatusApi {
 
     public StatusService statusService;
     private AuthorizationService authorizationService;
+    public OrderService orderService;
 
-    public StatusController(StatusService statusService, AuthorizationService authorizationService) {
+    public StatusController(StatusService statusService, OrderService orderService, AuthorizationService authorizationService) {
         this.statusService = statusService;
+        this.orderService = orderService;
         this.authorizationService = authorizationService;
     }
 
@@ -185,6 +189,32 @@ public class StatusController implements StatusApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * PUT for /status/{orderId}/delivered.
+     *
+     * @param orderId                  Id of the order to change status (required)
+     * @param authorization            the UserId to check if they have the rights to make this request (required)
+     * @param updateToDeliveredRequest Request body for status change from in-transit to delivered (required)
+     * @return the http status for the response
+     */
+    @Override
+    public ResponseEntity<Void> updateToDelivered(Long orderId, Long authorization,
+                                                  UpdateToDeliveredRequest updateToDeliveredRequest) {
+        // todo authorization
+
+        if (!orderService.orderExists(orderId)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Order> updatedTime = statusService.updateStatusToDelivered(orderId, updateToDeliveredRequest);
+
+        if (updatedTime.isEmpty()) {
+            // something went wrong with the specific fields and the logic inside the service method :(
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     /**
      * Handles get request for (/status/{orderId}).

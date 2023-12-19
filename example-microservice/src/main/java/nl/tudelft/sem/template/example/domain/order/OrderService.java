@@ -6,6 +6,7 @@ import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,41 @@ public class OrderService {
         }
 
         return Optional.of(vendorLocation);
+    }
+
+    /**
+     * Returns the time value object of an order.
+     *
+     * @param orderId the id of the order to get the values from
+     * @return optional of time object, empty if the order does not exist or values not found
+     */
+    public Optional<Time> getTimeValuesForOrder(Long orderId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        // oh no order is not found
+        if (order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Time timeValues = order.get().getTimeValues();
+
+        // oh no something went wrong and there is no object
+        if (timeValues == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(order.get().getTimeValues());
+    }
+
+
+    /**
+     * Returns true if an order if it exists.
+     *
+     * @param orderId the id of the order to retrieve
+     * @return boolean
+     */
+    public Boolean orderExists(Long orderId) {
+        return orderRepo.existsById(orderId);
     }
 
     /**
