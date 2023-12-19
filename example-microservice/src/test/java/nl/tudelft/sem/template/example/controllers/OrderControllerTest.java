@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
 import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,6 +66,42 @@ class OrderControllerTest {
 
         var res = controller.getPickupDestination(1L, 22L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getOrder200() {
+        Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
+        Mockito.when(orderService.getOrderById(11L)).thenReturn(proper);
+        Mockito.when(authorizationService.authorize(1L, "getOrder"))
+                .thenReturn(Optional.empty());
+
+
+        var res = controller.getOrder(11L, 1L);
+        assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getOrder404() {
+        Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
+        Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(1L, "getOrder"))
+                .thenReturn(Optional.empty());
+
+
+        var res = controller.getOrder(11L, 1L);
+            assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getOrder403() {
+        Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
+        Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(1L, "getOrder"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+
+        var res = controller.getOrder(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
 }
