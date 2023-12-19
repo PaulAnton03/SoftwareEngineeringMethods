@@ -66,4 +66,14 @@ public class OrderService {
 
         return Optional.of(vendorLocation);
     }
+
+    /**
+     * Gets the order based on id.
+     *
+     * @param orderId the id of the order
+     * @return empty optional if order  DNE, optional of order otherwise
+     */
+    public Optional<Order> getOrderById(Long orderId) {
+        return orderRepo.findById(orderId);
+    }
 }

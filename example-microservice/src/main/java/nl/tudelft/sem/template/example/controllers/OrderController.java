@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,6 +56,33 @@ public class OrderController implements OrderApi {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(location.get(), HttpStatus.OK);
+
+    }
+
+    /**
+     * GET /order/{orderId} : Retrieve order based on orderId.
+     * Return the Order object.
+     *
+     * @param orderId       (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @return Successful response, order object received (status code 200)
+     *         or Unsuccessful, order cannot be retrieved because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve order (status code 403)
+     *         or Unsuccessful, no order was found (status code 404)
+     */
+    @Override
+    public ResponseEntity<Order> getOrder(Long orderId, Long authorization) {
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "getOrder");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Order> o = orderService.getOrderById(orderId);
+        if (o.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(o.get(), HttpStatus.OK);
 
     }
 
