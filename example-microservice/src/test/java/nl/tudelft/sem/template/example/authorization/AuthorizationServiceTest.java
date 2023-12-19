@@ -74,6 +74,34 @@ public class AuthorizationServiceTest {
     }
 
     @Test
+    void adminOnlyMethodNoPermission() {
+        WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .withBody("vendor")));
+        Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
+        Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);
+        permissions.remove("getFinalDestination");
+        var res = controller.getFinalDestination(11L, 1L);
+        assertEquals(ResponseEntity.status(403).body("User with id " + 11 + " does not have access rights"), res);
+    }
+
+    @Test
+    void adminOnlyMethodPermission() {
+        WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .withBody("admin")));
+        Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
+        Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);
+        permissions.remove("getFinalDestination");
+        var res = controller.getFinalDestination(11L, 1L);
+        assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
+    }
+
+    @Test
     void userMicroServiceIsDown() {
         WireMockConfig.stopUserServer();
         Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));

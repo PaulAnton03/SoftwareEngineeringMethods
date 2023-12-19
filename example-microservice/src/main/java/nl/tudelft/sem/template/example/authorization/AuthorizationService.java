@@ -23,13 +23,7 @@ public class AuthorizationService {
 
     // Maps method names to the user types that are allowed to call them
     private HashMap<String, List<UserType>> permissions;
-
     private UserExternalService userExternalService;
-
-    // Default constructor. Use this one in test cases if you want to ignore authorization.
-    public AuthorizationService() {
-        userExternalService = new UserExternalService();
-    }
 
     public AuthorizationService(UserExternalService userExternalService, HashMap<String, List<UserType>> permissions) {
         this.userExternalService = userExternalService;
@@ -39,8 +33,8 @@ public class AuthorizationService {
     /**
      * Authorizes a user based on the provided user ID and required user type.
      *
-     * @param userId          The ID of the user to be authorized.
-     * @param methodName      Name of the method that was called.
+     * @param userId     The ID of the user to be authorized.
+     * @param methodName Name of the method that was called.
      * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
      */
     public Optional<ResponseEntity> authorize(Long userId, String methodName) {
@@ -48,7 +42,8 @@ public class AuthorizationService {
         if (actualUserType == UserType.NAN) {
             return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
         }
-        if (actualUserType != UserType.ADMIN && !permissions.get(methodName).contains(actualUserType)) {
+        if ((actualUserType != UserType.ADMIN && !permissions.containsKey(methodName))
+            || (actualUserType != UserType.ADMIN && !permissions.get(methodName).contains(actualUserType))) {
             return Optional.of(ResponseEntity.status(403).body("User with id " + userId + " does not have access rights"));
         }
         return Optional.empty();
@@ -87,6 +82,7 @@ public class AuthorizationService {
 
     /**
      * Initializes the permissions map with default values if it is null.
+     * You do not need to add permissions for admin only methods.
      */
     @PostConstruct
     private void init() {
