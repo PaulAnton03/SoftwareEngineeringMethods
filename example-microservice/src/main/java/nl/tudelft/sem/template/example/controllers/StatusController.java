@@ -2,7 +2,9 @@ package nl.tudelft.sem.template.example.controllers;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.api.StatusApi;
+import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
+import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.springframework.http.HttpStatus;
@@ -50,6 +52,39 @@ public class StatusController implements StatusApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Handles put request for (/status/{orderId}/rejected).
+     *
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param orderId id of the order to update its status to accepted (required)
+     * @return a response entity with nothing, 404 if not found  403 if not authorized, only for vendors
+     */
+    @Override
+    public ResponseEntity<Void> updateToRejected(Long orderId, Long authorization) {
+
+        // TODO: authentication
+
+        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
+
+        if (currentStatus.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (currentStatus.get() != Order.StatusEnum.PENDING) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Order> order = statusService.updateStatusToRejected(orderId);
+        if (order.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        DeliveryException e = new DeliveryException().isResolved(false)
+                .exceptionType(DeliveryException.ExceptionTypeEnum.REJECTED)
+                .orderId(orderId).message("Order was rejected by the Vendor");
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     /**
      * Handles put request for (/status/{orderId}/giventocourier).

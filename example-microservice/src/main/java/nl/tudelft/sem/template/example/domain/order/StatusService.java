@@ -47,6 +47,25 @@ public class StatusService {
         return Optional.of(orderRepo.save(order));
     }
 
+    /**
+     * Attempts to update the status of order to rejected.
+     * Vendors use this.
+     *
+     * @param orderId the id of the order
+     * @return the optional of updated order object, empty if the order was not found
+     */
+    public Optional<Order> updateStatusToRejected(Long orderId) {
+        Optional<Order> o = orderRepo.findById(orderId);
+
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order order = o.get();
+        order.setStatus(Order.StatusEnum.REJECTED);
+        return Optional.of(orderRepo.save(order));
+    }
+
 
     /**
      * Attempts to update the status of order to given_to_courier.
