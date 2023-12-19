@@ -56,12 +56,7 @@ public class StatusController implements StatusApi {
 
         Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToAccepted");
         if (auth.isPresent()) {
-            if (auth.get().getStatusCode() == HttpStatus.valueOf(500)) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            if (auth.get().getStatusCode() == HttpStatus.valueOf(403)) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
+            return auth.get();
         }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -101,12 +96,7 @@ public class StatusController implements StatusApi {
 
         Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToGivenToCourier");
         if (auth.isPresent()) {
-            if (auth.get().getStatusCode() == HttpStatus.valueOf(500)) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            if (auth.get().getStatusCode() == HttpStatus.valueOf(403)) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
+            return auth.get();
         }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -146,12 +136,7 @@ public class StatusController implements StatusApi {
 
         Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToInTransit");
         if (auth.isPresent()) {
-            if (auth.get().getStatusCode() == HttpStatus.valueOf(500)) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            if (auth.get().getStatusCode() == HttpStatus.valueOf(403)) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
+            return auth.get();
         }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -191,12 +176,7 @@ public class StatusController implements StatusApi {
 
         Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "getStatus");
         if (auth.isPresent()) {
-            if (auth.get().getStatusCode() == HttpStatus.valueOf(500)) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            if (auth.get().getStatusCode() == HttpStatus.valueOf(403)) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
+            return auth.get();
         }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
