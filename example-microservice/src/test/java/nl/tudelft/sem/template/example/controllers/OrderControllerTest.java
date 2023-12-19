@@ -20,14 +20,14 @@ class OrderControllerTest {
     private OrderService orderService;
     private OrderController controller;
 
-    private final AuthorizationService authorizationService = new AuthorizationService();
+    private AuthorizationService authorizationService;
 
 
     @BeforeEach
     void setUp() {
-        WireMockConfig.startUserServer();
-        WireMockConfig.ignoreAuthorization();
         this.orderService = Mockito.mock(OrderService.class);
+        this.authorizationService = Mockito.mock(AuthorizationService.class);
+        Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString())).thenReturn(Optional.empty());
         this.controller = new OrderController(orderService, authorizationService);
     }
 
@@ -67,8 +67,4 @@ class OrderControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
-    @AfterEach
-    void tearDown() {
-        WireMockConfig.stopUserServer();
-    }
 }

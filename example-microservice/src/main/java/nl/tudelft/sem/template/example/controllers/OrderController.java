@@ -7,7 +7,10 @@ import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.model.Location;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -35,7 +38,11 @@ public class OrderController implements OrderApi {
      *         or Unsuccessful, order not found by id (status code 404)
      */
     @Override
-    public ResponseEntity getFinalDestination(Long authorization, Long orderId) {
+    @GetMapping("/{orderId}/final-destination")
+    public ResponseEntity getFinalDestination(
+        @RequestParam(name = "authorization") Long authorization,
+        @PathVariable(name = "orderId") Long orderId
+    ) {
         Optional<ResponseEntity> authorizationResponse =
             authorizationService.authorize(authorization, "getFinalDestination");
         if (authorizationResponse.isPresent()) {
@@ -63,7 +70,10 @@ public class OrderController implements OrderApi {
      *         or Unsuccessful, vendor location for the order not found (status code 404)
      */
     @Override
-    public ResponseEntity getPickupDestination(Long orderId, Long authorization) {
+    @GetMapping("/{orderId}/pickup-destination")
+    public ResponseEntity getPickupDestination(
+        @RequestParam(name = "authorization") Long authorization,
+        @PathVariable(name = "orderId") Long orderId) {
         Optional<ResponseEntity> authorizationResponse =
             authorizationService.authorize(authorization, "getPickupDestination");
         if (authorizationResponse.isPresent()) {
