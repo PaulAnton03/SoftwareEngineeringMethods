@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.example.controllers;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.api.StatusApi;
-import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
@@ -83,7 +82,7 @@ public class StatusController implements StatusApi {
                 .exceptionType(DeliveryException.ExceptionTypeEnum.REJECTED)
                 .orderId(orderId).message("Order was rejected by the vendor");
 
-        Optional<DeliveryException> exception = statusService.addDeliveryException(e);
+        statusService.addDeliveryException(e);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -5,7 +5,6 @@ import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionReposit
 import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,7 +31,7 @@ public class StatusService {
     }
 
     /**
-     * Attempts to update the status of order to accepted.
+     * Attempts to update the status of order to "accepted".
      * Vendors use this.
      *
      * @param orderId the id of the order
@@ -51,7 +50,7 @@ public class StatusService {
     }
 
     /**
-     * Attempts to update the status of order to rejected.
+     * Attempts to update the status of order to "rejected".
      * Vendors use this.
      *
      * @param orderId the id of the order
@@ -71,7 +70,7 @@ public class StatusService {
 
 
     /**
-     * Attempts to update the status of order to given_to_courier.
+     * Attempts to update the status of order to "given_to_courier".
      * Vendors use this.
      *
      * @param orderId the id of the order
@@ -92,7 +91,7 @@ public class StatusService {
 
 
     /**
-     * Attempts to update the status of order to in_transit.
+     * Attempts to update the status of order to "in_transit".
      * Couriers use this.
      *
      * @param orderId the id of the order
