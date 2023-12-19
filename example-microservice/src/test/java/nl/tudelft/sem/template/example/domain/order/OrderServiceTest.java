@@ -84,4 +84,18 @@ class OrderServiceTest {
         Optional<Location> res = os.getPickupDestination(order1.getId());
         assertEquals(res, Optional.empty());
     }
+
+    @Test
+    void getOrder200() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Optional<Order> res = os.getOrderById(order1.getId());
+        assertEquals(res, Optional.of(order1));
+    }
+
+    @Test
+    void getOrder400() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<Order> res = os.getOrderById(order1.getId());
+        assertEquals(res, Optional.empty());
+    }
 }
