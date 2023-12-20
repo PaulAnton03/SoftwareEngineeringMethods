@@ -44,7 +44,7 @@ public class OrderController implements OrderApi {
         @PathVariable(name = "orderId") Long orderId
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getFinalDestination");
+            authorizationService.authorize(authorization, "getFinalDestination", orderId);
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -75,7 +75,7 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @PathVariable(name = "orderId") Long orderId) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getPickupDestination");
+            authorizationService.authorize(authorization, "getPickupDestination", orderId);
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }

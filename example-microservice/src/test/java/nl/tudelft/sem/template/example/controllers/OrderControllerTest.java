@@ -27,7 +27,7 @@ class OrderControllerTest {
     void setUp() {
         this.orderService = Mockito.mock(OrderService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
-        Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString())).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString(), anyLong())).thenReturn(Optional.empty());
         this.controller = new OrderController(orderService, authorizationService);
     }
 
