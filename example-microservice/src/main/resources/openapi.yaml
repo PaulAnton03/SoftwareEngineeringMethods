@@ -137,7 +137,7 @@ paths:
       operationId: getIndependentOrders
       summary: Retrieve all independent and unassigned orders
       tags:
-        - Admin
+        - Order
       description: >-
         Return a list of all independent and unassigned orders. Independent orders are orders that belong 
         to a vendor without own couriers.
