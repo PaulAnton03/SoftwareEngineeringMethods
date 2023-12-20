@@ -1,10 +1,13 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +22,16 @@ public class OrderController implements OrderApi {
 
     public AuthorizationService authorizationService;
 
+    @Autowired
     public OrderController(OrderService orderService, AuthorizationService authorizationService) {
         this.orderService = orderService;
         this.authorizationService = authorizationService;
+    }
+
+    @Override
+    public ResponseEntity<Order> getNextOrderForVendor(Long vendorId, Long authorization) {
+        // todo properly implement with setter fro strategy and stuff
+        return OrderApi.super.getNextOrderForVendor(vendorId, authorization);
     }
 
     /**

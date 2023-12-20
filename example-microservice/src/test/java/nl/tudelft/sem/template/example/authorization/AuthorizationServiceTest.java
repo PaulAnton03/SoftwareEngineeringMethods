@@ -56,6 +56,44 @@ public class AuthorizationServiceTest {
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
 
+//    @Test
+//    void getFinalDestinationWorksA() {
+//        WireMockConfig.orderMicroservice.stubFor(WireMock.get(urlPathMatching(("/order/11/pending")))
+//            .willReturn(aResponse()
+//                .withStatus(200)
+//                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+//                .withBody("[\n" +
+//                    "  {\n" +
+//                    "    \"id\": 1,\n" +
+//                    "    \"customerId\": 1,\n" +
+//                    "    \"vendorId\": 1,\n" +
+//                    "    \"ratingNumber\": 1,\n" +
+//                    "    \"orderTime\": \"1985-04-12T23:20:50.520Z\",\n" +
+//                    "    \"dishes\": [\n" +
+//                    "      1\n" +
+//                    "    ],\n" +
+//                    "    \"dishRequirements\": [\n" +
+//                    "      \"no nuts\"\n" +
+//                    "    ],\n" +
+//                    "    \"status\": {\n" +
+//                    "      \"status\": \"pending\"\n" +
+//                    "    },\n" +
+//                    "    \"deliveryDestination\": {\n" +
+//                    "      \"latitude\": 51.925298,\n" +
+//                    "      \"longitude\": 4.754099\n" +
+//                    "    },\n" +
+//                    "    \"comment\": \"deliver on the door\",\n" +
+//                    "    \"price\": 14.5,\n" +
+//                    "    \"isPayed\": true\n" +
+//                    "  }\n" +
+//                    "]")));
+//        Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
+//        Mockito.when(orderService.getPendingOrdersForVendor(anyLong())).thenReturn(proper);
+//
+//        var res = controller.getFinalDestination(11L, 1L);
+//        assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
+//    }
+
     @Test
     void getFinalDestinationNoPermission() {
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
