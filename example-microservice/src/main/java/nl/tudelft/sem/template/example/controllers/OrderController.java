@@ -3,6 +3,8 @@ package nl.tudelft.sem.template.example.controllers;
 import java.util.List;
 import java.math.BigDecimal;
 import java.util.Optional;
+
+import io.swagger.v3.oas.annotations.Parameter;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
@@ -71,7 +73,11 @@ public class OrderController implements OrderApi {
      *         or Unsuccessful, no order was found (status code 404)
      */
     @Override
-    public ResponseEntity<Order> getOrder(Long orderId, Long authorization) {
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Order> getOrder(
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
+    ) {
         Optional<ResponseEntity> authorizationResponse =
                 authorizationService.authorize(authorization, "getOrder");
         if (authorizationResponse.isPresent()) {
@@ -97,7 +103,8 @@ public class OrderController implements OrderApi {
      *         or Unsuccessful, no orders were found (status code 404)
      */
     @Override
-    public ResponseEntity<List<Order>> getOrders(Long authorization) {
+    @GetMapping("")
+    public ResponseEntity<List<Order>> getOrders(@RequestParam(name = "authorization") Long authorization) {
         Optional<ResponseEntity> authorizationResponse =
                 authorizationService.authorize(authorization, "getOrders");
         if (authorizationResponse.isPresent()) {
@@ -155,7 +162,12 @@ public class OrderController implements OrderApi {
      *         or Unsuccessful, no order was found (status code 404)
      */
     @Override
-    public ResponseEntity<Void> makeOrder(Long orderId, Long authorization, Order order) {
+    @PostMapping("/{orderId}")
+    public ResponseEntity<Void> makeOrder(
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order
+    ) {
         Optional<ResponseEntity> authorizationResponse =
                 authorizationService.authorize(authorization, "makeOrder");
         if (authorizationResponse.isPresent()) {
@@ -186,7 +198,11 @@ public class OrderController implements OrderApi {
      *         or Unsuccessful, no order was found" (status code 404)
      */
     @Override
-    public ResponseEntity<Void> updateOrder(Long orderId, Long authorization, Order order) {
+    @PutMapping("/{orderId}")
+    public ResponseEntity<Void> updateOrder(
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order) {
         Optional<ResponseEntity> authorizationResponse =
                 authorizationService.authorize(authorization, "updateOrder");
         if (authorizationResponse.isPresent()) {

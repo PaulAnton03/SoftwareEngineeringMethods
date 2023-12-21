@@ -8,18 +8,14 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
-import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.swing.text.html.Option;
 
 class OrderControllerTest {
 
