@@ -76,7 +76,7 @@ class OrderControllerTest {
         Mockito.when(authorizationService.authorize(1L, "getOrder"))
                 .thenReturn(Optional.empty());
 
-        var res = controller.getOrder(11L, 1L);
+        var res = controller.getOrder(1L, 11L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
 
@@ -88,7 +88,7 @@ class OrderControllerTest {
                 .thenReturn(Optional.empty());
 
 
-        var res = controller.getOrder(11L, 1L);
+        var res = controller.getOrder(1L, 11L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
@@ -99,7 +99,7 @@ class OrderControllerTest {
         Mockito.when(authorizationService.authorize(1L, "getOrder"))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
-        var res = controller.getOrder(11L, 1L);
+        var res = controller.getOrder(1L, 11L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
