@@ -5,8 +5,11 @@ import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController
@@ -131,7 +134,18 @@ public class UserController implements UserApi {
      */
     @Override
     public ResponseEntity<Void> updateBossOfCourier(Long courierId, Long bossId, Long authorization) {
-        return UserApi.super.updateBossOfCourier(courierId, bossId, authorization);
+        var auth = authorizationService.authorize(authorization, "updateBossOfCourier");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
+
+        Optional<Long> newBossId = userService.updateBossIdOfCourier(courierId, bossId);
+
+        if (newBossId.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
