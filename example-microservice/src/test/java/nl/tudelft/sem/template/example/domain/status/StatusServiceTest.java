@@ -10,6 +10,7 @@ import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
+import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ public class StatusServiceTest {
     public Order order2;
 
     public Order order3;
+    public DeliveryException delException1;
 
     public StatusService ss;
 
@@ -38,6 +40,8 @@ public class StatusServiceTest {
         this.order1 = new Order().id(1L).status(Order.StatusEnum.PENDING);
         this.order2 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER);
         this.order3 = new Order().id(1L).status(Order.StatusEnum.PREPARING);
+        this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
+                .message("Test exception").isResolved(false).orderId(1L);
         this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 
@@ -148,6 +152,20 @@ public class StatusServiceTest {
         Optional<Order.StatusEnum> status = ss.getOrderStatus(1L);
 
         assertTrue(status.isEmpty());
+    }
+
+    @Test
+    void addDeliveryExceptionEmpty(){
+        Optional<DeliveryException> res = Optional.empty();
+        assertEquals(res, ss.addDeliveryException(null));
+    }
+
+    @Test
+    void addDeliveryExceptionSuccess(){
+        Mockito.when(exceptionRepo.saveAndFlush(delException1)).thenReturn(delException1);
+
+        Optional<DeliveryException> res = Optional.of(delException1);
+        assertEquals(res, ss.addDeliveryException(delException1));
     }
 
 }
