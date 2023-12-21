@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
-
 import java.util.Optional;
-
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
@@ -153,13 +151,13 @@ public class StatusServiceTest {
     }
 
     @Test
-    void addDeliveryExceptionEmpty(){
+    void addDeliveryExceptionEmpty() {
         Optional<DeliveryException> res = Optional.empty();
         assertEquals(res, ss.addDeliveryException(null));
     }
 
     @Test
-    void addDeliveryExceptionSuccess(){
+    void addDeliveryExceptionSuccess() {
         Mockito.when(exceptionRepo.saveAndFlush(delException1)).thenReturn(delException1);
 
         Optional<DeliveryException> res = Optional.of(delException1);
