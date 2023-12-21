@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
-import java.util.Optional;
-
 @Service
 public class UserService {
 
-    private CourierRepository courierRepo;
+    private final CourierRepository courierRepo;
+    private final VendorRepository vendorRepo;
 
-    public UserService(CourierRepository courierRepo) {
+    @Autowired
+    public UserService(CourierRepository courierRepo, VendorRepository vendorRepo) {
         this.courierRepo = courierRepo;
+        this.vendorRepo = vendorRepo;
     }
-
 
     /**
      * Attempts to update the bossId of the courier.
@@ -37,14 +37,6 @@ public class UserService {
         c.setBossId(bossId);
 
         return Optional.of(courierRepo.saveAndFlush(c).getBossId());
-    }
-
-
-    private final VendorRepository vendorRepo;
-
-    @Autowired
-    public UserService(VendorRepository vendorRepo) {
-        this.vendorRepo = vendorRepo;
     }
 
     /**

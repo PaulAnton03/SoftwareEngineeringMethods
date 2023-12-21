@@ -13,35 +13,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class UserControllerTest {
 
     private UserService userService;
-
     private AuthorizationService authorizationService;
-
     private UserController controller;
 
     @BeforeEach
     void setUp() {
         this.userService = Mockito.mock(UserService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
-        Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString())).thenReturn(Optional.empty());
         this.controller = new UserController(userService, authorizationService);
     }
 
     @Test
-    void makeVendor200() {
-        Vendor vendor = new Vendor().id(1L);
-        Optional<Vendor> proper = Optional.of(vendor);
-
-        Mockito.when(userService.makeVendor(any())).thenReturn(proper);
-
-        var res = controller.makeVendor(2L, vendor);
     void updateBossOfCourier200() {
         Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
                 .thenReturn(Optional.empty());
@@ -53,10 +39,6 @@ public class UserControllerTest {
     }
 
     @Test
-    void makeVendor404() {
-        Mockito.when(userService.makeVendor(any())).thenReturn(Optional.empty());
-
-        var res = controller.makeVendor(2L, new Vendor().id(1L));
     void updateBossOfCourier404() {
         Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
                 .thenReturn(Optional.empty());
@@ -68,23 +50,6 @@ public class UserControllerTest {
     }
 
     @Test
-    void makeVendorById200() {
-        Vendor vendor = new Vendor().id(1L);
-        Optional<Vendor> proper = Optional.of(vendor);
-
-        Mockito.when(userService.makeVendorById(anyLong())).thenReturn(proper);
-
-        var res = controller.makeVendorById(2L, 1L);
-        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
-    }
-
-    @Test
-    void makeVendorById404() {
-        Mockito.when(userService.makeVendorById(anyLong())).thenReturn(Optional.empty());
-
-        var res = controller.makeVendorById(2L, 1L);
-        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
-    }
     void updateBossOfCourier500() {
         Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
@@ -100,5 +65,48 @@ public class UserControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
+    @Test
+    void makeVendorById200() {
+        Vendor vendor = new Vendor().id(1L);
+        Optional<Vendor> proper = Optional.of(vendor);
+
+        Mockito.when(userService.makeVendorById(anyLong())).thenReturn(proper);
+        Mockito.when(authorizationService.authorize(1L, "makeVendorById"))
+                .thenReturn(Optional.empty());
+
+        var res = controller.makeVendorById(2L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void makeVendorById404() {
+        Mockito.when(userService.makeVendorById(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(1L, "makeVendorById"))
+                .thenReturn(Optional.empty());
+
+        var res = controller.makeVendorById(2L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void makeVendor200() {
+        Vendor vendor = new Vendor().id(1L);
+        Optional<Vendor> proper = Optional.of(vendor);
+
+        Mockito.when(userService.makeVendor(any())).thenReturn(proper);
+        Mockito.when(authorizationService.authorize(1L, "makeVendor"))
+                .thenReturn(Optional.empty());
+        var res = controller.makeVendor(2L, vendor);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void makeVendor404() {
+        Mockito.when(userService.makeVendor(any())).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(1L, "makeVendor"))
+                .thenReturn(Optional.empty());
+        var res = controller.makeVendor(2L, new Vendor().id(1L));
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
 
 }
