@@ -16,8 +16,6 @@ import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.convert.Delimiter;
-
 
 public class StatusServiceTest {
 

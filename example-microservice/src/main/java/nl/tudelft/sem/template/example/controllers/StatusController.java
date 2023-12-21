@@ -40,7 +40,7 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToAccepted");
+        var auth = authorizationService.authorize(authorization, "updateToAccepted");
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -73,10 +73,9 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToRejected(Long orderId, Long authorization) {
 
-        Optional<ResponseEntity> authorizationResponse =
-                authorizationService.authorize(authorization, "updateToRejected");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
+        var auth = authorizationService.authorize(authorization, "updateToRejected");
+        if (auth.isPresent()) {
+            return auth.get();
         }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -119,7 +118,7 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToGivenToCourier(Long orderId, Long authorization,
                                                        UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToGivenToCourier");
+        var auth = authorizationService.authorize(authorization, "updateToGivenToCourier");
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -159,7 +158,7 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToInTransit");
+        var auth = authorizationService.authorize(authorization, "updateToInTransit");
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -199,7 +198,7 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<String> getStatus(Long orderId, Long authorization) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "getStatus");
+        var auth = authorizationService.authorize(authorization, "getStatus");
         if (auth.isPresent()) {
             return auth.get();
         }
