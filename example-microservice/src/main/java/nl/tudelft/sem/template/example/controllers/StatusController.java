@@ -65,7 +65,7 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToRejected(Long orderId, Long authorization) {
 
         Optional<ResponseEntity> authorizationResponse =
-                authorizationService.authorize(authorization, "methodN");
+                authorizationService.authorize(authorization, "updateToRejected");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
