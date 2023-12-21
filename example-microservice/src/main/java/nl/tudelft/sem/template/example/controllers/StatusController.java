@@ -20,8 +20,6 @@ public class StatusController implements StatusApi {
     public StatusService statusService;
     private AuthorizationService authorizationService;
 
-    public AuthorizationService authorizationService;
-
     public StatusController(StatusService statusService, AuthorizationService authorizationService) {
         this.statusService = statusService;
         this.authorizationService = authorizationService;

@@ -20,9 +20,6 @@ import org.springframework.http.ResponseEntity;
 public class StatusControllerTest {
 
     private StatusService statusService;
-
-    private AuthorizationService authorizationService;
-
     private AuthorizationService authorizationService;
     private StatusController controller;
 
