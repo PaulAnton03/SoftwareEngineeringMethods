@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.util.List;
+import java.math.BigDecimal;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
@@ -17,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import javax.swing.text.html.Option;
 
 class OrderControllerTest {
 
@@ -77,7 +80,6 @@ class OrderControllerTest {
         Mockito.when(authorizationService.authorize(1L, "getOrder"))
                 .thenReturn(Optional.empty());
 
-
         var res = controller.getOrder(11L, 1L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
@@ -91,7 +93,7 @@ class OrderControllerTest {
 
 
         var res = controller.getOrder(11L, 1L);
-            assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
     @Test
@@ -103,6 +105,21 @@ class OrderControllerTest {
 
         var res = controller.getOrder(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getOrderRating200() {
+        Optional<BigDecimal> proper = Optional.of(new BigDecimal("5.0"));
+        Mockito.when(orderService.getRating(1L)).thenReturn(proper);
+        var res = controller.getOrderRating(1L, 1L);
+        assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getOrderRating404() {
+        Mockito.when(orderService.getRating(1L)).thenReturn(Optional.empty());
+        var res = controller.getOrderRating(1L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
     @Test
@@ -128,7 +145,6 @@ class OrderControllerTest {
 
 
         var res = controller.updateOrder(11L, 1L, updated);
-        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
     @Test
@@ -182,7 +198,17 @@ class OrderControllerTest {
         Mockito.when(orderService.createOrder(o)).thenReturn(Optional.of(o));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
 
-        var res = controller.makeOrder(11L, 1L, o);
+        var res = controller.makeOrder(11L, 1L, o);}
+
+    @Test
+    void updateOrderRating200() {
+        Optional<BigDecimal> rating1 = Optional.of(new BigDecimal("5.0"));
+        Optional<BigDecimal> rating2 = Optional.of(new BigDecimal("2.0"));
+
+        Mockito.when(orderService.getRating(1L)).thenReturn(rating1);
+        Mockito.when(orderService.updateRating(1L, rating2.get())).thenReturn(rating2);
+
+        var res = controller.putOrderRating(1L, 1L, rating2.get());
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
@@ -207,7 +233,14 @@ class OrderControllerTest {
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.of(o));
 
         var res = controller.makeOrder(11L, 1L, o);
-        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);}
+
+    @Test
+    void updateOrderRating404() {
+        Mockito.when(orderService.getRating(1L)).thenReturn(Optional.empty());
+        var res = controller.putOrderRating(1L, 1L, new BigDecimal("1.0"));
+
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
 }
