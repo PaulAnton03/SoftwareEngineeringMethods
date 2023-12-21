@@ -13,13 +13,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 public class UserControllerTest {
 
     private UserService userService;
-    private UserController controller;
 
     private AuthorizationService authorizationService;
 
+    private UserController controller;
 
     @BeforeEach
     void setUp() {
@@ -37,6 +42,13 @@ public class UserControllerTest {
         Mockito.when(userService.makeVendor(any())).thenReturn(proper);
 
         var res = controller.makeVendor(2L, vendor);
+    void updateBossOfCourier200() {
+        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
+                .thenReturn(Optional.empty());
+        Mockito.when(userService.updateBossIdOfCourier(100L, 6L)).thenReturn(
+                Optional.of(6L));
+
+        var res = controller.updateBossOfCourier(100L, 6L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
@@ -45,6 +57,13 @@ public class UserControllerTest {
         Mockito.when(userService.makeVendor(any())).thenReturn(Optional.empty());
 
         var res = controller.makeVendor(2L, new Vendor().id(1L));
+    void updateBossOfCourier404() {
+        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
+                .thenReturn(Optional.empty());
+        Mockito.when(userService.updateBossIdOfCourier(100L, 6L)).thenReturn(
+                Optional.empty());
+
+        var res = controller.updateBossOfCourier(100L, 6L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
@@ -66,4 +85,20 @@ public class UserControllerTest {
         var res = controller.makeVendorById(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
+    void updateBossOfCourier500() {
+        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
+        var res = controller.updateBossOfCourier(100L, 6L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR), res);
+    }
+
+    @Test
+    void updateBossOfCourier403() {
+        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        var res = controller.updateBossOfCourier(100L, 6L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+
 }
