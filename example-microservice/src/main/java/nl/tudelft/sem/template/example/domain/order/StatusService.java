@@ -14,8 +14,9 @@ public class StatusService {
     private OrderRepository orderRepo;
 
 
-    public StatusService(OrderRepository orderRepo) {
+    public StatusService(OrderRepository orderRepo, DeliveryExceptionRepository exceptionRepo) {
         this.orderRepo = orderRepo;
+        this.exceptionRepo = exceptionRepo;
     }
 
     /**

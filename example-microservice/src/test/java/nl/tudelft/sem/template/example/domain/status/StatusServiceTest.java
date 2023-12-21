@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 
 import java.util.Optional;
+
+import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
@@ -13,11 +15,13 @@ import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.convert.Delimiter;
 
 
 public class StatusServiceTest {
 
     public OrderRepository orderRepo;
+    private DeliveryExceptionRepository exceptionRepo;
 
     public Order order1;
 
@@ -30,10 +34,11 @@ public class StatusServiceTest {
     @BeforeEach
     void setUp() {
         this.orderRepo = mock(OrderRepository.class);
+        this.exceptionRepo = mock(DeliveryExceptionRepository.class);
         this.order1 = new Order().id(1L).status(Order.StatusEnum.PENDING);
         this.order2 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER);
         this.order3 = new Order().id(1L).status(Order.StatusEnum.PREPARING);
-        this.ss = new StatusService(orderRepo);
+        this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 
     @Test
@@ -54,6 +59,27 @@ public class StatusServiceTest {
         Mockito.when(orderRepo.getOne(anyLong())).thenThrow(new javax.persistence.EntityNotFoundException());
 
         Optional<Order> ret = ss.updateStatusToAccepted(order1.getId());
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
+    void updateStatusToRejected200() {
+        Order order11 = new Order().id(1L).status(Order.StatusEnum.REJECTED);
+
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Mockito.lenient().when(orderRepo.save(order1)).thenReturn(order11);
+
+        assertEquals(order1.getStatus(), Order.StatusEnum.PENDING);
+
+        ss.updateStatusToRejected(order1.getId());
+        assertEquals(order1.getStatus(), Order.StatusEnum.REJECTED);
+    }
+
+    @Test
+    void updateStatusToRejected404() {
+        Mockito.when(orderRepo.getOne(anyLong())).thenThrow(new javax.persistence.EntityNotFoundException());
+
+        Optional<Order> ret = ss.updateStatusToRejected(order1.getId());
         assertTrue(ret.isEmpty());
     }
 
@@ -105,6 +131,7 @@ public class StatusServiceTest {
         assertTrue(ret.isEmpty());
     }
 
+    @Test
     void getOrderStatus200() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
 

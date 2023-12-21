@@ -46,7 +46,8 @@ public class StatusControllerTest {
 
     @Test
     void updateStatusToRejected200() {
-
+        Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
+                .thenReturn(Optional.empty());
         Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
                 Optional.of(Order.StatusEnum.PENDING));
         Mockito.when(statusService.updateStatusToRejected(11L)).thenReturn(
@@ -68,6 +69,8 @@ public class StatusControllerTest {
 
     @Test
     void updateStatusToRejected404() {
+        Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
+                .thenReturn(Optional.empty());
         Mockito.when(statusService.updateStatusToRejected(anyLong())).thenReturn(Optional.empty());
 
         var res = controller.updateToRejected(11L, 1L);
@@ -76,12 +79,30 @@ public class StatusControllerTest {
 
     @Test
     void updateStatusToRejected400() {
-        Mockito.when(statusService.updateStatusToAccepted(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
+                .thenReturn(Optional.empty());
+        Mockito.when(statusService.updateStatusToRejected(anyLong())).thenReturn(Optional.empty());
         Mockito.when(statusService.getOrderStatus(anyLong()))
                 .thenReturn(Optional.of(Order.StatusEnum.GIVEN_TO_COURIER));
 
         var res = controller.updateToRejected(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
+    void updateStatusToRejected500() {
+        Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
+        var res = controller.updateToRejected(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR), res);
+    }
+
+    @Test
+    void updateStatusToRejected403() {
+        Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        var res = controller.updateToRejected(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
