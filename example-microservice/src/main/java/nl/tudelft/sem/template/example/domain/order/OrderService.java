@@ -107,4 +107,13 @@ public class OrderService {
         }
         return Optional.of(o);
     }
+
+    /**
+     * Creates new order.
+     *
+     * @return optional of order
+     */
+    public Optional<Order> createOrder(Order order) {
+        return Optional.of(orderRepo.save(order));
+    }
 }

@@ -131,4 +131,11 @@ class OrderServiceTest {
         Optional<List<Order>> res = os.getOrders();
         assertEquals(res, Optional.empty());
     }
+
+    @Test
+    void makeOrder200() {
+        Mockito.when(orderRepo.save(order1)).thenReturn(order1);
+        Optional<Order> o = os.createOrder(order1);
+        assertEquals(o, Optional.of(order1));
+    }
 }

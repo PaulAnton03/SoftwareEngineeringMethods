@@ -92,7 +92,7 @@ public class OrderController implements OrderApi {
      * Return list of all Order objects.
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @return Successful response, order object received (status code 200)
+     * @return Successful response, order objects received (status code 200)
      *         or Unsuccessful, orders cannot be retrieved because of bad request (status code 400)
      *         or Unsuccessful, entity does not have access rights to retrieve all orders (status code 403)
      *         or Unsuccessful, no orders were found (status code 404)
@@ -140,6 +140,38 @@ public class OrderController implements OrderApi {
         }
 
         return new ResponseEntity<>(pickup.get(), HttpStatus.OK);
+    }
+
+    /**
+     * POST /order/{orderId} : Create new order with specified id.
+     * Return the response of POST operation.
+     *
+     * @param orderId       (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param order Order object to create
+     * @return Successful response, order created (status code 200)
+     *         or Unsuccessful, order cannot be added because of bad request (status code 400)
+     *                  - order with this id already exists
+     *         or Unsuccessful, entity does not have access rights to add order (status code 403)
+     *         or Unsuccessful, no order was found (status code 404)
+     */
+    @Override
+    public ResponseEntity<Void> makeOrder(Long orderId, Long authorization, Order order) {
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "makeOrder");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Order> o = orderService.getOrderById(orderId);
+        if (o.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Order> created = orderService.createOrder(order);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
     /**
