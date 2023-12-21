@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.example.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 
+import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
@@ -12,6 +13,7 @@ import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -138,6 +140,38 @@ class OrderControllerTest {
 
         var res = controller.updateOrder(11L, 1L, updated);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getOrders200() {
+        List<Order> proper = List.of(new Order().id(11L), new Order().id(22L), new Order().id(33L));
+        Mockito.when(orderService.getOrders()).thenReturn(Optional.of(proper));
+        Mockito.when(authorizationService.authorize(1L, "getOrders"))
+                .thenReturn(Optional.empty());
+
+        var res = controller.getOrders(1L);
+        assertEquals(new ResponseEntity<>(proper, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getOrders403() {
+        List<Order> proper = List.of(new Order().id(11L), new Order().id(22L), new Order().id(33L));
+        Mockito.when(orderService.getOrders()).thenReturn(Optional.of(proper));
+        Mockito.when(authorizationService.authorize(1L, "getOrders"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getOrders(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getOrders404() {
+        Mockito.when(orderService.getOrders()).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(1L, "getOrders"))
+                .thenReturn(Optional.empty());
+
+        var res = controller.getOrders(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
 }

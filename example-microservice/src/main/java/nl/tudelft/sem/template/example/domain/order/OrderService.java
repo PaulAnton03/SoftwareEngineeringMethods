@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.domain.order;
 
+import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
@@ -92,5 +93,18 @@ public class OrderService {
         }
 
         return Optional.of(orderRepo.save(order));
+    }
+
+    /**
+     * Gets all orders.
+     *
+     * @return empty optional if no order exists, optional of list of order otherwise
+     */
+    public Optional<List<Order>> getOrders() {
+        List<Order> o = orderRepo.findAll();
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(o);
     }
 }

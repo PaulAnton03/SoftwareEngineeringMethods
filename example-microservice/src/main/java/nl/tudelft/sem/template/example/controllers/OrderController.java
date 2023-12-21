@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
@@ -84,6 +85,31 @@ public class OrderController implements OrderApi {
         }
         return new ResponseEntity<>(o.get(), HttpStatus.OK);
 
+    }
+
+    /**
+     * GET /order : Retrieve all orders.
+     * Return list of all Order objects.
+     *
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @return Successful response, order object received (status code 200)
+     *         or Unsuccessful, orders cannot be retrieved because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve all orders (status code 403)
+     *         or Unsuccessful, no orders were found (status code 404)
+     */
+    @Override
+    public ResponseEntity<List<Order>> getOrders(Long authorization) {
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "getOrders");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<List<Order>> o = orderService.getOrders();
+        if (o.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(o.get(), HttpStatus.OK);
     }
 
     /**

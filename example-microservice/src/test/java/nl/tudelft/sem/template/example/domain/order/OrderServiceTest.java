@@ -5,11 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -111,6 +113,22 @@ class OrderServiceTest {
     void updateOrder400() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
         Optional<Order> res = os.updateOrderById(order1.getId(), order1);
+        assertEquals(res, Optional.empty());
+    }
+
+    @Test
+    void getOrders200() {
+        List<Order> o = List.of(order1, new Order().id(22L));
+        Mockito.when(orderRepo.findAll()).thenReturn(o);
+        Optional<List<Order>> res = os.getOrders();
+        assertEquals(res, Optional.of(o));
+    }
+
+    @Test
+    void getOrders404() {
+        List<Order> o = List.of();
+        Mockito.when(orderRepo.findAll()).thenReturn(o);
+        Optional<List<Order>> res = os.getOrders();
         assertEquals(res, Optional.empty());
     }
 }
