@@ -10,8 +10,7 @@ import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/status")
@@ -71,7 +70,11 @@ public class StatusController implements StatusApi {
      * @return a response entity with nothing, 404 if not found  403 if not authorized, only for vendors
      */
     @Override
-    public ResponseEntity<Void> updateToRejected(Long orderId, Long authorization) {
+    @PutMapping("/{orderId}/rejected")
+    public ResponseEntity<Void> updateToRejected(
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
+    ) {
 
         var auth = authorizationService.authorize(authorization, "updateToRejected");
         if (auth.isPresent()) {
@@ -196,7 +199,11 @@ public class StatusController implements StatusApi {
      */
 
     @Override
-    public ResponseEntity<String> getStatus(Long orderId, Long authorization) {
+    @GetMapping("/{orderId}")
+    public ResponseEntity<String> getStatus(
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
+    ) {
 
         var auth = authorizationService.authorize(authorization, "getStatus");
         if (auth.isPresent()) {
