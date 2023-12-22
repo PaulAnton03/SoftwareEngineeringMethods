@@ -203,7 +203,7 @@ public class OrderController implements OrderApi {
             @PathVariable(name = "orderId") Long orderId,
             @RequestParam(name = "authorization") Long authorization,
             @Parameter(name = "Order") @RequestBody @Valid Order order) {
-        Optional<ResponseEntity> authorizationResponse =
+        var authorizationResponse =
                 authorizationService.authorize(authorization, "updateOrder");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
