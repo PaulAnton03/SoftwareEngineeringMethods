@@ -70,7 +70,6 @@ public class OrderService {
     }
 
     /**
-<<<<<<< HEAD
      * Gets the order based on id.
      *
      * @param orderId the id of the order
