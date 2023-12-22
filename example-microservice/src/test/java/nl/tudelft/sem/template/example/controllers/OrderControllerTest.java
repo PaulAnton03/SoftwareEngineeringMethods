@@ -107,4 +107,21 @@ class OrderControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
+    @Test
+    void updatePrepTime200() {
+        Optional<String> prepTime = Optional.of(new String("01:01:01"));
+        Mockito.when(orderService.updatePrepTime(1L, prepTime.get())).thenReturn(prepTime);
+        var res = controller.setDeliverTime(1L, 1L, prepTime.get());
+
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updatePrepTime404() {
+        Mockito.when(orderService.updatePrepTime(1L, "01:01:01")).thenReturn(Optional.empty());
+        var res = controller.setDeliverTime(1L, 1L, "01:01:01");
+
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
 }

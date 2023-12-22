@@ -5,6 +5,7 @@ import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,7 +91,7 @@ public class OrderService {
      *
      * @param orderId the id of the order
      * @param body the new rating that the order will have
-     * @return empty optional if either order DNE, optional of updated rating otherwise
+     * @return empty optional if order DNE, optional of rating otherwise
      */
     public Optional<BigDecimal> updateRating(Long orderId, BigDecimal body) {
         Optional<Order> order = orderRepo.findById(orderId);
@@ -101,6 +102,27 @@ public class OrderService {
 
         Order newOrder = order.get();
         newOrder.setRatingNumber(body);
+
+        return Optional.of(body);
+    }
+
+    /**
+     * Update the rating per order, uses the order id to get the rating of the order and
+     * updates it using the body parameter provided in the signature.
+     *
+     * @param orderId the id of the order
+     * @param body the new preparation time that the order will have
+     * @return empty optional if the order DNE, optional of prepTime otherwise
+     */
+    public Optional<String> updatePrepTime(Long orderId, String body) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        if(order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Time timeOfOrder = order.get().getTimeValues();
+        timeOfOrder.setPrepTime(body);
 
         return Optional.of(body);
     }
