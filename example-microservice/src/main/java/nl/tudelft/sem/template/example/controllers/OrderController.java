@@ -2,16 +2,20 @@ package nl.tudelft.sem.template.example.controllers;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import javax.validation.Valid;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -107,7 +111,7 @@ public class OrderController implements OrderApi {
             @PathVariable(name = "orderId") Long orderId
     ) {
         Optional<ResponseEntity> authorizationResponse =
-                authorizationService.authorize(authorization, "putOrderRating");
+                authorizationService.authorize(authorization, "putOrderRating",orderId);
         if(authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -141,7 +145,7 @@ public class OrderController implements OrderApi {
             @RequestBody @Valid BigDecimal body
     ) {
         Optional<ResponseEntity> authorizationResponse =
-                authorizationService.authorize(authorization, "putOrderRating");
+                authorizationService.authorize(authorization, "putOrderRating",orderId);
         if(authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }

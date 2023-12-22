@@ -30,7 +30,7 @@ public class UserControllerTest {
 
     @Test
     void updateBossOfCourier200() {
-        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
+        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier", 6L))
                 .thenReturn(Optional.empty());
         Mockito.when(userService.updateBossIdOfCourier(100L, 6L)).thenReturn(
                 Optional.of(6L));
@@ -41,7 +41,7 @@ public class UserControllerTest {
 
     @Test
     void updateBossOfCourier404() {
-        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
+        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier", 6L))
                 .thenReturn(Optional.empty());
         Mockito.when(userService.updateBossIdOfCourier(100L, 6L)).thenReturn(
                 Optional.empty());
@@ -52,7 +52,7 @@ public class UserControllerTest {
 
     @Test
     void updateBossOfCourier500() {
-        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
+        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier", 6L))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
         var res = controller.updateBossOfCourier(100L, 6L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR), res);
@@ -60,7 +60,7 @@ public class UserControllerTest {
 
     @Test
     void updateBossOfCourier403() {
-        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier"))
+        Mockito.when(authorizationService.authorize(1L, "updateBossOfCourier", 6L))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         var res = controller.updateBossOfCourier(100L, 6L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);

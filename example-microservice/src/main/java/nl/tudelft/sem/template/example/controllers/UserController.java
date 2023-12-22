@@ -134,7 +134,7 @@ public class UserController implements UserApi {
      */
     @Override
     public ResponseEntity<Void> updateBossOfCourier(Long courierId, Long bossId, Long authorization) {
-        var auth = authorizationService.authorize(authorization, "updateBossOfCourier");
+        var auth = authorizationService.authorize(authorization, "updateBossOfCourier",bossId);
         if (auth.isPresent()) {
             return auth.get();
         }

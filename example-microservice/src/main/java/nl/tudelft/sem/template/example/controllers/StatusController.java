@@ -40,7 +40,7 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToAccepted");
+        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToAccepted",orderId);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -80,7 +80,7 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToGivenToCourier(Long orderId, Long authorization,
                                                        UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToGivenToCourier");
+        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToGivenToCourier",orderId);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -120,7 +120,7 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToInTransit");
+        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToInTransit",orderId);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -160,7 +160,7 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<String> getStatus(Long orderId, Long authorization) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "getStatus");
+        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "getStatus",orderId);
         if (auth.isPresent()) {
             return auth.get();
         }
