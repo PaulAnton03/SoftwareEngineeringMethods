@@ -37,4 +37,13 @@ public class UserService {
     }
 
 
+    /**
+     * Gets the courier based on id.
+     *
+     * @param courierId the id of the courier
+     * @return empty optional if courier DNE, optional of Courier otherwise
+     */
+    public Optional<Courier> getCourierById(Long courierId) {
+        return courierRepo.findById(courierId);
+    }
 }

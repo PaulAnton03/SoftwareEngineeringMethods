@@ -50,5 +50,21 @@ public class UserServiceTest {
         assertTrue(ret.isEmpty());
     }
 
+    @Test
+    void getCourierById200() {
+        Mockito.when(courierRepo.findById(courier1.getId())).thenReturn(Optional.of(courier1));
+
+        Optional<Courier> ret = us.getCourierById(courier1.getId());
+        assertEquals(ret.get(), courier1);
+    }
+
+    @Test
+    void getCourierById404() {
+        Mockito.when(courierRepo.findById(courier1.getId())).thenReturn(Optional.empty());
+
+        Optional<Courier> ret = us.getCourierById(courier1.getId());
+        assertTrue(ret.isEmpty());
+    }
+
 
 }

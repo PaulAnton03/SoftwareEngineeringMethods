@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.http.HttpStatus;
@@ -23,10 +25,13 @@ public class OrderController implements OrderApi {
 
     public OrderService orderService;
 
+    public UserService userService;
+
     public AuthorizationService authorizationService;
 
-    public OrderController(OrderService orderService, AuthorizationService authorizationService) {
+    public OrderController(OrderService orderService, UserService userService,AuthorizationService authorizationService) {
         this.orderService = orderService;
+        this.userService = userService;
         this.authorizationService = authorizationService;
     }
 
@@ -285,6 +290,44 @@ public class OrderController implements OrderApi {
         Optional<BigDecimal> newRating = orderService.updateRating(orderId, body);
 
         if(newRating.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /** * PUT /order/{orderId}/courier/{courierId} : Update courierId of the order.
+     * Update the courier of the order and return response. *
+     * @param orderId id of the order to update rating (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param courierId The courierId to update (required)
+     * @param order Order object where courierId is updated (required)
+     * @return Successful response, courier id of order set (status code 200)
+     *       or Unsuccessful, courier id cannot be updated because of bad request (status code 400)
+     *       or Unsuccessful, entity does not have access rights to update courier id (status code 403)
+     *       or Unsuccessful, no order or courier id was found (status code 404)
+     */
+    @Override
+    @PutMapping("/{orderId}/courier/{courierId}")
+    public ResponseEntity<Void> setCourierId(
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId,
+            @PathVariable(name = "courierId") Long courierId,
+            @RequestBody @Valid Order order
+    ) {
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "setCourierId");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Courier> c = userService.getCourierById(courierId);
+        if (c.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Order> updated = orderService.updateCourier(orderId, courierId);
+        if (updated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

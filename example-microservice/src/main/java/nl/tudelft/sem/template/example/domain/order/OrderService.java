@@ -70,7 +70,6 @@ public class OrderService {
     }
 
     /**
-<<<<<<< HEAD
      * Gets the order based on id.
      *
      * @param orderId the id of the order
@@ -152,5 +151,25 @@ public class OrderService {
         newOrder.setRatingNumber(body);
 
         return Optional.of(body);
+    }
+
+    /**
+     * Update the courier of the order.
+     *
+     * @param orderId the id of the order
+     * @param courierId the new courier of the order
+     * @return empty optional if either order DNE, optional of updated order otherwise
+     */
+    public Optional<Order> updateCourier(Long orderId, Long courierId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        if(order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order o = order.get();
+        o.setCourierId(courierId);
+
+        return Optional.of(orderRepo.save(o));
     }
 }
