@@ -1,7 +1,9 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import java.util.Optional;
+
 import nl.tudelft.sem.template.api.StatusApi;
+import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
@@ -16,21 +18,32 @@ public class StatusController implements StatusApi {
 
     public StatusService statusService;
 
-    public StatusController(StatusService statusService) {
+    public AuthorizationService authorizationService;
+
+    public StatusController(StatusService statusService, AuthorizationService authorizationService) {
         this.statusService = statusService;
+        this.authorizationService = authorizationService;
     }
 
     /**
      * Handles put request for (/status/{orderId}/accepted).
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param orderId id of the order to update its status to accepted (required)
-     * @return a response entity with nothing, 404 if not found  403 if not authorized, only for vendors
+     * @param orderId       id of the order to update its status to accepted (required)
+     * @return a response entity with nothing,
+     * 400 if previous status doesn't match method,
+     * 404 if not found,
+     * 403 if not authorized,
+     * 500 if server error,
+     * only for vendors
      */
     @Override
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
 
-        // TODO: authentication
+        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToAccepted");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -54,15 +67,23 @@ public class StatusController implements StatusApi {
     /**
      * Handles put request for (/status/{orderId}/giventocourier).
      *
-     * @param orderId id of the order to update its status to given_to_courier (required)
+     * @param orderId       id of the order to update its status to given_to_courier (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @return a response entity with nothing, 404 if not found  403 if not authorized, only for vendors
+     * @return a response entity with nothing,
+     * 400 if previous status doesn't match method,
+     * 404 if not found,
+     * 403 if not authorized,
+     * 500 if server error,
+     * only for vendors
      */
     @Override
     public ResponseEntity<Void> updateToGivenToCourier(Long orderId, Long authorization,
                                                        UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
-        // TODO: authentication
+        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToGivenToCourier");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -88,13 +109,21 @@ public class StatusController implements StatusApi {
      * Handles put request for (/status/{orderId}/intransit).
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param orderId id of the order to update its status to in_transit (required)
-     * @return a response entity with nothing, 404 if not found  403 if not authorized, only for couriers
+     * @param orderId       id of the order to update its status to in_transit (required)
+     * @return a response entity with nothing,
+     * 400 if previous status doesn't match method,
+     * 404 if not found,
+     * 403 if not authorized,
+     * 500 if server error,
+     * only for couriers
      */
     @Override
     public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
 
-        // TODO: authentication
+        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToInTransit");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -121,13 +150,20 @@ public class StatusController implements StatusApi {
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param orderId       id of the order to update its status to accepted (required)
-     * @return a response entity with a String, 200 if found, 404 if not found,  403 if not authorized
+     * @return a response entity with a status String,
+     * 404 if not found,
+     * 403 if not authorized,
+     * 500 if server error,
+     * only for customers
      */
 
     @Override
     public ResponseEntity<String> getStatus(Long orderId, Long authorization) {
 
-        // TODO: authentication
+        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "getStatus");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
