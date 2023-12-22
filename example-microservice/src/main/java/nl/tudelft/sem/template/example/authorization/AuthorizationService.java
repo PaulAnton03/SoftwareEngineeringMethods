@@ -59,18 +59,15 @@ public class AuthorizationService {
      */
     @PostConstruct
     private void init() throws NoSuchMethodException {
-        if (permissions == null) {
-            permissions = new HashMap<>(
-                Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
-                ));
+        permissions = new HashMap<>(
+            Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
+            ));
 
-        }
 
-        if (validationMethods == null) {
-            validationMethods = new HashMap<>(
-                Map.of(//"Method name", "dbUtils::userBelongsToOrder" or "dbUtils::courierBelongsToVendor")
-                ));
-        }
+        validationMethods = new HashMap<>(
+            Map.of(//"Method name", "dbUtils::userBelongsToOrder" or "dbUtils::courierBelongsToVendor")
+                "getFinalDestination", dbUtils::userBelongsToOrder
+            ));
 
     }
 
