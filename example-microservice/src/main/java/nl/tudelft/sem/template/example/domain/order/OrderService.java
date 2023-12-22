@@ -92,7 +92,7 @@ public class OrderService {
             return Optional.empty();
         }
 
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
     /**
@@ -114,7 +114,7 @@ public class OrderService {
      * @return optional of order
      */
     public Optional<Order> createOrder(Order order) {
-        return Optional.of(orderRepo.save(order));}
+        return Optional.of(orderRepo.saveAndFlush(order));}
 
     /**
      * Gets the rating per order, uses the order id to get the rating of the order.
@@ -170,6 +170,6 @@ public class OrderService {
         Order o = order.get();
         o.setCourierId(courierId);
 
-        return Optional.of(orderRepo.save(o));
+        return Optional.of(orderRepo.saveAndFlush(o));
     }
 }
