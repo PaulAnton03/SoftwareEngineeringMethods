@@ -104,7 +104,7 @@ class OrderServiceTest {
     @Test
     void updateOrder200() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
-        Mockito.when(orderRepo.save(order1)).thenReturn(order1);
+        Mockito.when(orderRepo.saveAndFlush(order1)).thenReturn(order1);
         Optional<Order> res = os.updateOrderById(order1.getId(), order1);
         assertEquals(res, Optional.of(order1));
     }
@@ -134,7 +134,7 @@ class OrderServiceTest {
 
     @Test
     void makeOrder200() {
-        Mockito.when(orderRepo.save(order1)).thenReturn(order1);
+        Mockito.when(orderRepo.saveAndFlush(order1)).thenReturn(order1);
         Optional<Order> o = os.createOrder(order1);
         assertEquals(o, Optional.of(order1));
     }
@@ -144,7 +144,7 @@ class OrderServiceTest {
         Mockito.when(orderRepo.findById(order1.getId())).thenReturn(Optional.of(order1));
         Order order2 = order1;
         order2.setCourierId(2L);
-        Mockito.when(orderRepo.save(order2)).thenReturn(order2);
+        Mockito.when(orderRepo.saveAndFlush(order2)).thenReturn(order2);
 
         Optional<Order> o = os.updateCourier(order1.getId(), 2L);
         assertEquals(o.get(), order2);
