@@ -144,7 +144,7 @@ public class UserController implements UserApi {
             @RequestParam(name = "authorization") Long authorization,
             @RequestBody Vendor vendor) {
 
-        Optional<ResponseEntity> authorizationResponse =
+        var authorizationResponse =
                 authorizationService.authorize(authorization, "makeVendor");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
@@ -171,7 +171,7 @@ public class UserController implements UserApi {
                         @RequestParam(name = "authorization") Long authorization,
                         @PathVariable(name = "vendorId") Long vendorId) {
 
-        Optional<ResponseEntity> authorizationResponse =
+        var authorizationResponse =
                 authorizationService.authorize(authorization, "makeVendorById");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
