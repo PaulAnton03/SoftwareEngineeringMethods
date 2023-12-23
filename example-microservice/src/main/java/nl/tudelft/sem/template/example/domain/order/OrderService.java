@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.domain.order;
 
+import java.util.List;
 import java.math.BigDecimal;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
@@ -67,6 +68,53 @@ public class OrderService {
 
         return Optional.of(vendorLocation);
     }
+
+    /**
+     * Gets the order based on id.
+     *
+     * @param orderId the id of the order
+     * @return empty optional if order  DNE, optional of order otherwise
+     */
+    public Optional<Order> getOrderById(Long orderId) {
+        return orderRepo.findById(orderId);
+    }
+
+    /**
+     * Updated the order based on id and updated object.
+     *
+     * @param orderId the id of the order
+     * @param order the updated order object
+     * @return empty optional if order  DNE, optional of order otherwise
+     */
+    public Optional<Order> updateOrderById(Long orderId, Order order) {
+        Optional<Order> o = orderRepo.findById(orderId);
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(orderRepo.saveAndFlush(order));
+    }
+
+    /**
+     * Gets all orders.
+     *
+     * @return empty optional if no order exists, optional of list of order otherwise
+     */
+    public Optional<List<Order>> getOrders() {
+        List<Order> o = orderRepo.findAll();
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(o);
+    }
+
+    /**
+     * Creates new order.
+     *
+     * @return optional of order
+     */
+    public Optional<Order> createOrder(Order order) {
+        return Optional.of(orderRepo.saveAndFlush(order));}
 
     /**
      * Gets the rating per order, uses the order id to get the rating of the order.

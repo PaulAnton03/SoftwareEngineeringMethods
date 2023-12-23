@@ -5,20 +5,19 @@ import java.util.Optional;
 import nl.tudelft.sem.template.api.StatusApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
+import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/status")
 public class StatusController implements StatusApi {
 
     public StatusService statusService;
-
-    public AuthorizationService authorizationService;
+    private AuthorizationService authorizationService;
 
     public StatusController(StatusService statusService, AuthorizationService authorizationService) {
         this.statusService = statusService;
@@ -39,8 +38,7 @@ public class StatusController implements StatusApi {
      */
     @Override
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
-
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToAccepted",orderId);
+        var auth = authorizationService.authorize(authorization, "updateToAccepted",orderId);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -63,6 +61,48 @@ public class StatusController implements StatusApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Handles put request for (/status/{orderId}/rejected).
+     *
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param orderId id of the order to update its status to accepted (required)
+     * @return a response entity with nothing, 404 if not found  403 if not authorized, only for vendors
+     */
+    @Override
+    @PutMapping("/{orderId}/rejected")
+    public ResponseEntity<Void> updateToRejected(
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
+    ) {
+
+        var auth = authorizationService.authorize(authorization, "updateToRejected",orderId);
+        if (auth.isPresent()) {
+            return auth.get();
+        }
+
+        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
+
+        if (currentStatus.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (currentStatus.get() != Order.StatusEnum.PENDING) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Order> order = statusService.updateStatusToRejected(orderId);
+        if (order.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        DeliveryException e = new DeliveryException().isResolved(false)
+                .exceptionType(DeliveryException.ExceptionTypeEnum.REJECTED)
+                .orderId(orderId).message("Order was rejected by the vendor");
+
+        statusService.addDeliveryException(e);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     /**
      * Handles put request for (/status/{orderId}/giventocourier).
@@ -80,7 +120,7 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToGivenToCourier(Long orderId, Long authorization,
                                                        UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToGivenToCourier",orderId);
+        var auth = authorizationService.authorize(authorization, "updateToGivenToCourier",orderId);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -119,8 +159,7 @@ public class StatusController implements StatusApi {
      */
     @Override
     public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
-
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToInTransit",orderId);
+        var auth = authorizationService.authorize(authorization, "updateToInTransit",orderId);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -158,9 +197,13 @@ public class StatusController implements StatusApi {
      */
 
     @Override
-    public ResponseEntity<String> getStatus(Long orderId, Long authorization) {
+    @GetMapping("/{orderId}")
+    public ResponseEntity<String> getStatus(
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
+    ) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "getStatus",orderId);
+        var auth = authorizationService.authorize(authorization, "getStatus",orderId);
         if (auth.isPresent()) {
             return auth.get();
         }
