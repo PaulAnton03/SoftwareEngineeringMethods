@@ -46,7 +46,7 @@ public class UserService {
      */
     public Optional<Vendor> makeVendor(Vendor vendor) {
         try{
-            Vendor saved = vendorRepo.save(vendor);
+            Vendor saved = vendorRepo.saveAndFlush(vendor);
             return Optional.of(saved);
         }
         catch (IllegalArgumentException e){
@@ -62,7 +62,7 @@ public class UserService {
     public Optional<Vendor> makeVendorById(Long vendorId) {
         try{
             Vendor vendor = new Vendor().id(vendorId);
-            Vendor saved = vendorRepo.save(vendor);
+            Vendor saved = vendorRepo.saveAndFlush(vendor);
             return Optional.of(saved);
         }
         catch (IllegalArgumentException e){
@@ -77,7 +77,7 @@ public class UserService {
      */
     public Optional<Courier> makeCourier(Courier courier) {
         try{
-            Courier saved = courierRepo.save(courier);
+            Courier saved = courierRepo.saveAndFlush(courier);
             return Optional.of(saved);
         }
         catch (IllegalArgumentException e){
@@ -93,7 +93,7 @@ public class UserService {
     public Optional<Courier> makeCourierById(Long courierId) {
         try{
             Courier courier = new Courier().id(courierId);
-            Courier saved = courierRepo.save(courier);
+            Courier saved = courierRepo.saveAndFlush(courier);
             return Optional.of(saved);
         }
         catch (IllegalArgumentException e){
