@@ -54,7 +54,7 @@ public class UserServiceTest {
 
     @Test
     void makeVendorWorks() {
-        Mockito.when(vendorRepo.save(any())).thenReturn(vendor1);
+        Mockito.when(vendorRepo.saveAndFlush(any())).thenReturn(vendor1);
 
         Optional<Vendor> res = userService.makeVendor(vendor1);
         assert(res.isPresent());
@@ -63,7 +63,7 @@ public class UserServiceTest {
 
     @Test
     void makeVendorDoesNotWork() {
-        Mockito.when(vendorRepo.save(any())).thenThrow(new IllegalArgumentException());
+        Mockito.when(vendorRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
 
         Optional<Vendor> res = userService.makeVendor(null);
         assert(res.isEmpty());
@@ -71,7 +71,7 @@ public class UserServiceTest {
 
     @Test
     void makeVendorByIdWorks() {
-        Mockito.when(vendorRepo.save(any())).thenReturn(vendor1);
+        Mockito.when(vendorRepo.saveAndFlush(any())).thenReturn(vendor1);
 
         Optional<Vendor> res = userService.makeVendorById(vendor1.getId());
         assert(res.isPresent());
@@ -80,7 +80,7 @@ public class UserServiceTest {
 
     @Test
     void makeVendorByIdDoesNotWork() {
-        Mockito.when(vendorRepo.save(any())).thenThrow(new IllegalArgumentException());
+        Mockito.when(vendorRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
 
         Optional<Vendor> res = userService.makeVendorById(null);
         assert(res.isEmpty());
