@@ -83,7 +83,7 @@ public class OrderController implements OrderApi {
             @RequestParam(name = "authorization") Long authorization,
             @PathVariable(name = "orderId") Long orderId
     ) {
-        Optional<ResponseEntity> authorizationResponse =
+        var authorizationResponse =
                 authorizationService.authorize(authorization, "getOrder");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
@@ -110,7 +110,7 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("")
     public ResponseEntity<List<Order>> getOrders(@RequestParam(name = "authorization") Long authorization) {
-        Optional<ResponseEntity> authorizationResponse =
+        var authorizationResponse =
                 authorizationService.authorize(authorization, "getOrders");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
@@ -173,7 +173,7 @@ public class OrderController implements OrderApi {
             @RequestParam(name = "authorization") Long authorization,
             @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
-        Optional<ResponseEntity> authorizationResponse =
+        var authorizationResponse =
                 authorizationService.authorize(authorization, "makeOrder");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
@@ -315,7 +315,7 @@ public class OrderController implements OrderApi {
             @PathVariable(name = "courierId") Long courierId,
             @RequestBody @Valid Order order
     ) {
-        Optional<ResponseEntity> authorizationResponse =
+        var authorizationResponse =
                 authorizationService.authorize(authorization, "setCourierId");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
