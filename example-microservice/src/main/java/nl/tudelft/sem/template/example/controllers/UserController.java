@@ -8,7 +8,6 @@ import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 
@@ -89,38 +88,6 @@ public class UserController implements UserApi {
     }
 
     /**
-     * POST /user/vendor/add-whole : Add a vendor
-     * Add a vendor to the database. One needs to provide the whole object. To be used by admin.
-     *
-     * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param vendor        (optional)
-     * @return Successful response, vendor added (status code 200)
-     * or Unsuccessful, vendor cannot be added because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to add vendor (status code 403)
-     * or Unsuccessful, no vendor was found (status code 404)
-     */
-    @Override
-    public ResponseEntity<Void> makeVendor(Long authorization, Vendor vendor) {
-        return UserApi.super.makeVendor(authorization, vendor);
-    }
-
-    /**
-     * POST /user/vendor/{vendorId} : Add a vendor by only using the id
-     * Add a vendor to the database. Only input needed is the id. The other fields will be set to a default value. To be used by admin.
-     *
-     * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param vendorId      id of the vendor to create (required)
-     * @return Successful response, vendor added (status code 200)
-     * or Unsuccessful, vendor cannot be added because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to add vendor (status code 403)
-     * or Unsuccessful, no vendor was found (status code 404)
-     */
-    @Override
-    public ResponseEntity<Void> makeVendorById(Long authorization, Long vendorId) {
-        return UserApi.super.makeVendorById(authorization, vendorId);
-    }
-
-    /**
      * PUT /user/courier/{courierId}/{bossId} : Update the boss of a courier given the courier id and vendor/admin id
      * Update the boss of the courier corresponding to the courierId. The boss can either be a vendor (if the courier works for that vendor) or the admin (if not).
      *
@@ -164,4 +131,58 @@ public class UserController implements UserApi {
         return UserApi.super.updateSpecificRadius(authorization, body);
     }
 
+
+    /**
+     * Adds the given user to the database
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param vendor  (optional)
+     * @return the saved user
+     */
+    @Override
+    @PostMapping("/vendor/add-whole")
+    public ResponseEntity<Void> makeVendor(
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody Vendor vendor) {
+
+        var authorizationResponse =
+                authorizationService.authorize(authorization, "makeVendor");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Vendor> saved = userService.makeVendor(vendor);
+
+        if (saved.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Creates a new user with given id and adds it to database
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param vendorId Id of the vendor to create (required)
+     * @return the saved user
+     */
+    @Override
+    @PostMapping("/vendor/{vendorId}")
+    public ResponseEntity<Void> makeVendorById(
+                        @RequestParam(name = "authorization") Long authorization,
+                        @PathVariable(name = "vendorId") Long vendorId) {
+
+        var authorizationResponse =
+                authorizationService.authorize(authorization, "makeVendorById");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Vendor> saved = userService.makeVendorById(vendorId);
+
+        if (saved.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
