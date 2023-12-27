@@ -6,8 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import nl.tudelft.sem.template.model.Vendor;
 import static org.mockito.ArgumentMatchers.any;
@@ -118,5 +118,33 @@ public class UserServiceTest {
 
         Optional<Courier> res = userService.makeCourierById(null);
         assert(res.isEmpty());
+    }
+
+    @Test
+    void existsVendorTrue() {
+        Mockito.when(vendorRepo.existsById(1L)).thenReturn(true);
+        boolean res = userService.existsVendor(1L);
+        assertTrue(res);
+    }
+
+    @Test
+    void existsVendorFalse() {
+        Mockito.when(vendorRepo.existsById(1L)).thenReturn(false);
+        boolean res = userService.existsVendor(1L);
+        assertFalse(res);
+    }
+
+    @Test
+    void existsCourierTrue() {
+        Mockito.when(courierRepo.existsById(1L)).thenReturn(true);
+        boolean res = userService.existsCourier(1L);
+        assertTrue(res);
+    }
+
+    @Test
+    void existsCourierFalse() {
+        Mockito.when(courierRepo.existsById(1L)).thenReturn(false);
+        boolean res = userService.existsCourier(1L);
+        assertFalse(res);
     }
 }

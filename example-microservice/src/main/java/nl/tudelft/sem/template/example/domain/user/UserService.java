@@ -100,4 +100,12 @@ public class UserService {
             return Optional.empty();
         }
     }
+
+    public boolean existsCourier(Long id){
+        return courierRepo.existsById(id);
+    }
+
+    public boolean existsVendor(Long id){
+        return vendorRepo.existsById(id);
+    }
 }

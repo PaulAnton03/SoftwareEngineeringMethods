@@ -69,9 +69,13 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Void> makeCourier(Long authorization, Courier courier) {
         var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendor");
+                authorizationService.authorize(authorization, "makeCourier");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
+        }
+
+        if (userService.existsCourier(courier.getId())){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Optional<Courier> saved = userService.makeCourier(courier);
@@ -97,9 +101,13 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Void> makeCourierById(Long authorization, Long courierId) {
         var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendorById");
+                authorizationService.authorize(authorization, "makeCourierById");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
+        }
+
+        if (userService.existsCourier(courierId)){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Optional<Courier> saved = userService.makeCourierById(courierId);
@@ -174,6 +182,10 @@ public class UserController implements UserApi {
             return authorizationResponse.get();
         }
 
+        if (userService.existsVendor(vendor.getId())){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         Optional<Vendor> saved = userService.makeVendor(vendor);
 
         if (saved.isEmpty()) {
@@ -199,6 +211,10 @@ public class UserController implements UserApi {
                 authorizationService.authorize(authorization, "makeVendorById");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
+        }
+
+        if (userService.existsVendor(vendorId)){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Optional<Vendor> saved = userService.makeVendorById(vendorId);
