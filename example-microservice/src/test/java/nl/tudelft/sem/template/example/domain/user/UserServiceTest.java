@@ -6,8 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import nl.tudelft.sem.template.model.Vendor;
 import static org.mockito.ArgumentMatchers.any;
@@ -84,5 +84,67 @@ public class UserServiceTest {
 
         Optional<Vendor> res = userService.makeVendorById(null);
         assert(res.isEmpty());
+    }
+
+    @Test
+    void makeCourierWorks() {
+        Mockito.when(courierRepo.saveAndFlush(any())).thenReturn(courier1);
+
+        Optional<Courier> res = userService.makeCourier(courier1);
+        assert(res.isPresent());
+        assertEquals(res.get().getId(), courier1.getId());
+    }
+
+    @Test
+    void makeCourierDoesNotWork() {
+        Mockito.when(courierRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
+
+        Optional<Courier> res = userService.makeCourier(null);
+        assert(res.isEmpty());
+    }
+
+    @Test
+    void makeCourierByIdWorks() {
+        Mockito.when(courierRepo.saveAndFlush(any())).thenReturn(courier1);
+
+        Optional<Courier> res = userService.makeCourierById(courier1.getId());
+        assert(res.isPresent());
+        assertEquals(res.get().getId(), courier1.getId());
+    }
+
+    @Test
+    void makeCourierByIdDoesNotWork() {
+        Mockito.when(courierRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
+
+        Optional<Courier> res = userService.makeCourierById(null);
+        assert(res.isEmpty());
+    }
+
+    @Test
+    void existsVendorTrue() {
+        Mockito.when(vendorRepo.existsById(1L)).thenReturn(true);
+        boolean res = userService.existsVendor(1L);
+        assertTrue(res);
+    }
+
+    @Test
+    void existsVendorFalse() {
+        Mockito.when(vendorRepo.existsById(1L)).thenReturn(false);
+        boolean res = userService.existsVendor(1L);
+        assertFalse(res);
+    }
+
+    @Test
+    void existsCourierTrue() {
+        Mockito.when(courierRepo.existsById(1L)).thenReturn(true);
+        boolean res = userService.existsCourier(1L);
+        assertTrue(res);
+    }
+
+    @Test
+    void existsCourierFalse() {
+        Mockito.when(courierRepo.existsById(1L)).thenReturn(false);
+        boolean res = userService.existsCourier(1L);
+        assertFalse(res);
     }
 }

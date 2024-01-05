@@ -69,4 +69,43 @@ public class UserService {
             return Optional.empty();
         }
     }
+
+    /**
+     * Tries to add the given courier to the database
+     * @param courier the courier to add
+     * @return an optional of the added courier (or empty optional)
+     */
+    public Optional<Courier> makeCourier(Courier courier) {
+        try{
+            Courier saved = courierRepo.saveAndFlush(courier);
+            return Optional.of(saved);
+        }
+        catch (IllegalArgumentException e){
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Tries to add a new courier with given id to the database
+     * @param courierId the id to create a courier with
+     * @return an optional of the added courier (or empty optional)
+     */
+    public Optional<Courier> makeCourierById(Long courierId) {
+        try{
+            Courier courier = new Courier().id(courierId);
+            Courier saved = courierRepo.saveAndFlush(courier);
+            return Optional.of(saved);
+        }
+        catch (IllegalArgumentException e){
+            return Optional.empty();
+        }
+    }
+
+    public boolean existsCourier(Long id){
+        return courierRepo.existsById(id);
+    }
+
+    public boolean existsVendor(Long id){
+        return vendorRepo.existsById(id);
+    }
 }
