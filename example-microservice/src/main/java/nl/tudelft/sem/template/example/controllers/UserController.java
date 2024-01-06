@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+
+import java.util.Optional;
 import nl.tudelft.sem.template.api.UserApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.user.UserService;
@@ -7,9 +10,8 @@ import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -135,9 +137,7 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Void> updateBossOfCourier(Long courierId, Long bossId, Long authorization) {
         var auth = authorizationService.authorize(authorization, "updateBossOfCourier",bossId);
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Long> newBossId = userService.updateBossIdOfCourier(courierId, bossId);
 

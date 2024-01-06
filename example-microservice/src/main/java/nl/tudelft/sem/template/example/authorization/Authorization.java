@@ -34,10 +34,27 @@ public class Authorization extends Handler {
         if (actualUserType == Authorization.UserType.ADMIN) {
             return Optional.empty();
         }
-        if (!permissions.containsKey(methodName) || !permissions.get(methodName).contains(actualUserType)) {
+        if (!permissions.get(methodName).contains(actualUserType)) {
             return Optional.of(ResponseEntity.status(403).body("User with id " + userId + " does not have access rights"));
         }
         return checkNext(userId, methodName, other);
+    }
+
+    /**
+     * Authorizes a user based on the provided user ID.
+     *
+     * @param userId     The ID of the user to be authorized.
+     * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
+     */
+    public Optional<ResponseEntity> authorizeAdminOnly(Long userId) {
+        Authorization.UserType actualUserType = getUserType(userId);
+        if (actualUserType == Authorization.UserType.NAN) {
+            return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
+        }
+        if (actualUserType != Authorization.UserType.ADMIN) {
+            return Optional.of(ResponseEntity.status(403).body("User with id " + userId + " does not have access rights"));
+        }
+        return Optional.empty();
     }
 
     /**

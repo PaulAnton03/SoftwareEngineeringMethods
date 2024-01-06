@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+
 import io.swagger.v3.oas.annotations.Parameter;
 import java.math.BigDecimal;
 import java.util.List;
@@ -51,11 +53,8 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @PathVariable(name = "orderId") Long orderId
     ) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getFinalDestination", orderId);
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorize(authorization, "getFinalDestination", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
         Optional<Location> location = orderService.getFinalDestinationOfOrder(orderId);
 
         if (location.isEmpty()) {
@@ -83,12 +82,8 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @PathVariable(name = "orderId") Long orderId
     ) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getOrder", orderId);
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
-
+        var auth = authorizationService.authorize(authorization, "getOrder", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
         Optional<Order> o = orderService.getOrderById(orderId);
         if (o.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -110,11 +105,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("")
     public ResponseEntity<List<Order>> getOrders(@RequestParam(name = "authorization") Long authorization) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getOrders", -1L);
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<List<Order>> o = orderService.getOrders();
         if (o.isEmpty()) {
@@ -139,11 +131,8 @@ public class OrderController implements OrderApi {
     public ResponseEntity getPickupDestination(
         @RequestParam(name = "authorization") Long authorization,
         @PathVariable(name = "orderId") Long orderId) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getPickupDestination", orderId);
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorize(authorization, "getPickupDestination", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
         Optional<Location> pickup = orderService.getPickupDestination(orderId);
 
         if (pickup.isEmpty()) {
@@ -173,11 +162,8 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "makeOrder", orderId);
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorize(authorization, "makeOrder", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order> o = orderService.getOrderById(orderId);
         if (o.isPresent()) {
@@ -208,11 +194,8 @@ public class OrderController implements OrderApi {
         @PathVariable(name = "orderId") Long orderId,
         @RequestParam(name = "authorization") Long authorization,
         @Parameter(name = "Order") @RequestBody @Valid Order order) {
-        var authorizationResponse =
-            authorizationService.authorize(authorization, "updateOrder", orderId);
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorize(authorization, "updateOrder", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order> response = orderService.updateOrderById(orderId, order);
 
@@ -241,11 +224,8 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @PathVariable(name = "orderId") Long orderId
     ) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "putOrderRating", orderId);
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorize(authorization, "getOrderRating", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<BigDecimal> currentRating = orderService.getRating(orderId);
 
@@ -275,11 +255,8 @@ public class OrderController implements OrderApi {
         @PathVariable(name = "orderId") Long orderId,
         @RequestBody @Valid BigDecimal body
     ) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "putOrderRating", orderId);
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorize(authorization, "putOrderRating", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<BigDecimal> currentRating = orderService.getRating(orderId);
 

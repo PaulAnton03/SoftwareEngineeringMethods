@@ -52,6 +52,26 @@ public class AuthorizationService {
         return handler.check(userId, methodName, other);
     }
 
+
+    /**
+     * Wrapper for authorize.
+     * @param response
+     * @return
+     */
+    public static boolean doesNotHaveAuthority(Optional<ResponseEntity> response) { return response.isPresent(); }
+
+
+    /**
+     * Checks if the user is an admin.
+     *
+     * @param userId the id of the user
+     * @return an empty optional if the user is authorized, otherwise a response entity
+     */
+    public Optional<ResponseEntity> authorizeAdminOnly(Long userId) {
+        Authorization authorization = new Authorization(userExternalService, permissions);
+        return authorization.authorizeAdminOnly(userId);
+    }
+
     /**
      * Initializes the permissions map with default values if it is null.
      * You do not need to add permissions for admin only methods.

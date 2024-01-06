@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+
 import java.util.Optional;
 
 import nl.tudelft.sem.template.api.StatusApi;
@@ -39,9 +41,7 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
         var auth = authorizationService.authorize(authorization, "updateToAccepted",orderId);
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -76,9 +76,7 @@ public class StatusController implements StatusApi {
     ) {
 
         var auth = authorizationService.authorize(authorization, "updateToRejected",orderId);
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -121,9 +119,7 @@ public class StatusController implements StatusApi {
                                                        UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
         var auth = authorizationService.authorize(authorization, "updateToGivenToCourier",orderId);
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -160,9 +156,7 @@ public class StatusController implements StatusApi {
     @Override
     public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
         var auth = authorizationService.authorize(authorization, "updateToInTransit",orderId);
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -204,9 +198,7 @@ public class StatusController implements StatusApi {
     ) {
 
         var auth = authorizationService.authorize(authorization, "getStatus",orderId);
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
