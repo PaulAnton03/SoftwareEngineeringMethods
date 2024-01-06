@@ -25,17 +25,13 @@ import org.mockito.Mockito;
 public class StatusServiceTest {
 
     public OrderRepository orderRepo;
-    private DeliveryExceptionRepository exceptionRepo;
-
     public Order order1;
-
     public Order order2;
-
     public Order order3;
     public DeliveryException delException1;
     public Order order4;
-
     public StatusService ss;
+    private DeliveryExceptionRepository exceptionRepo;
 
     @BeforeEach
     void setUp() {
@@ -46,7 +42,7 @@ public class StatusServiceTest {
         this.order3 = new Order().id(1L).status(Order.StatusEnum.PREPARING);
         this.order4 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT).timeValues(new Time().prepTime("00:22::00"));
         this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
-                .message("Test exception").isResolved(false).orderId(1L);
+            .message("Test exception").isResolved(false).orderId(1L);
         this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 
@@ -176,14 +172,14 @@ public class StatusServiceTest {
     @Test
     void updateStatusToDelivered200() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order4));
-        Mockito.when(orderRepo.save(order4)).thenReturn(order4);
+        Mockito.when(orderRepo.saveAndFlush(order4)).thenReturn(order4);
 
         OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
         UpdateToDeliveredRequest req = new UpdateToDeliveredRequest().actualDeliveryTime(deliveryTime);
-        Optional<Order> ret = ss.updateStatusToDelivered(order4.getId(), req);
+        ss.updateStatusToDelivered(order4.getId(), req);
 
         ArgumentCaptor<Order> argumentCaptor = ArgumentCaptor.forClass(Order.class);
-        verify(orderRepo).save(argumentCaptor.capture());
+        verify(orderRepo).saveAndFlush(argumentCaptor.capture());
         Order res = argumentCaptor.getValue();
 
         assertEquals(res.getStatus(), Order.StatusEnum.DELIVERED);

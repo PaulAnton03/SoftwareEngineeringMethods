@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.api.UserApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.user.UserService;
@@ -7,8 +8,12 @@ import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -69,12 +74,12 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Void> makeCourier(Long authorization, Courier courier) {
         var authorizationResponse =
-                authorizationService.authorize(authorization, "makeCourier");
+            authorizationService.authorize(authorization, "makeCourier");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
 
-        if (userService.existsCourier(courier.getId())){
+        if (userService.existsCourier(courier.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -101,12 +106,12 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Void> makeCourierById(Long authorization, Long courierId) {
         var authorizationResponse =
-                authorizationService.authorize(authorization, "makeCourierById");
+            authorizationService.authorize(authorization, "makeCourierById");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
 
-        if (userService.existsCourier(courierId)){
+        if (userService.existsCourier(courierId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -130,6 +135,7 @@ public class UserController implements UserApi {
      * or Unsuccessful, courier updated be retrieved because of bad request (status code 400)
      * or Unsuccessful, no courier was found (status code 404)
      * or Unauthorized (status code 403)
+     * only for vendors
      */
     @Override
     public ResponseEntity<Void> updateBossOfCourier(Long courierId, Long bossId, Long authorization) {
@@ -166,23 +172,24 @@ public class UserController implements UserApi {
 
     /**
      * Adds the given user to the database
+     *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param vendor  (optional)
+     * @param vendor        (optional)
      * @return the saved user
      */
     @Override
     @PostMapping("/vendor/add-whole")
     public ResponseEntity<Void> makeVendor(
-            @RequestParam(name = "authorization") Long authorization,
-            @RequestBody Vendor vendor) {
+        @RequestParam(name = "authorization") Long authorization,
+        @RequestBody Vendor vendor) {
 
         var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendor");
+            authorizationService.authorize(authorization, "makeVendor");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
 
-        if (userService.existsVendor(vendor.getId())){
+        if (userService.existsVendor(vendor.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -197,23 +204,24 @@ public class UserController implements UserApi {
 
     /**
      * Creates a new user with given id and adds it to database
+     *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param vendorId Id of the vendor to create (required)
+     * @param vendorId      Id of the vendor to create (required)
      * @return the saved user
      */
     @Override
     @PostMapping("/vendor/{vendorId}")
     public ResponseEntity<Void> makeVendorById(
-                        @RequestParam(name = "authorization") Long authorization,
-                        @PathVariable(name = "vendorId") Long vendorId) {
+        @RequestParam(name = "authorization") Long authorization,
+        @PathVariable(name = "vendorId") Long vendorId) {
 
         var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendorById");
+            authorizationService.authorize(authorization, "makeVendorById");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
 
-        if (userService.existsVendor(vendorId)){
+        if (userService.existsVendor(vendorId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
