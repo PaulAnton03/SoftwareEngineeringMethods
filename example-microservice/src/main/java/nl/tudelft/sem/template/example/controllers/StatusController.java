@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/status")
 public class StatusController implements StatusApi {
 
+    private final AuthorizationService authorizationService;
     public StatusService statusService;
     public OrderService orderService;
-    private final AuthorizationService authorizationService;
 
     public StatusController(StatusService statusService, OrderService orderService,
                             AuthorizationService authorizationService) {

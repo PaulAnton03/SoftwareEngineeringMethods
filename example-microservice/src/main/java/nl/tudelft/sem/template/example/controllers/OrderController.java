@@ -80,7 +80,7 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(
-        @PathVariable("orderId") Long orderId,
+        @PathVariable(name = "orderId") Long orderId,
         @RequestParam(name = "authorization") Long authorization
     ) {
         Optional<ResponseEntity> authorizationResponse =
@@ -139,7 +139,7 @@ public class OrderController implements OrderApi {
     public ResponseEntity getPickupDestination(
         @PathVariable(name = "orderId") Long orderId,
         @RequestParam(name = "authorization") Long authorization
-        ) {
+    ) {
         Optional<ResponseEntity> authorizationResponse =
             authorizationService.authorize(authorization, "getPickupDestination");
         if (authorizationResponse.isPresent()) {

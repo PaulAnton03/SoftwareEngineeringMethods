@@ -1,7 +1,7 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import java.util.List;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
@@ -119,7 +119,7 @@ public class OrderService {
      * Updated the order based on id and updated object.
      *
      * @param orderId the id of the order
-     * @param order the updated order object
+     * @param order   the updated order object
      * @return empty optional if order  DNE, optional of order otherwise
      */
     public Optional<Order> updateOrderById(Long orderId, Order order) {
@@ -150,7 +150,8 @@ public class OrderService {
      * @return optional of order
      */
     public Optional<Order> createOrder(Order order) {
-        return Optional.of(orderRepo.saveAndFlush(order));}
+        return Optional.of(orderRepo.saveAndFlush(order));
+    }
 
     /**
      * Gets the rating per order, uses the order id to get the rating of the order.
@@ -161,7 +162,7 @@ public class OrderService {
     public Optional<BigDecimal> getRating(Long orderId) {
         Optional<Order> order = orderRepo.findById(orderId);
 
-        if(order.isEmpty()) {
+        if (order.isEmpty()) {
             return Optional.empty();
         }
 
@@ -173,13 +174,13 @@ public class OrderService {
      * updates it using the body parameter provided in the signature.
      *
      * @param orderId the id of the order
-     * @param body the new rating that the order will have
+     * @param body    the new rating that the order will have
      * @return empty optional if either order DNE, optional of updated rating otherwise
      */
     public Optional<BigDecimal> updateRating(Long orderId, BigDecimal body) {
         Optional<Order> order = orderRepo.findById(orderId);
 
-        if(order.isEmpty()) {
+        if (order.isEmpty()) {
             return Optional.empty();
         }
 

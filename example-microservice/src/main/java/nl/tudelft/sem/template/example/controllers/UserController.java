@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +31,7 @@ public class UserController implements UserApi {
     }
 
     /**
-     * GET /user/courier/{courierId} : Retrieve a courier given the courier id
+     * GET /user/courier/{courierId} : Retrieve a courier given the courier id.
      * return the courier corresponding to the id
      *
      * @param courierId     id of the courier to retrieve (required)
@@ -72,7 +73,9 @@ public class UserController implements UserApi {
      * or Unsuccessful, no courier was found (status code 404)
      */
     @Override
-    public ResponseEntity<Void> makeCourier(Long authorization, Courier courier) {
+    @PostMapping("/courier/add-whole")
+    public ResponseEntity<Void> makeCourier(@RequestParam(value = "authorization", required = true) Long authorization,
+                                            @RequestBody(required = false) Courier courier) {
         var authorizationResponse =
             authorizationService.authorize(authorization, "makeCourier");
         if (authorizationResponse.isPresent()) {
@@ -104,7 +107,9 @@ public class UserController implements UserApi {
      * or Unsuccessful, no courier was found (status code 404)
      */
     @Override
-    public ResponseEntity<Void> makeCourierById(Long authorization, Long courierId) {
+    @PostMapping("/courier/{courierId}")
+    public ResponseEntity<Void> makeCourierById(@RequestParam(value = "authorization", required = true) Long authorization,
+                                                @PathVariable(name = "courierId") Long courierId) {
         var authorizationResponse =
             authorizationService.authorize(authorization, "makeCourierById");
         if (authorizationResponse.isPresent()) {
@@ -138,7 +143,11 @@ public class UserController implements UserApi {
      * only for vendors
      */
     @Override
-    public ResponseEntity<Void> updateBossOfCourier(Long courierId, Long bossId, Long authorization) {
+    @PutMapping("/courier/{courierId}/{bossId}")
+    public ResponseEntity<Void> updateBossOfCourier(@PathVariable("courierId") Long courierId,
+                                                    @PathVariable("bossId") Long bossId,
+                                                    @RequestParam(value = "authorization", required = true)
+                                                    Long authorization) {
         var auth = authorizationService.authorize(authorization, "updateBossOfCourier");
         if (auth.isPresent()) {
             return auth.get();
