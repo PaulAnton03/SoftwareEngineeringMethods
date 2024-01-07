@@ -237,7 +237,7 @@ public class OrderController implements OrderApi {
             @PathVariable(name = "orderId") Long orderId
     ) {
         Optional<ResponseEntity> authorizationResponse =
-                authorizationService.authorize(authorization, "putOrderRating");
+                authorizationService.authorize(authorization, "getOrderRating");
         if(authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }

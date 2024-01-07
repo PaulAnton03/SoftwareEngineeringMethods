@@ -4,6 +4,8 @@ import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -107,5 +109,31 @@ public class UserService {
 
     public boolean existsVendor(Long id){
         return vendorRepo.existsById(id);
+    }
+
+    public Optional<Double> getRadiusOfVendor(Long id) {
+        Optional<Vendor> vendor = vendorRepo.findById(id);
+
+        if(vendor.isEmpty()){
+            return Optional.empty();
+        }
+
+        return Optional.of(vendor.get().getRadius());
+    }
+
+    public Optional<Double> updateRadiusOfVendor(Long id, Double body) {
+        Optional<Vendor> vendor = vendorRepo.findById(id);
+
+        if(vendor.isEmpty()){
+            return Optional.empty();
+        }
+
+        vendor.get().setRadius(body);
+
+        return Optional.of(vendorRepo.saveAndFlush(vendor.get()).getRadius());
+    }
+
+    public Optional<Vendor> getVendor(Long id) {
+        return vendorRepo.findById(id);
     }
 }

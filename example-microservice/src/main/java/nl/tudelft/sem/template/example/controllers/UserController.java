@@ -51,8 +51,23 @@ public class UserController implements UserApi {
      * or Unsuccessful, no specific radius was found (status code 404)
      */
     @Override
-    public ResponseEntity<Double> getSpecificRadius(Long authorization) {
-        return UserApi.super.getSpecificRadius(authorization);
+    @GetMapping("/vendor/radius")
+    public ResponseEntity getSpecificRadius(
+            @RequestParam(name = "authorization") Long authorization
+    ) {
+        var authorizationResponse =
+                authorizationService.authorize(authorization, "getSpecificRadius");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Double> ratingReceived = userService.getRadiusOfVendor(authorization);
+
+        if (ratingReceived.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(ratingReceived.get(), HttpStatus.OK);
     }
 
     /**
@@ -159,8 +174,27 @@ public class UserController implements UserApi {
      * or Unsuccessful, no specific radius was found. (status code 404)
      */
     @Override
-    public ResponseEntity<Void> updateSpecificRadius(Long authorization, Double body) {
-        return UserApi.super.updateSpecificRadius(authorization, body);
+    @PutMapping("/vendor/radius")
+    public ResponseEntity updateSpecificRadius(Long authorization, Double body) {
+        var authorizationResponse =
+                authorizationService.authorize(authorization, "updateSpecificRadius");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Vendor> vendor = userService.getVendor(authorization);
+
+        if (vendor.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Double> newRadius = userService.updateRadiusOfVendor(authorization, body);
+
+        if(newRadius.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -225,4 +259,5 @@ public class UserController implements UserApi {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
