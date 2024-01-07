@@ -102,6 +102,7 @@ public class OrderService {
 
         Order newOrder = order.get();
         newOrder.setRatingNumber(body);
+        orderRepo.save(newOrder);
 
         return Optional.of(body);
     }
@@ -123,6 +124,7 @@ public class OrderService {
 
         Time timeOfOrder = order.get().getTimeValues();
         timeOfOrder.setPrepTime(body);
+        orderRepo.save(order.get());
 
         return Optional.of(body);
     }
