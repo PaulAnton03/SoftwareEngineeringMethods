@@ -176,9 +176,10 @@ public class OrderController implements OrderApi {
             @PathVariable(name = "orderId") Long orderId,
             @RequestBody @Valid String body
     ) {
-        var auth = authorizationService.authorize(authorization, "setDeliverTime", orderId);
-        if (auth.isPresent()) {
-            return auth.get();
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "setDeliverTime");
+        if(authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
         }
 
         Optional<String> newPrepTime = orderService.updatePrepTime(orderId, body);
