@@ -480,7 +480,7 @@ paths:
             type: integer
             format: int64
       requestBody:
-        description: Order object where ratingNumber is updated
+        description: The rating number to update the rating field of an order
         required: true
         content:
           application/json:
@@ -1440,8 +1440,8 @@ components:
   schemas:
     Order:
       type: object
-      x-class-extra-annotation: "@javax.persistence.Entity"
-      x-table-name: "order_table"
+      x-class-extra-annotation: "@javax.persistence.Entity @javax.persistence.Table(name = \"order_table\") @lombok.AllArgsConstructor @lombok.NoArgsConstructor"
+      x-field-extra-annotation: "@javax.persistence.OneToOne(cascade = javax.persistence.CascadeType.ALL) @javax.persistence.JoinColumn(name =\"orderId\")"
       properties:
         status:
           type: string
@@ -1479,8 +1479,7 @@ components:
           description: a number out of five (0-5 stars)
 
     Vendor:
-      x-class-extra-annotation: "@javax.persistence.Entity"
-      x-table-name: "vendor_table"
+      x-class-extra-annotation: "@javax.persistence.Entity @javax.persistence.Table(name = \"vendor_table\") @lombok.AllArgsConstructor @lombok.NoArgsConstructor"
       properties:
         id:
           type: integer
@@ -1500,8 +1499,7 @@ components:
 
     Courier:
       description: The user that delivers the given order.
-      x-class-extra-annotation: "@javax.persistence.Entity"
-      x-table-name: "courier_table"
+      x-class-extra-annotation: "@javax.persistence.Entity @javax.persistence.Table(name = \"courier_table\") @lombok.AllArgsConstructor @lombok.NoArgsConstructor"
       properties:
         id:
           type: integer
@@ -1523,13 +1521,14 @@ components:
       description: >-
         General exception class more specific exceptions inherit from.
         Thrown whenever there is any kind of problem with the order
-      x-class-extra-annotation: "@javax.persistence.Entity"
+      x-class-extra-annotation: "@javax.persistence.Entity @javax.persistence.Table(name= \"exception_table\") @lombok.AllArgsConstructor @lombok.NoArgsConstructor"
       properties:
-        orderId:
+        id:
           type: integer
           format: int64
-          description: the id of the order that the exception happened on
-          x-field-extra-annotation: "@javax.persistence.Id"
+          x-field-extra-annotation: "@javax.persistence.Id @javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)"
+        order:
+          $ref: '#/components/schemas/Order'
         message:
           type: string
           description: explanation of what went wrong with the order
@@ -1548,7 +1547,6 @@ components:
           example: LateDelivery
 
     Location:
-#      x-field-extra-annotation: "@javax.persistence.ManyToOne(cascade = javax.persistence.CascadeType.ALL) @javax.persistence.JoinColumn(name =\"id\")"
       description: Any kind of address expressed as a longitude and latitude
       type: object
       x-class-extra-annotation: "@javax.persistence.Embeddable"
