@@ -84,7 +84,7 @@ class OrderControllerTest {
     void getOrder403() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
-        Mockito.when(authorizationService.authorize(1L, "getOrder", 11L))
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "getOrder", 11L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getOrder(1L, 11L);
@@ -127,7 +127,7 @@ class OrderControllerTest {
     void updateOrder403() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
-        Mockito.when(authorizationService.authorize(1L, "updateOrder", 11L))
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "updateOrder", 11L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.updateOrder(11L, 1L, updated);
@@ -184,7 +184,7 @@ class OrderControllerTest {
     @Test
     void makeOrder403() {
         Order o = new Order().id(11L);
-        Mockito.when(authorizationService.authorize(1L, "makeOrder", 11L))
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "makeOrder", 11L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         Mockito.when(orderService.createOrder(o)).thenReturn(Optional.of(o));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());

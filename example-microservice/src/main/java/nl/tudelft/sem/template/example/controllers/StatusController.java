@@ -40,7 +40,7 @@ public class StatusController implements StatusApi {
      */
     @Override
     public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
-        var auth = authorizationService.authorize(authorization, "updateToAccepted",orderId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToAccepted",orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -75,7 +75,7 @@ public class StatusController implements StatusApi {
             @PathVariable(name = "orderId") Long orderId
     ) {
 
-        var auth = authorizationService.authorize(authorization, "updateToRejected",orderId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToRejected",orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -118,7 +118,7 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToGivenToCourier(Long orderId, Long authorization,
                                                        UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
-        var auth = authorizationService.authorize(authorization, "updateToGivenToCourier",orderId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToGivenToCourier",orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -155,7 +155,7 @@ public class StatusController implements StatusApi {
      */
     @Override
     public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
-        var auth = authorizationService.authorize(authorization, "updateToInTransit",orderId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToInTransit",orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -197,7 +197,7 @@ public class StatusController implements StatusApi {
             @PathVariable(name = "orderId") Long orderId
     ) {
 
-        var auth = authorizationService.authorize(authorization, "getStatus",orderId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getStatus",orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);

@@ -70,11 +70,9 @@ public class UserController implements UserApi {
      */
     @Override
     public ResponseEntity<Void> makeCourier(Long authorization, Courier courier) {
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeCourier");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
 
         if (userService.existsCourier(courier.getId())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -102,11 +100,9 @@ public class UserController implements UserApi {
      */
     @Override
     public ResponseEntity<Void> makeCourierById(Long authorization, Long courierId) {
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeCourierById");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
 
         if (userService.existsCourier(courierId)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -135,7 +131,7 @@ public class UserController implements UserApi {
      */
     @Override
     public ResponseEntity<Void> updateBossOfCourier(Long courierId, Long bossId, Long authorization) {
-        var auth = authorizationService.authorize(authorization, "updateBossOfCourier",bossId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateBossOfCourier",bossId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Long> newBossId = userService.updateBossIdOfCourier(courierId, bossId);
@@ -176,11 +172,8 @@ public class UserController implements UserApi {
             @RequestParam(name = "authorization") Long authorization,
             @RequestBody Vendor vendor) {
 
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendor");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         if (userService.existsVendor(vendor.getId())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -207,11 +200,9 @@ public class UserController implements UserApi {
                         @RequestParam(name = "authorization") Long authorization,
                         @PathVariable(name = "vendorId") Long vendorId) {
 
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendorById");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
 
         if (userService.existsVendor(vendorId)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

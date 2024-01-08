@@ -46,7 +46,7 @@ public class AuthorizationService {
      * @param other      id of order or vendor
      * @return an empty optional if the user is authorized, otherwise a response entity
      */
-    public Optional<ResponseEntity> authorize(Long userId, String methodName, Long other) {
+    public Optional<ResponseEntity> checkIfUserIsAuthorized(Long userId, String methodName, Long other) {
         Handler handler = Handler.link(new Authorization(userExternalService, permissions),
             new Validation(dbUtils, validationMethods));
         return handler.check(userId, methodName, other);
