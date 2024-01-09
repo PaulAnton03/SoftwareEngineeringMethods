@@ -5,5 +5,5 @@ import java.util.Optional;
 import nl.tudelft.sem.template.model.Order;
 
 public interface NextOrderStrategy {
-    public List<Order> availableOrders(Optional<Long> vendorId);
+    Optional<List<Order>> availableOrders(Optional<Long> vendorId);
 }

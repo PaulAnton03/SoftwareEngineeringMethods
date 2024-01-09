@@ -3,21 +3,16 @@ package nl.tudelft.sem.template.example.domain.order;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import nl.tudelft.sem.template.example.authorization.AuthorizationService;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-public class DependentOrderStrategy implements NextOrderStrategy{
-    private OrderRepository orderRepository;
+public class OrderPerVendorStrategy implements NextOrderStrategy {
+
 
     private static final int DELIVERY_SERVER_PORT = 8082;
 
-    public DependentOrderStrategy(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
 
     /**
      * The strategy used for couriers working for a vendor (dependent couriers).
@@ -25,12 +20,26 @@ public class DependentOrderStrategy implements NextOrderStrategy{
      * @return a list containing a single order that was assigned by the vendor to that courier
      */
     @Override
-    public List<Order> availableOrders(Optional<Long> vendorId) {
-        if(vendorId.isEmpty()) {
-            return null; // well something went wrong
+    public Optional<List<Order>> availableOrders(Optional<Long> vendorId) {
+        if (vendorId.isEmpty()) {
+            return Optional.empty(); // well something went wrong
         }
 
-        return null;
+        List<Order> availableOrders = getOrdersFromDeliveryMicroservice(vendorId.get());
+
+        if (availableOrders == null) {
+            // something went wrong with communication
+            return Optional.empty();
+        }
+
+        if (availableOrders.isEmpty()) {
+            // if no available orders, return empty list
+            return Optional.of(new ArrayList<>());
+        }
+
+        // return only one order as a courier is "assigned" an order, this behavior can be changed in the future
+        // according to the needs of the vendor by for example first ordering and then getting the first one
+        return Optional.of(List.of(availableOrders.get(0)));
     }
 
 
@@ -38,7 +47,8 @@ public class DependentOrderStrategy implements NextOrderStrategy{
         RestTemplate restTemplate = new RestTemplate();
         String ordersServiceEndpoint = "http://localhost:" + DELIVERY_SERVER_PORT + "/ORDER/" + vendorId + "/type";
         try {
-            ParameterizedTypeReference<List<Order>> responseType = new ParameterizedTypeReference<>() {};
+            ParameterizedTypeReference<List<Order>> responseType = new ParameterizedTypeReference<>() {
+            };
 
 //            List<Order> orders = restTemplate.getForObject(ordersServiceEndpoint);
 //            return parseUserType(actualUserType);
