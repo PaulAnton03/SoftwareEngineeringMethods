@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -17,6 +18,7 @@ import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 class OrderServiceTest {
@@ -182,6 +184,39 @@ class OrderServiceTest {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
 
         Optional<Time> res = os.getTimeValuesForOrder(order1.getId());
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getRating200() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Optional<BigDecimal> res = os.getRating(order1.getId());
+        assertTrue(res.isPresent());
+        assertEquals(res.get(),order1.getRatingNumber());
+    }
+
+    @Test
+    void getRating404() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<BigDecimal> res = os.getRating(order1.getId());
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void updateRating200() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Order order3 = order1;
+        order3.setRatingNumber(BigDecimal.valueOf(10));
+        Mockito.when(orderRepo.saveAndFlush(order3)).thenReturn(order3);
+        Optional<BigDecimal> res = os.updateRating(order1.getId(), BigDecimal.valueOf(10));
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), order3.getRatingNumber());
+    }
+
+    @Test
+    void updateRating404() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<BigDecimal> res = os.updateRating(order1.getId(), BigDecimal.valueOf(10));
         assertTrue(res.isEmpty());
     }
 }
