@@ -37,7 +37,7 @@ public class StatusServiceTest {
         this.order2 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER);
         this.order3 = new Order().id(1L).status(Order.StatusEnum.PREPARING);
         this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
-                .message("Test exception").isResolved(false).orderId(1L);
+                .message("Test exception").isResolved(false).order(order1);
         this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 
