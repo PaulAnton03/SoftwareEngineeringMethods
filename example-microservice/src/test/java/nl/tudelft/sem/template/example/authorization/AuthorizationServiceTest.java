@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.controllers.OrderController;
+import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
 import nl.tudelft.sem.template.model.Location;
@@ -28,6 +30,9 @@ public class AuthorizationServiceTest {
     private OrderService orderService;
     private OrderController controller;
 
+    private OrderRepository orderRepo;
+    private VendorRepository vendorRepo;
+
     private final UserExternalService userExternalService = new UserExternalService();
 
     private final HashMap<String, List<AuthorizationService.UserType>> permissions = new HashMap<>(
@@ -42,7 +47,9 @@ public class AuthorizationServiceTest {
     void setUp() {
         WireMockConfig.startUserServer();
         this.orderService = Mockito.mock(OrderService.class);
-        this.controller = new OrderController(orderService, authorizationService);
+        this.orderRepo = Mockito.mock(OrderRepository.class);
+        this.vendorRepo = Mockito.mock(VendorRepository.class);
+        this.controller = new OrderController(orderService, authorizationService, orderRepo, vendorRepo);
     }
 
     @Test

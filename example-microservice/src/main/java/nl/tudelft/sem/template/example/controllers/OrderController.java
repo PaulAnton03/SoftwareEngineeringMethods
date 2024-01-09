@@ -5,12 +5,16 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
+import lombok.Getter;
+import lombok.Setter;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.GeneralOrdersStrategy;
 import nl.tudelft.sem.template.example.domain.order.NextOrderStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderPerVendorStrategy;
+import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +38,23 @@ public class OrderController implements OrderApi {
 
     private final AuthorizationService authorizationService;
 
+    private OrderRepository orderRepository;
+
+    private VendorRepository vendorRepository;
+
+    @Getter
+    @Setter
     private NextOrderStrategy strategy;
 
     @Autowired
-    public OrderController(OrderService orderService, AuthorizationService authorizationService) {
+    public OrderController(OrderService orderService, AuthorizationService authorizationService,
+                           OrderRepository orderRepository, VendorRepository vendorRepository) {
         this.orderService = orderService;
         this.authorizationService = authorizationService;
+        this.orderRepository = orderRepository;
+        this.vendorRepository = vendorRepository;
     }
 
-    /**
-     * Sets the strategy for getting available offers
-     *
-     * @param strategy the next order strategy, either for independent or dependent orders
-     */
-    public void setStrategy(NextOrderStrategy strategy) {
-        this.strategy = strategy;
-    }
 
     /**
      * GET /order/{vendorId} : Retrieve the next order that belongs to a given vendor.
@@ -75,7 +80,7 @@ public class OrderController implements OrderApi {
             return authorizationResponse.get();
         }
 
-        this.setStrategy(new OrderPerVendorStrategy());
+        this.setStrategy(new OrderPerVendorStrategy(orderRepository));
         Optional<List<Order>> orders = strategy.availableOrders(Optional.of(vendorId));
 
         if (orders.isEmpty()) {
@@ -110,11 +115,18 @@ public class OrderController implements OrderApi {
             return authorizationResponse.get();
         }
 
-        this.setStrategy(new GeneralOrdersStrategy());
+        this.setStrategy(new GeneralOrdersStrategy(orderRepository, vendorRepository));
         Optional<List<Order>> orders = strategy.availableOrders(Optional.empty());
 
+        if (orders.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        return OrderApi.super.getIndependentOrders(authorization);
+        if (orders.get().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(orders.get(), HttpStatus.OK);
     }
 
     /**

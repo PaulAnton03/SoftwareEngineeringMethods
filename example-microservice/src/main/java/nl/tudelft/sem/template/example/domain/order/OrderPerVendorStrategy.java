@@ -3,16 +3,26 @@ package nl.tudelft.sem.template.example.domain.order;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 public class OrderPerVendorStrategy implements NextOrderStrategy {
+    /**
+     * This strategy is used for dependent couriers, meaning couriers that work for a specific vendor.
+     * They can only get - meaning "assigned" - one order that is available for that vendor.
+     */
 
 
-    private static final int DELIVERY_SERVER_PORT = 8082;
+//    private static final int DELIVERY_SERVER_PORT = 8082;
 
+    private OrderRepository orderRepository;
+
+    public OrderPerVendorStrategy(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     /**
      * The strategy used for couriers working for a vendor (dependent couriers).
@@ -25,7 +35,7 @@ public class OrderPerVendorStrategy implements NextOrderStrategy {
             return Optional.empty(); // well something went wrong
         }
 
-        List<Order> availableOrders = getOrdersFromDeliveryMicroservice(vendorId.get());
+        List<Order> availableOrders = orderRepository.findByVendorIdAndStatus(vendorId.get(), Order.StatusEnum.PREPARING);
 
         if (availableOrders == null) {
             // something went wrong with communication
@@ -43,21 +53,21 @@ public class OrderPerVendorStrategy implements NextOrderStrategy {
     }
 
 
-    private List<Order> getOrdersFromDeliveryMicroservice(Long vendorId) {
-        RestTemplate restTemplate = new RestTemplate();
-        String ordersServiceEndpoint = "http://localhost:" + DELIVERY_SERVER_PORT + "/ORDER/" + vendorId + "/type";
-        try {
-            ParameterizedTypeReference<List<Order>> responseType = new ParameterizedTypeReference<>() {
-            };
-
-//            List<Order> orders = restTemplate.getForObject(ordersServiceEndpoint);
-//            return parseUserType(actualUserType);
-
-            return restTemplate.exchange(ordersServiceEndpoint, HttpMethod.GET, null, responseType)
-                .getBody();
-
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-    }
+//    private List<Order> getOrdersFromDeliveryMicroservice(Long vendorId) {
+//        RestTemplate restTemplate = new RestTemplate();
+//        String ordersServiceEndpoint = "http://localhost:" + DELIVERY_SERVER_PORT + "/ORDER/" + vendorId + "/type";
+//        try {
+//            ParameterizedTypeReference<List<Order>> responseType = new ParameterizedTypeReference<>() {
+//            };
+//
+////            List<Order> orders = restTemplate.getForObject(ordersServiceEndpoint);
+////            return parseUserType(actualUserType);
+//
+//            return restTemplate.exchange(ordersServiceEndpoint, HttpMethod.GET, null, responseType)
+//                .getBody();
+//
+//        } catch (Exception e) {
+//            return new ArrayList<>();
+//        }
+//    }
 }

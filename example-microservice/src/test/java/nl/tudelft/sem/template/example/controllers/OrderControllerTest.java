@@ -1,13 +1,19 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
+import nl.tudelft.sem.template.example.domain.order.GeneralOrdersStrategy;
+import nl.tudelft.sem.template.example.domain.order.NextOrderStrategy;
+import nl.tudelft.sem.template.example.domain.order.OrderPerVendorStrategy;
+import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +26,10 @@ import org.springframework.http.ResponseEntity;
 class OrderControllerTest {
 
     private OrderService orderService;
+
+    private OrderRepository orderRepo;
+
+    private VendorRepository vendorRepo;
     private OrderController controller;
 
     private AuthorizationService authorizationService;
@@ -28,9 +38,11 @@ class OrderControllerTest {
     @BeforeEach
     void setUp() {
         this.orderService = Mockito.mock(OrderService.class);
+        this.orderRepo = Mockito.mock(OrderRepository.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
+        this.vendorRepo = Mockito.mock(VendorRepository.class);
         Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString())).thenReturn(Optional.empty());
-        this.controller = new OrderController(orderService, authorizationService);
+        this.controller = new OrderController(orderService, authorizationService, orderRepo, vendorRepo);
     }
 
     @Test
@@ -41,6 +53,7 @@ class OrderControllerTest {
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
+
 
     @Test
     void getFinalDestinationGives404() {
