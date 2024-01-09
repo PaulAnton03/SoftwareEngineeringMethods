@@ -50,7 +50,7 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.ACCEPTED);
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
 
@@ -70,7 +70,7 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.REJECTED);
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
 
@@ -91,7 +91,7 @@ public class StatusService {
         Order order = o.get();
         order.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
         order.courierId(req.getCourierId());
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
 
@@ -111,7 +111,7 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.IN_TRANSIT);
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
     /**
