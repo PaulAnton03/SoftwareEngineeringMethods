@@ -1,9 +1,7 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.externalservices.NavigationMock;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Time;
@@ -11,17 +9,24 @@ import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepo;
     private final VendorRepository vendorRepo;
+    private final NavigationMock navigationMock;
 
 
     @Autowired
     public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo) {
         this.vendorRepo = vendorRepo;
         this.orderRepo = orderRepo;
+        this.navigationMock = new NavigationMock();
     }
 
     /**
@@ -188,5 +193,15 @@ public class OrderService {
         newOrder.setRatingNumber(body);
 
         return Optional.of(body);
+    }
+
+    public Optional<OffsetDateTime> getETA(Long orderId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        if (order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(navigationMock.getETA(orderId));
     }
 }

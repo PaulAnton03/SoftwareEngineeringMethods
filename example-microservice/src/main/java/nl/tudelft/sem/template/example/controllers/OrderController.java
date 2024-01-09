@@ -1,10 +1,6 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import javax.validation.Valid;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
@@ -12,14 +8,13 @@ import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -48,11 +43,11 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/final-destination")
     public ResponseEntity getFinalDestination(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getFinalDestination");
+                authorizationService.authorize(authorization, "getFinalDestination");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -80,11 +75,11 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getOrder");
+                authorizationService.authorize(authorization, "getOrder");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -111,7 +106,7 @@ public class OrderController implements OrderApi {
     @GetMapping("")
     public ResponseEntity<List<Order>> getOrders(@RequestParam(name = "authorization") Long authorization) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getOrders");
+                authorizationService.authorize(authorization, "getOrders");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -137,11 +132,11 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/pickup-destination")
     public ResponseEntity getPickupDestination(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getPickupDestination");
+                authorizationService.authorize(authorization, "getPickupDestination");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -170,12 +165,12 @@ public class OrderController implements OrderApi {
     @Override
     @PostMapping("/{orderId}")
     public ResponseEntity<Void> makeOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization,
-        @Parameter(name = "Order") @RequestBody @Valid Order order
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "makeOrder");
+                authorizationService.authorize(authorization, "makeOrder");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -206,11 +201,11 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}")
     public ResponseEntity<Void> updateOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization,
-        @Parameter(name = "Order") @RequestBody @Valid Order order) {
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order) {
         var authorizationResponse =
-            authorizationService.authorize(authorization, "updateOrder");
+                authorizationService.authorize(authorization, "updateOrder");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -239,11 +234,11 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/rating")
     public ResponseEntity getOrderRating(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getOrderRating");
+                authorizationService.authorize(authorization, "getOrderRating");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -273,12 +268,12 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}/rating")
     public ResponseEntity putOrderRating(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestBody @Valid BigDecimal body
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestBody @Valid BigDecimal body
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "putOrderRating");
+                authorizationService.authorize(authorization, "putOrderRating");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -296,5 +291,36 @@ public class OrderController implements OrderApi {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * GET /order/{orderId}/ETA : Get the ETA of an order
+     * return the ETA of an order
+     *
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param orderId       Id of the order to get it&#39;s ETA (required)
+     * @return Successful response, order found (status code 200)
+     * or Invalid arguments (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve estimated time of arrival (status code 403)
+     * or Unsuccessful, order not found (status code 404)
+     */
+    @Override
+    @GetMapping("/{orderId}/ETA")
+    public ResponseEntity<OffsetDateTime> getETA(
+            @RequestParam(value = "authorization", required = true) Long authorization,
+            @PathVariable(name = "orderId") Long orderId) {
+
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "getETA");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<OffsetDateTime> eta = orderService.getETA(orderId);
+        if (eta.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(eta.get(), HttpStatus.OK);
     }
 }
