@@ -187,6 +187,26 @@ public class OrderService {
         Order newOrder = order.get();
         newOrder.setRatingNumber(body);
 
-        return Optional.of(body);
+        return Optional.of(orderRepo.saveAndFlush(newOrder).getRatingNumber());
+    }
+
+    /**
+     * Update the courier of the order.
+     *
+     * @param orderId the id of the order
+     * @param courierId the new courier of the order
+     * @return empty optional if either order DNE, optional of updated order otherwise
+     */
+    public Optional<Order> updateCourier(Long orderId, Long courierId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        if(order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order o = order.get();
+        o.setCourierId(courierId);
+
+        return Optional.of(orderRepo.saveAndFlush(o));
     }
 }

@@ -16,6 +16,7 @@ import nl.tudelft.sem.template.example.controllers.OrderController;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.user.CourierRepository;
+import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
@@ -40,6 +41,7 @@ public class AuthorizationServiceTest {
     private CourierRepository courierRepo;
 
     private OrderService orderService;
+    private UserService userService;
     private OrderController controller;
 
     private final UserExternalService userExternalService = new UserExternalService();
@@ -60,6 +62,9 @@ public class AuthorizationServiceTest {
     @BeforeEach
     void setUp() {
         WireMockConfig.startUserServer();
+        this.orderService = Mockito.mock(OrderService.class);
+        this.userService = Mockito.mock(UserService.class);
+        this.controller = new OrderController(orderService, userService, authorizationService);
         orderService = Mockito.mock(OrderService.class);
         orderRepo = mock(OrderRepository.class);
         vendorRepo = mock(VendorRepository.class);
@@ -74,14 +79,11 @@ public class AuthorizationServiceTest {
         order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F));
         vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
-        controller = new OrderController(orderService, authorizationService);
+        controller = new OrderController(orderService, userService, authorizationService);
     }
-
 
     @Test
     void getFinalDestinationWorks() {
-        Mockito.when(orderRepo.existsByIdAndVendorId(1L, 11L)).thenReturn(true);
-        Mockito.when(orderRepo.existsByIdAndCourierId(1L, 11L)).thenReturn(false);
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
             .willReturn(aResponse()
                 .withStatus(200)

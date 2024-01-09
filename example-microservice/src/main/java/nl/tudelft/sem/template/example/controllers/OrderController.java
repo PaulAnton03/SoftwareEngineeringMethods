@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+
 import io.swagger.v3.oas.annotations.Parameter;
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,6 +10,8 @@ import javax.validation.Valid;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.http.HttpStatus;
@@ -29,10 +32,13 @@ public class OrderController implements OrderApi {
 
     public OrderService orderService;
 
+    public UserService userService;
+
     public AuthorizationService authorizationService;
 
-    public OrderController(OrderService orderService, AuthorizationService authorizationService) {
+    public OrderController(OrderService orderService, UserService userService,AuthorizationService authorizationService) {
         this.orderService = orderService;
+        this.userService = userService;
         this.authorizationService = authorizationService;
     }
 
@@ -49,8 +55,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/final-destination")
     public ResponseEntity getFinalDestination(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getFinalDestination", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -78,8 +84,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrder", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -129,8 +135,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/pickup-destination")
     public ResponseEntity getPickupDestination(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getPickupDestination", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -160,9 +166,9 @@ public class OrderController implements OrderApi {
     @Override
     @PostMapping("/{orderId}")
     public ResponseEntity<Void> makeOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization,
-        @Parameter(name = "Order") @RequestBody @Valid Order order
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "makeOrder", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -193,9 +199,9 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}")
     public ResponseEntity<Void> updateOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization,
-        @Parameter(name = "Order") @RequestBody @Valid Order order) {
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateOrder", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
@@ -223,8 +229,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/rating")
     public ResponseEntity getOrderRating(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrderRating", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -249,17 +255,14 @@ public class OrderController implements OrderApi {
      * or Unsuccessful, rating of the order cannot be retrieved because of a bad request (status code 400)
      * or Unsuccessful, entity does not have access rights to retrieve rating (status code 403)
      * or Unsuccessful, rating for the order not found (status code 404)
-<<<<<<< example-microservice/src/main/java/nl/tudelft/sem/template/example/controllers/OrderController.java
-=======
      * only for customers
->>>>>>> example-microservice/src/main/java/nl/tudelft/sem/template/example/controllers/OrderController.java
      */
     @Override
     @PutMapping("/{orderId}/rating")
     public ResponseEntity putOrderRating(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestBody @Valid BigDecimal body
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody @Valid BigDecimal body
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "putOrderRating", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -273,6 +276,42 @@ public class OrderController implements OrderApi {
         Optional<BigDecimal> newRating = orderService.updateRating(orderId, body);
 
         if (newRating.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /** * PUT /order/{orderId}/courier/{courierId} : Update courierId of the order.
+     * Update the courier of the order and return response. *
+     * @param orderId id of the order to update rating (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param courierId The courierId to update (required)
+     * @param order Order object where courierId is updated (required)
+     * @return Successful response, courier id of order set (status code 200)
+     *       or Unsuccessful, courier id cannot be updated because of bad request (status code 400)
+     *       or Unsuccessful, entity does not have access rights to update courier id (status code 403)
+     *       or Unsuccessful, no order or courier id was found (status code 404)
+     */
+    @Override
+    @PutMapping("/{orderId}/courier/{courierId}")
+    public ResponseEntity<Void> setCourierId(
+
+            @PathVariable(name = "orderId") Long orderId,
+            @PathVariable(name = "courierId") Long courierId,
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody @Valid Order order
+    ) {
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
+        Optional<Courier> c = userService.getCourierById(courierId);
+        if (c.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Order> updated = orderService.updateCourier(orderId, courierId);
+        if (updated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
