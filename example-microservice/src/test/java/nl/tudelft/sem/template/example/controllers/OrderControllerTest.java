@@ -258,7 +258,7 @@ class OrderControllerTest {
         o1.setCourierId(2L);
         Mockito.when(orderService.updateCourier(11L, 2L)).thenReturn(Optional.of(o1));
 
-        var res = controller.setCourierId(1L, 11L, 2L, o);
+        var res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
@@ -269,7 +269,7 @@ class OrderControllerTest {
 
         Order o = new Order().id(11L).courierId(3L);
 
-        var res = controller.setCourierId(1L, 11L, 2L, o);
+        var res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
