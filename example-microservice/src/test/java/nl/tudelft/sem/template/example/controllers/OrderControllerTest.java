@@ -3,8 +3,8 @@ package nl.tudelft.sem.template.example.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-import java.util.List;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
@@ -87,7 +87,7 @@ class OrderControllerTest {
         Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "getOrder", 11L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
-        var res = controller.getOrder(1L, 11L);
+        var res = controller.getOrder(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 

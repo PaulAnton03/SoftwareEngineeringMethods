@@ -4,10 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
+import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
+import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +25,7 @@ public class StatusControllerTest {
 
     private StatusService statusService;
     private AuthorizationService authorizationService;
+    private OrderService orderService;
     private StatusController controller;
 
 
@@ -27,7 +33,8 @@ public class StatusControllerTest {
     void setUp() {
         this.statusService = Mockito.mock(StatusService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
-        this.controller = new StatusController(statusService, authorizationService);
+        this.orderService = Mockito.mock(OrderService.class);
+        this.controller = new StatusController(statusService, orderService, authorizationService);
     }
 
     @Test
@@ -130,6 +137,7 @@ public class StatusControllerTest {
         Mockito.when(statusService.getOrderStatus(1L)).thenReturn(Optional.of(Order.StatusEnum.ACCEPTED));
         var res = controller.getStatus(1L, 1L);
         assertEquals(new ResponseEntity<>("accepted", HttpStatus.OK), res);
+
     }
 
     @Test
@@ -228,6 +236,85 @@ public class StatusControllerTest {
 
         var res = controller.updateToInTransit(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateStatusToDelivered200() {
+        Mockito.when(authorizationService.authorize(11L, "updateToDelivered"))
+            .thenReturn(Optional.empty());
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+            Optional.of(Order.StatusEnum.IN_TRANSIT));
+
+        OffsetDateTime time = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
+        UpdateToDeliveredRequest req =
+            new UpdateToDeliveredRequest().actualDeliveryTime(time);
+        Mockito.when(orderService.orderExists(anyLong())).thenReturn(true);
+        Mockito.when(statusService.updateStatusToDelivered(11L, req)).thenReturn(
+            Optional.of(
+                new Order().id(11L).timeValues(new Time().actualDeliveryTime(time)).status(Order.StatusEnum.DELIVERED)));
+
+        var res = controller.updateToDelivered(11L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateStatusToDelivered404() {
+        Mockito.when(authorizationService.authorize(11L, "updateToDelivered"))
+            .thenReturn(Optional.empty());
+        Mockito.when(statusService.updateStatusToDelivered(anyLong(), any()))
+            .thenReturn(Optional.of(new Order().id(11L)));
+        Mockito.when(orderService.orderExists(anyLong())).thenReturn(
+            false);
+
+        UpdateToDeliveredRequest update =
+            new UpdateToDeliveredRequest().actualDeliveryTime(OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC));
+        var res = controller.updateToDelivered(11L, 1L, update);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateStatusToDelivered400() {
+        Mockito.when(authorizationService.authorize(11L, "updateToDelivered"))
+            .thenReturn(Optional.empty());
+        Mockito.when(statusService.updateStatusToDelivered(anyLong(), any()))
+            .thenReturn(Optional.empty());
+        Mockito.when(orderService.orderExists(anyLong())).thenReturn(
+            true);
+
+        UpdateToDeliveredRequest update =
+            new UpdateToDeliveredRequest().actualDeliveryTime(OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC));
+        var res = controller.updateToDelivered(11L, 1L, update);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
+    void updateStatusToDelivered403() {
+        Mockito.when(authorizationService.authorize(11L, "updateToDelivered"))
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        Mockito.when(statusService.updateStatusToDelivered(anyLong(), any()))
+            .thenReturn(Optional.empty());
+        Mockito.when(orderService.orderExists(anyLong())).thenReturn(
+            true);
+
+        UpdateToDeliveredRequest update =
+            new UpdateToDeliveredRequest().actualDeliveryTime(OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC));
+        var res = controller.updateToDelivered(11L, 1L, update);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
+    void updateStatusToDelivered500() {
+        Mockito.when(authorizationService.authorize(11L, "updateToDelivered"))
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
+        Mockito.when(statusService.updateStatusToDelivered(anyLong(), any()))
+            .thenReturn(Optional.empty());
+        Mockito.when(orderService.orderExists(anyLong())).thenReturn(
+            true);
+
+        UpdateToDeliveredRequest update =
+            new UpdateToDeliveredRequest().actualDeliveryTime(OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC));
+        var res = controller.updateToDelivered(11L, 1L, update);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
     @Test

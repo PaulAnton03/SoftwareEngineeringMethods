@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
-
 import io.swagger.v3.oas.annotations.Parameter;
 import java.math.BigDecimal;
 import java.util.List;
@@ -79,11 +78,12 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrder", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
         Optional<Order> o = orderService.getOrderById(orderId);
         if (o.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -129,10 +129,12 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/pickup-destination")
     public ResponseEntity getPickupDestination(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId) {
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization
+    ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getPickupDestination", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
         Optional<Location> pickup = orderService.getPickupDestination(orderId);
 
         if (pickup.isEmpty()) {
@@ -247,6 +249,10 @@ public class OrderController implements OrderApi {
      * or Unsuccessful, rating of the order cannot be retrieved because of a bad request (status code 400)
      * or Unsuccessful, entity does not have access rights to retrieve rating (status code 403)
      * or Unsuccessful, rating for the order not found (status code 404)
+<<<<<<< example-microservice/src/main/java/nl/tudelft/sem/template/example/controllers/OrderController.java
+=======
+     * only for customers
+>>>>>>> example-microservice/src/main/java/nl/tudelft/sem/template/example/controllers/OrderController.java
      */
     @Override
     @PutMapping("/{orderId}/rating")

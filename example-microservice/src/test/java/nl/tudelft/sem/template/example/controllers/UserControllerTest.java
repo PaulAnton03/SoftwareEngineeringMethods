@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 public class UserControllerTest {
 
@@ -195,6 +197,35 @@ public class UserControllerTest {
     void makeCourier404() {
         Mockito.when(userService.makeCourier(any())).thenReturn(Optional.empty());
         var res = controller.makeCourier(2L, new Courier().id(1L));
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getCourier200() {
+        Courier courier = new Courier().id(1L);
+        Optional<Courier> proper = Optional.of(courier);
+
+        Mockito.when(userService.getCourier(1L)).thenReturn(proper);
+        Mockito.when(authorizationService.authorize(2L, "getCourier"))
+                .thenReturn(Optional.empty());
+        var res = controller.getCourier(1L, 2L);
+        assertEquals(new ResponseEntity<>(courier, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getCourier403() {
+        Mockito.when(authorizationService.authorize(1L, "getCourier"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        var res = controller.getCourier(2L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getCourier404() {
+        Mockito.when(userService.getCourier(1L)).thenReturn(Optional.empty());
+        Mockito.when(authorizationService.authorize(2L, "getCourier"))
+                .thenReturn(Optional.empty());
+        var res = controller.getCourier(1L, 2L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 

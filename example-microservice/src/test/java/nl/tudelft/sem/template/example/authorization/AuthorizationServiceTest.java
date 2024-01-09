@@ -42,7 +42,7 @@ public class AuthorizationServiceTest {
     private OrderService orderService;
     private OrderController controller;
 
-    private UserExternalService userExternalService = new UserExternalService();
+    private final UserExternalService userExternalService = new UserExternalService();
 
     private AuthorizationService authorizationService;
 
