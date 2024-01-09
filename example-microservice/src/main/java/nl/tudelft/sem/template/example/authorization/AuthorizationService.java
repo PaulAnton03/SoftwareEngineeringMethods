@@ -4,94 +4,99 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import javax.annotation.PostConstruct;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
+import nl.tudelft.sem.template.example.utils.DbUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.*;
 
 @Service
 public class AuthorizationService {
 
-    public enum UserType {
-        VENDOR,
-        COURIER,
-        ADMIN,
-        CUSTOMER,
+    private final UserExternalService userExternalService;
+    private DbUtils dbUtils;
+    private HashMap<String, List<Authorization.UserType>> permissions;
 
-        NAN
-    }
+    private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
 
-    // Maps method names to the user types that are allowed to call them
-    private HashMap<String, List<UserType>> permissions;
-    private UserExternalService userExternalService;
-
-    public AuthorizationService(UserExternalService userExternalService, HashMap<String, List<UserType>> permissions) {
+    /**
+     * Constructor for the AuthorizationService.
+     *
+     * @param dbUtils             the dbUtils
+     * @param userExternalService the userExternalService
+     * @param permissions         the permissions
+     * @param validationMethods   the validationMethods
+     */
+    public AuthorizationService(DbUtils dbUtils, UserExternalService userExternalService,
+                                HashMap<String, List<Authorization.UserType>> permissions,
+                                HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods) {
         this.userExternalService = userExternalService;
         this.permissions = permissions;
+        this.dbUtils = dbUtils;
+        this.validationMethods = validationMethods;
     }
 
-    /**
-     * Authorizes a user based on the provided user ID and required user type.
-     *
-     * @param userId     The ID of the user to be authorized.
-     * @param methodName Name of the method that was called.
-     * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
-     */
-    public Optional<ResponseEntity> authorize(Long userId, String methodName) {
-        UserType actualUserType = getUserType(userId);
-        if (actualUserType == UserType.NAN) {
-            return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
-        }
-        if ((actualUserType != UserType.ADMIN && !permissions.containsKey(methodName))
-            || (actualUserType != UserType.ADMIN && !permissions.get(methodName).contains(actualUserType))) {
-            return Optional.of(ResponseEntity.status(403).body("User with id " + userId + " does not have access rights"));
-        }
-        return Optional.empty();
-    }
 
     /**
-     * Retrieves the user type from the user microservice based on the provided user ID.
+     * Checks if the user is authorized to call the method.
      *
-     * @param userId The ID of the user.
-     * @return The user type obtained from the user service, or UserType.NAN if an error occurs.
+     * @param userId     the id of the user
+     * @param methodName the name of the method
+     * @param other      id of order or vendor
+     * @return an empty optional if the user is authorized, otherwise a response entity
      */
-    private UserType getUserType(Long userId) {
-        try {
-            return parseUserType(userExternalService.getUserTypeFromService(userId));
-        } catch (Exception e) {
-            return UserType.NAN;
-        }
+    public Optional<ResponseEntity> checkIfUserIsAuthorized(Long userId, String methodName, Long other) {
+        Handler handler = Handler.link(new Authorization(userExternalService, permissions),
+            new Validation(dbUtils, validationMethods));
+        return handler.check(userId, methodName, other);
     }
 
+
     /**
-     * Parses the string representation of a user type into the corresponding UserType enum value.
-     *
-     * @param userType The string representation of the user type.
-     * @return The corresponding UserType enum value.
-     * @throws IllegalArgumentException If the provided user type is invalid.
+     * Wrapper for authorize.
+     * @param response
+     * @return
      */
-    private UserType parseUserType(String userType) {
-        return switch (userType) {
-            case "vendor" -> UserType.VENDOR;
-            case "courier" -> UserType.COURIER;
-            case "admin" -> UserType.ADMIN;
-            case "customer" -> UserType.CUSTOMER;
-            default -> throw new IllegalArgumentException("Invalid user type: " + userType);
-        };
+    public static boolean doesNotHaveAuthority(Optional<ResponseEntity> response) { return response.isPresent(); }
+
+
+    /**
+     * Checks if the user is an admin.
+     *
+     * @param userId the id of the user
+     * @return an empty optional if the user is authorized, otherwise a response entity
+     */
+    public Optional<ResponseEntity> authorizeAdminOnly(Long userId) {
+        Authorization authorization = new Authorization(userExternalService, permissions);
+        return authorization.authorizeAdminOnly(userId);
     }
 
     /**
      * Initializes the permissions map with default values if it is null.
      * You do not need to add permissions for admin only methods.
+     * Initializes the validationMethods map with default values if it is null.
      */
     @PostConstruct
-    private void init() {
-        if (permissions == null) {
-            permissions = new HashMap<>(
-                Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
-                )
-            );
-        }
+    private void init() throws NoSuchMethodException {
+        permissions = new HashMap<>(
+            Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
+                    "updateToDelivered", List.of(COURIER),
+                    "updateToInTransit", List.of(COURIER),
+                    "updateToGivenToCourier", List.of(VENDOR),
+                    "updateToRejected", List.of(VENDOR),
+                    "updateToAccepted", List.of(VENDOR),
+                    "getStatus", List.of(CUSTOMER, VENDOR, COURIER),
+                    "putOrderRating", List.of(CUSTOMER),
+                    "updateBossOfCourier", List.of(VENDOR)
+            ));
+
+
+        validationMethods = new HashMap<>(
+            Map.of(//"Method name", "dbUtils::userBelongsToOrder" or "dbUtils::courierBelongsToVendor")
+                "getFinalDestination", dbUtils::userBelongsToOrder
+            ));
     }
 
 }
