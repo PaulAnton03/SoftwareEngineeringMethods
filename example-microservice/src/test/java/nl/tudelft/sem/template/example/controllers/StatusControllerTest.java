@@ -315,17 +315,13 @@ public class StatusControllerTest {
 
     @Test
     void updateStatusToDelivered403() {
-        Mockito.when(authorizationService.authorize(11L, "updateToDelivered"))
+        Mockito.when(authorizationService.authorize(1L, "updateToDelivered"))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
-        Mockito.when(statusService.updateStatusToDelivered(anyLong(), any()))
-            .thenReturn(Optional.empty());
-        Mockito.when(orderService.orderExists(anyLong())).thenReturn(
-            true);
 
         UpdateToDeliveredRequest update =
             new UpdateToDeliveredRequest().actualDeliveryTime(OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC));
         var res = controller.updateToDelivered(11L, 1L, update);
-        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
