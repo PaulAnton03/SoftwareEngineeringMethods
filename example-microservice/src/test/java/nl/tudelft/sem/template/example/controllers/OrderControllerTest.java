@@ -14,11 +14,9 @@ import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import wiremock.org.checkerframework.checker.units.qual.C;
 
 
 class OrderControllerTest {
@@ -35,7 +33,6 @@ class OrderControllerTest {
         this.orderService = Mockito.mock(OrderService.class);
         this.userService = Mockito.mock(UserService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
-        Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString())).thenReturn(Optional.empty());
         this.controller = new OrderController(orderService, userService, authorizationService);
     }
 
@@ -43,7 +40,6 @@ class OrderControllerTest {
     void getFinalDestinationWorks() {
         Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
         Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);
-
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
@@ -52,7 +48,6 @@ class OrderControllerTest {
     void getFinalDestinationGives404() {
         Optional<Location> proper = Optional.empty();
         Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);
-
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
@@ -61,7 +56,6 @@ class OrderControllerTest {
     void getPickUpDestinationWorks() {
         var proper = Optional.of(new Location().longitude(11f).latitude(22f));
         Mockito.when(orderService.getPickupDestination(anyLong())).thenReturn(proper);
-
         var res = controller.getPickupDestination(1L, 22L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
@@ -70,7 +64,6 @@ class OrderControllerTest {
     void getPickUpDestinationGives404() {
         Optional<Location> proper = Optional.empty();
         Mockito.when(orderService.getPickupDestination(anyLong())).thenReturn(proper);
-
         var res = controller.getPickupDestination(1L, 22L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
@@ -79,9 +72,6 @@ class OrderControllerTest {
     void getOrder200() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(proper);
-        Mockito.when(authorizationService.authorize(1L, "getOrder"))
-            .thenReturn(Optional.empty());
-
         var res = controller.getOrder(11L, 1L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
@@ -90,10 +80,6 @@ class OrderControllerTest {
     void getOrder404() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
-        Mockito.when(authorizationService.authorize(1L, "getOrder"))
-            .thenReturn(Optional.empty());
-
-
         var res = controller.getOrder(1L, 11L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
@@ -102,7 +88,7 @@ class OrderControllerTest {
     void getOrder403() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
-        Mockito.when(authorizationService.authorize(1L, "getOrder"))
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "getOrder", 11L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getOrder(11L, 1L);
@@ -129,10 +115,6 @@ class OrderControllerTest {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
         Mockito.when(orderService.updateOrderById(11L, updated)).thenReturn(Optional.of(updated));
-        Mockito.when(authorizationService.authorize(1L, "updateOrder"))
-            .thenReturn(Optional.empty());
-
-
         var res = controller.updateOrder(11L, 1L, updated);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
@@ -142,10 +124,6 @@ class OrderControllerTest {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
         Mockito.when(orderService.updateOrderById(11L, updated)).thenReturn(Optional.empty());
-        Mockito.when(authorizationService.authorize(1L, "updateOrder"))
-            .thenReturn(Optional.empty());
-
-
         var res = controller.updateOrder(11L, 1L, updated);
     }
 
@@ -153,7 +131,7 @@ class OrderControllerTest {
     void updateOrder403() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
-        Mockito.when(authorizationService.authorize(1L, "updateOrder"))
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "updateOrder", 11L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.updateOrder(11L, 1L, updated);
@@ -164,9 +142,6 @@ class OrderControllerTest {
     void getOrders200() {
         List<Order> proper = List.of(new Order().id(11L), new Order().id(22L), new Order().id(33L));
         Mockito.when(orderService.getOrders()).thenReturn(Optional.of(proper));
-        Mockito.when(authorizationService.authorize(1L, "getOrders"))
-            .thenReturn(Optional.empty());
-
         var res = controller.getOrders(1L);
         assertEquals(new ResponseEntity<>(proper, HttpStatus.OK), res);
     }
@@ -175,7 +150,7 @@ class OrderControllerTest {
     void getOrders403() {
         List<Order> proper = List.of(new Order().id(11L), new Order().id(22L), new Order().id(33L));
         Mockito.when(orderService.getOrders()).thenReturn(Optional.of(proper));
-        Mockito.when(authorizationService.authorize(1L, "getOrders"))
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getOrders(1L);
@@ -185,9 +160,6 @@ class OrderControllerTest {
     @Test
     void getOrders404() {
         Mockito.when(orderService.getOrders()).thenReturn(Optional.empty());
-        Mockito.when(authorizationService.authorize(1L, "getOrders"))
-            .thenReturn(Optional.empty());
-
         var res = controller.getOrders(1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
@@ -195,8 +167,6 @@ class OrderControllerTest {
     @Test
     void makeOrder200() {
         Order o = new Order().id(11L);
-        Mockito.when(authorizationService.authorize(1L, "makeOrder"))
-            .thenReturn(Optional.empty());
         Mockito.when(orderService.createOrder(o)).thenReturn(Optional.of(o));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
 
@@ -218,7 +188,7 @@ class OrderControllerTest {
     @Test
     void makeOrder403() {
         Order o = new Order().id(11L);
-        Mockito.when(authorizationService.authorize(1L, "makeOrder"))
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "makeOrder", 11L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         Mockito.when(orderService.createOrder(o)).thenReturn(Optional.of(o));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
@@ -230,11 +200,8 @@ class OrderControllerTest {
     @Test
     void makeOrder400() {
         Order o = new Order().id(11L);
-        Mockito.when(authorizationService.authorize(1L, "makeOrder"))
-            .thenReturn(Optional.empty());
         Mockito.when(orderService.createOrder(o)).thenReturn(Optional.of(o));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.of(o));
-
         var res = controller.makeOrder(11L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
@@ -249,8 +216,6 @@ class OrderControllerTest {
 
     @Test
     void setCourierId200() {
-        Mockito.when(authorizationService.authorize(1L, "setCourierId"))
-                .thenReturn(Optional.empty());
         Courier c = new Courier().id(2L);
         Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.of(c));
         Order o = new Order().id(11L).courierId(3L);
@@ -264,7 +229,7 @@ class OrderControllerTest {
 
     @Test
     void setCourierId403() {
-        Mockito.when(authorizationService.authorize(1L, "setCourierId"))
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         Order o = new Order().id(11L).courierId(3L);
@@ -275,8 +240,6 @@ class OrderControllerTest {
 
     @Test
     void setCourierId404noCourier() {
-        Mockito.when(authorizationService.authorize(1L, "setCourierId"))
-                .thenReturn(Optional.empty());
         Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.empty());
         Order o = new Order().id(11L).courierId(3L);
 
@@ -286,8 +249,6 @@ class OrderControllerTest {
 
     @Test
     void setCourierId404noOrder() {
-        Mockito.when(authorizationService.authorize(1L, "setCourierId"))
-                .thenReturn(Optional.empty());
         Courier c = new Courier().id(2L);
         Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.of(c));
         Order o = new Order().id(11L).courierId(3L);

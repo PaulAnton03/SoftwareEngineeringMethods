@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+
 import java.util.Optional;
 import javax.validation.Valid;
 import nl.tudelft.sem.template.api.StatusApi;
@@ -50,14 +52,12 @@ public class StatusController implements StatusApi {
     @Override
     @PutMapping("/{orderId}/accepted")
     public ResponseEntity<Void> updateToAccepted(
-            @PathVariable(name= "orderId") Long orderId,
-            @RequestParam(name= "authorization") Long authorization)
+        @PathVariable(name= "orderId") Long orderId,
+        @RequestParam(name= "authorization") Long authorization)
     {
 
-        var auth = authorizationService.authorize(authorization, "updateToAccepted");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToAccepted",orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -91,10 +91,8 @@ public class StatusController implements StatusApi {
             @RequestParam(name = "authorization") Long authorization
     ) {
 
-        var auth = authorizationService.authorize(authorization, "updateToRejected");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToRejected",orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -139,10 +137,8 @@ public class StatusController implements StatusApi {
             @RequestParam(name= "authorization") Long authorization,
             @RequestBody UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
-        var auth = authorizationService.authorize(authorization, "updateToGivenToCourier");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToGivenToCourier",orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -182,10 +178,8 @@ public class StatusController implements StatusApi {
             @PathVariable(name= "orderId") Long orderId,
             @RequestParam(name= "authorization") Long authorization) {
 
-        var auth = authorizationService.authorize(authorization, "updateToInTransit");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToInTransit",orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -224,10 +218,8 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToDelivered(@PathVariable("orderId") Long orderId,
                                                   @RequestParam(value = "authorization", required = true) Long authorization,
                                                   @Valid @RequestBody UpdateToDeliveredRequest updateToDeliveredRequest) {
-        var auth = authorizationService.authorize(authorization, "updateToDelivered");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToDelivered",orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         if (!orderService.orderExists(orderId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -262,10 +254,8 @@ public class StatusController implements StatusApi {
             @RequestParam(name = "authorization") Long authorization
     ) {
 
-        var auth = authorizationService.authorize(authorization, "getStatus");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getStatus",orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 

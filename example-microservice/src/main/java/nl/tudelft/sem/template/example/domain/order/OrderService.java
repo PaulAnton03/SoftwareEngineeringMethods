@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.example.domain.order;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
@@ -7,10 +10,6 @@ import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
