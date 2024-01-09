@@ -138,10 +138,10 @@ class OrderControllerTest {
 
     @Test
     void getOrderRating403() {
-        Mockito.when(authorizationService.authorize(1L, "getOrderRAting"))
+        Mockito.when(authorizationService.authorize(1L, "getOrderRating"))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         var res = controller.getOrderRating(1L, 1L);
-        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
