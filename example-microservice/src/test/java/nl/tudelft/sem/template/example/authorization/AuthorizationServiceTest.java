@@ -28,14 +28,14 @@ public class AuthorizationServiceTest {
     private OrderService orderService;
     private OrderController controller;
 
-    private UserExternalService userExternalService = new UserExternalService();
+    private final UserExternalService userExternalService = new UserExternalService();
 
-    private HashMap<String, List<AuthorizationService.UserType>> permissions = new HashMap<>(
+    private final HashMap<String, List<AuthorizationService.UserType>> permissions = new HashMap<>(
         Map.of("getFinalDestination", List.of(AuthorizationService.UserType.CUSTOMER),
             "getPickupDestination", List.of(AuthorizationService.UserType.VENDOR))
     );
 
-    private AuthorizationService authorizationService = new AuthorizationService(userExternalService, permissions);
+    private final AuthorizationService authorizationService = new AuthorizationService(userExternalService, permissions);
 
 
     @BeforeEach
