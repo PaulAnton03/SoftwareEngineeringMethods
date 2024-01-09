@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.example.controllers;
 
-import java.util.Optional;
 import nl.tudelft.sem.template.api.UserApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.user.UserService;
@@ -8,13 +7,9 @@ import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController
@@ -42,8 +37,23 @@ public class UserController implements UserApi {
      * or Unauthorized (status code 403)
      */
     @Override
-    public ResponseEntity<Courier> getCourier(Long courierId, Long authorization) {
-        return UserApi.super.getCourier(courierId, authorization);
+    @GetMapping("/courier/{courierId}")
+    public ResponseEntity<Courier> getCourier(
+            @PathVariable(name = "courierId") Long courierId,
+            @RequestParam(name = "authorization") Long authorization) {
+
+        Optional<ResponseEntity> authorizationResponse =
+                authorizationService.authorize(authorization, "getCourier");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
+
+        Optional<Courier> courier = userService.getCourier(courierId);
+        if (courier.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(courier.get(), HttpStatus.OK);
     }
 
     /**
@@ -77,7 +87,7 @@ public class UserController implements UserApi {
     public ResponseEntity<Void> makeCourier(@RequestParam(value = "authorization", required = true) Long authorization,
                                             @RequestBody(required = false) Courier courier) {
         var authorizationResponse =
-            authorizationService.authorize(authorization, "makeCourier");
+                authorizationService.authorize(authorization, "makeCourier");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -111,7 +121,7 @@ public class UserController implements UserApi {
     public ResponseEntity<Void> makeCourierById(@RequestParam(value = "authorization", required = true) Long authorization,
                                                 @PathVariable(name = "courierId") Long courierId) {
         var authorizationResponse =
-            authorizationService.authorize(authorization, "makeCourierById");
+                authorizationService.authorize(authorization, "makeCourierById");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -189,11 +199,11 @@ public class UserController implements UserApi {
     @Override
     @PostMapping("/vendor/add-whole")
     public ResponseEntity<Void> makeVendor(
-        @RequestParam(name = "authorization") Long authorization,
-        @RequestBody Vendor vendor) {
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody Vendor vendor) {
 
         var authorizationResponse =
-            authorizationService.authorize(authorization, "makeVendor");
+                authorizationService.authorize(authorization, "makeVendor");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -221,11 +231,11 @@ public class UserController implements UserApi {
     @Override
     @PostMapping("/vendor/{vendorId}")
     public ResponseEntity<Void> makeVendorById(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "vendorId") Long vendorId) {
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "vendorId") Long vendorId) {
 
         var authorizationResponse =
-            authorizationService.authorize(authorization, "makeVendorById");
+                authorizationService.authorize(authorization, "makeVendorById");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
