@@ -108,12 +108,12 @@ public class OrderController implements OrderApi {
     @GetMapping("/unassigned")
     public ResponseEntity<List<Order>> getIndependentOrders(
         @RequestParam(value = "authorization", required = true) Long authorization) {
-//        Optional<ResponseEntity> authorizationResponse =
-//            authorizationService.authorize(authorization, "getIndependentOrders");
-//        // if there is a response, then the authority is not sufficient
-//        if (authorizationResponse.isPresent()) {
-//            return authorizationResponse.get();
-//        }
+        Optional<ResponseEntity> authorizationResponse =
+            authorizationService.authorize(authorization, "getIndependentOrders");
+        // if there is a response, then the authority is not sufficient
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
 
         this.setStrategy(new GeneralOrdersStrategy(orderRepository, vendorRepository));
         Optional<List<Order>> orders = strategy.availableOrders(Optional.empty());
@@ -141,11 +141,11 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @PathVariable(name = "orderId") Long orderId
     ) {
-//        Optional<ResponseEntity> authorizationResponse =
-//            authorizationService.authorize(authorization, "getFinalDestination");
-//        if (authorizationResponse.isPresent()) {
-//            return authorizationResponse.get();
-//        }
+        Optional<ResponseEntity> authorizationResponse =
+            authorizationService.authorize(authorization, "getFinalDestination");
+        if (authorizationResponse.isPresent()) {
+            return authorizationResponse.get();
+        }
         Optional<Location> location = orderService.getFinalDestinationOfOrder(orderId);
 
         if (location.isEmpty()) {
