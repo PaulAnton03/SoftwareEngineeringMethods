@@ -143,6 +143,25 @@ class OrderServiceTest {
     }
 
     @Test
+    void updateCourier200() {
+        Mockito.when(orderRepo.findById(order1.getId())).thenReturn(Optional.of(order1));
+        Order order2 = order1;
+        order2.setCourierId(2L);
+        Mockito.when(orderRepo.saveAndFlush(order2)).thenReturn(order2);
+
+        Optional<Order> o = os.updateCourier(order1.getId(), 2L);
+        assertEquals(o.get(), order2);
+    }
+
+    @Test
+    void updateCourier404() {
+        Mockito.when(orderRepo.findById(order1.getId())).thenReturn(Optional.empty());
+
+        Optional<Order> o = os.updateCourier(order1.getId(), 2L);
+        assertTrue(o.isEmpty());
+    }
+
+    @Test
     void orderExistsTrue() {
         Mockito.when(orderRepo.existsById(anyLong())).thenReturn(true);
 

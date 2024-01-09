@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.controllers.OrderController;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
 import nl.tudelft.sem.template.model.Location;
@@ -26,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 public class AuthorizationServiceTest {
 
     private OrderService orderService;
+    private UserService userService;
     private OrderController controller;
 
     private final UserExternalService userExternalService = new UserExternalService();
@@ -42,7 +44,8 @@ public class AuthorizationServiceTest {
     void setUp() {
         WireMockConfig.startUserServer();
         this.orderService = Mockito.mock(OrderService.class);
-        this.controller = new OrderController(orderService, authorizationService);
+        this.userService = Mockito.mock(UserService.class);
+        this.controller = new OrderController(orderService, userService, authorizationService);
     }
 
     @Test

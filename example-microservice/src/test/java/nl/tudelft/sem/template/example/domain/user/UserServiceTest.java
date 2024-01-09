@@ -54,6 +54,22 @@ public class UserServiceTest {
     }
 
     @Test
+    void getCourierById200() {
+        Mockito.when(courierRepo.findById(courier1.getId())).thenReturn(Optional.of(courier1));
+
+        Optional<Courier> ret = userService.getCourierById(courier1.getId());
+        assertEquals(ret.get(), courier1);
+    }
+
+    @Test
+    void getCourierById404() {
+        Mockito.when(courierRepo.findById(courier1.getId())).thenReturn(Optional.empty());
+
+        Optional<Courier> ret = userService.getCourierById(courier1.getId());
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
     void makeVendorWorks() {
         Mockito.when(vendorRepo.saveAndFlush(any())).thenReturn(vendor1);
 
@@ -73,7 +89,6 @@ public class UserServiceTest {
     @Test
     void makeVendorByIdWorks() {
         Mockito.when(vendorRepo.saveAndFlush(any())).thenReturn(vendor1);
-
         Optional<Vendor> res = userService.makeVendorById(vendor1.getId());
         assert (res.isPresent());
         assertEquals(res.get().getId(), vendor1.getId());

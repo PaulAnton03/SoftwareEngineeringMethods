@@ -8,18 +8,23 @@ import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import wiremock.org.checkerframework.checker.units.qual.C;
 
 
 class OrderControllerTest {
 
     private OrderService orderService;
+    private UserService userService;
     private OrderController controller;
 
     private AuthorizationService authorizationService;
@@ -28,9 +33,10 @@ class OrderControllerTest {
     @BeforeEach
     void setUp() {
         this.orderService = Mockito.mock(OrderService.class);
+        this.userService = Mockito.mock(UserService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
         Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString())).thenReturn(Optional.empty());
-        this.controller = new OrderController(orderService, authorizationService);
+        this.controller = new OrderController(orderService, userService, authorizationService);
     }
 
     @Test
@@ -238,6 +244,56 @@ class OrderControllerTest {
         Mockito.when(orderService.getRating(1L)).thenReturn(Optional.empty());
         var res = controller.putOrderRating(1L, 1L, new BigDecimal("1.0"));
 
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void setCourierId200() {
+        Mockito.when(authorizationService.authorize(1L, "setCourierId"))
+                .thenReturn(Optional.empty());
+        Courier c = new Courier().id(2L);
+        Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.of(c));
+        Order o = new Order().id(11L).courierId(3L);
+        Order o1 = o;
+        o1.setCourierId(2L);
+        Mockito.when(orderService.updateCourier(11L, 2L)).thenReturn(Optional.of(o1));
+
+        var res = controller.setCourierId(11L, 2L, 1L, o);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void setCourierId403() {
+        Mockito.when(authorizationService.authorize(1L, "setCourierId"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        Order o = new Order().id(11L).courierId(3L);
+
+        var res = controller.setCourierId(11L, 2L, 1L, o);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void setCourierId404noCourier() {
+        Mockito.when(authorizationService.authorize(1L, "setCourierId"))
+                .thenReturn(Optional.empty());
+        Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.empty());
+        Order o = new Order().id(11L).courierId(3L);
+
+        var res = controller.setCourierId(1L, 11L, 2L, o);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void setCourierId404noOrder() {
+        Mockito.when(authorizationService.authorize(1L, "setCourierId"))
+                .thenReturn(Optional.empty());
+        Courier c = new Courier().id(2L);
+        Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.of(c));
+        Order o = new Order().id(11L).courierId(3L);
+        Mockito.when(orderService.updateCourier(11L, 2L)).thenReturn(Optional.empty());
+
+        var res = controller.setCourierId(1L, 11L, 2L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
