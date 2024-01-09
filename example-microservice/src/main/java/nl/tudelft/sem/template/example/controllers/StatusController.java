@@ -48,7 +48,11 @@ public class StatusController implements StatusApi {
      * only for vendors
      */
     @Override
-    public ResponseEntity<Void> updateToAccepted(Long orderId, Long authorization) {
+    @PutMapping("/{orderId}/accepted")
+    public ResponseEntity<Void> updateToAccepted(
+            @PathVariable(name= "orderId") Long orderId,
+            @RequestParam(name= "authorization") Long authorization)
+    {
 
         var auth = authorizationService.authorize(authorization, "updateToAccepted");
         if (auth.isPresent()) {
@@ -83,8 +87,8 @@ public class StatusController implements StatusApi {
     @Override
     @PutMapping("/{orderId}/rejected")
     public ResponseEntity<Void> updateToRejected(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
 
         var auth = authorizationService.authorize(authorization, "updateToRejected");
@@ -129,8 +133,11 @@ public class StatusController implements StatusApi {
      * only for vendors
      */
     @Override
-    public ResponseEntity<Void> updateToGivenToCourier(Long orderId, Long authorization,
-                                                       UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
+    @PutMapping("/{orderId}/giventocourier")
+    public ResponseEntity<Void> updateToGivenToCourier(
+            @PathVariable(name= "orderId") Long orderId,
+            @RequestParam(name= "authorization") Long authorization,
+            @RequestBody UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
         var auth = authorizationService.authorize(authorization, "updateToGivenToCourier");
         if (auth.isPresent()) {
@@ -170,7 +177,10 @@ public class StatusController implements StatusApi {
      * only for couriers
      */
     @Override
-    public ResponseEntity<Void> updateToInTransit(Long orderId, Long authorization) {
+    @PutMapping("/{orderId}/intransit")
+    public ResponseEntity<Void> updateToInTransit(
+            @PathVariable(name= "orderId") Long orderId,
+            @RequestParam(name= "authorization") Long authorization) {
 
         var auth = authorizationService.authorize(authorization, "updateToInTransit");
         if (auth.isPresent()) {
@@ -248,8 +258,8 @@ public class StatusController implements StatusApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<String> getStatus(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
 
         var auth = authorizationService.authorize(authorization, "getStatus");

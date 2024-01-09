@@ -1,10 +1,6 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import javax.validation.Valid;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
@@ -14,14 +10,12 @@ import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -53,11 +47,11 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/final-destination")
     public ResponseEntity getFinalDestination(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getFinalDestination");
+                authorizationService.authorize(authorization, "getFinalDestination");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -85,8 +79,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         var authorizationResponse =
                 authorizationService.authorize(authorization, "getOrder");
@@ -142,11 +136,11 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/pickup-destination")
     public ResponseEntity getPickupDestination(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getPickupDestination");
+                authorizationService.authorize(authorization, "getPickupDestination");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -175,9 +169,9 @@ public class OrderController implements OrderApi {
     @Override
     @PostMapping("/{orderId}")
     public ResponseEntity<Void> makeOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization,
-        @Parameter(name = "Order") @RequestBody @Valid Order order
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
         var authorizationResponse =
                 authorizationService.authorize(authorization, "makeOrder");
@@ -211,11 +205,11 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}")
     public ResponseEntity<Void> updateOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization,
-        @Parameter(name = "Order") @RequestBody @Valid Order order) {
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order) {
         var authorizationResponse =
-            authorizationService.authorize(authorization, "updateOrder");
+                authorizationService.authorize(authorization, "updateOrder");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -244,11 +238,11 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/rating")
     public ResponseEntity getOrderRating(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getOrderRating");
+                authorizationService.authorize(authorization, "getOrderRating");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
@@ -278,12 +272,12 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}/rating")
     public ResponseEntity putOrderRating(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestBody @Valid BigDecimal body
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody @Valid BigDecimal body
     ) {
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "putOrderRating");
+                authorizationService.authorize(authorization, "putOrderRating");
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
         }
