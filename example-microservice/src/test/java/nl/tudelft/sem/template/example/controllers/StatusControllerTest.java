@@ -59,7 +59,7 @@ public class StatusControllerTest {
         Mockito.when(statusService.updateStatusToRejected(11L)).thenReturn(
             Optional.of(new Order().id(11L).status(Order.StatusEnum.REJECTED)));
 
-        var res = controller.updateToRejected(1L, 11L);
+        var res = controller.updateToRejected(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
@@ -99,7 +99,7 @@ public class StatusControllerTest {
     void updateStatusToRejected500() {
         Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
-        var res = controller.updateToRejected(1L, 11L);
+        var res = controller.updateToRejected(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR), res);
     }
 
@@ -107,7 +107,7 @@ public class StatusControllerTest {
     void updateStatusToRejected403() {
         Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
-        var res = controller.updateToRejected(1L, 11L);
+        var res = controller.updateToRejected(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
@@ -161,7 +161,7 @@ public class StatusControllerTest {
         Mockito.when(authorizationService.authorize(1L, "getStatus"))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
         Mockito.when(statusService.getOrderStatus(11L)).thenReturn(Optional.of(Order.StatusEnum.ACCEPTED));
-        var res = controller.getStatus(1L, 11L);
+        var res = controller.getStatus(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR), res);
     }
 
@@ -170,7 +170,7 @@ public class StatusControllerTest {
         Mockito.when(authorizationService.authorize(1L, "getStatus"))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         Mockito.when(statusService.getOrderStatus(11L)).thenReturn(Optional.of(Order.StatusEnum.ACCEPTED));
-        var res = controller.getStatus(1L, 11L);
+        var res = controller.getStatus(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
