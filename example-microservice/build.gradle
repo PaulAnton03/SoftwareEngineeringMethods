@@ -104,7 +104,6 @@ jacocoTestCoverageVerification() {
 	}
 }
 
-
 checkstyle {
 	toolVersion "8.37"
 	// Link Checkstyle task to customCheckstyle

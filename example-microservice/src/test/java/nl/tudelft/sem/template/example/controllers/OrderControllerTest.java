@@ -52,6 +52,15 @@ class OrderControllerTest {
     }
 
     @Test
+    void getFinalDestinationGives403() {
+        Mockito.when(authorizationService.authorize(1L, "getFinalDestination"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getFinalDestination(1L, 11L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
     void getPickUpDestinationWorks() {
         var proper = Optional.of(new Location().longitude(11f).latitude(22f));
         Mockito.when(orderService.getPickupDestination(anyLong())).thenReturn(proper);
@@ -67,6 +76,15 @@ class OrderControllerTest {
 
         var res = controller.getPickupDestination(1L, 22L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getPickUpDestinationGives403() {
+        Mockito.when(authorizationService.authorize(1L, "getPickupDestination"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getPickupDestination(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
@@ -114,6 +132,14 @@ class OrderControllerTest {
     @Test
     void getOrderRating404() {
         Mockito.when(orderService.getRating(1L)).thenReturn(Optional.empty());
+        var res = controller.getOrderRating(1L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getOrderRating403() {
+        Mockito.when(authorizationService.authorize(1L, "getOrderRAting"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         var res = controller.getOrderRating(1L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
@@ -207,6 +233,17 @@ class OrderControllerTest {
 
         var res = controller.putOrderRating(1L, 1L, rating2.get());
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateOrderRating403() {
+        Optional<BigDecimal> rating2 = Optional.of(new BigDecimal("2.0"));
+
+        Mockito.when(authorizationService.authorize(1L, "putOrderRating"))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.putOrderRating(1L, 1L, rating2.get());
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
