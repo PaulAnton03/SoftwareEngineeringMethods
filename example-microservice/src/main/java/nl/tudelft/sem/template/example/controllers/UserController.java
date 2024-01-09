@@ -8,6 +8,8 @@ import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.Optional;
 
 
@@ -175,7 +177,10 @@ public class UserController implements UserApi {
      */
     @Override
     @PutMapping("/vendor/radius")
-    public ResponseEntity updateSpecificRadius(Long authorization, Double body) {
+    public ResponseEntity updateSpecificRadius(
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody @Valid Double body
+    ) {
         var authorizationResponse =
                 authorizationService.authorize(authorization, "updateSpecificRadius");
         if (authorizationResponse.isPresent()) {
