@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import nl.tudelft.sem.template.example.controllers.OrderController;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
@@ -35,6 +36,8 @@ public class AuthorizationTest {
 
     private AuthorizationService authorizationService;
 
+    private UserService userService;
+
 
     private HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
         Map.of("getFinalDestination", List.of(Authorization.UserType.CUSTOMER, Authorization.UserType.COURIER))
@@ -52,7 +55,8 @@ public class AuthorizationTest {
         validationMethods = Mockito.mock(HashMap.class);
         Mockito.when(validationMethods.get(anyString())).thenReturn((a, b) -> true);
         authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
-        controller = new OrderController(orderService, authorizationService);
+        userService = Mockito.mock(UserService.class);
+        controller = new OrderController(orderService, userService, authorizationService);
     }
 
     @Test

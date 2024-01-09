@@ -55,7 +55,7 @@ public class AuthorizationServiceTest {
     private DbUtils dbUtils;
     private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
     private HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
-        Map.of("getFinalDestination", List.of(Authorization.UserType.CUSTOMER),
+        Map.of("getFinalDestination", List.of(Authorization.UserType.VENDOR),
             "getPickupDestination", List.of(Authorization.UserType.VENDOR))
     );
 
@@ -88,10 +88,10 @@ public class AuthorizationServiceTest {
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                .withBody("customer")));
+                .withBody("vendor")));
         Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
         Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);
-
+        Mockito.when(orderRepo.existsByIdAndVendorId(1L, 11L)).thenReturn(true);
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
