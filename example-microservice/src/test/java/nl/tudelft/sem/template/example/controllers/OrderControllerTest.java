@@ -167,6 +167,7 @@ class OrderControllerTest {
 
 
         var res = controller.updateOrder(11L, 1L, updated);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
     @Test
@@ -221,6 +222,7 @@ class OrderControllerTest {
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
 
         var res = controller.makeOrder(11L, 1L, o);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
     @Test
