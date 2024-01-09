@@ -1,19 +1,18 @@
 package nl.tudelft.sem.template.example.domain.user;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-
-import java.util.Optional;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 
 public class UserServiceTest {
 
@@ -35,7 +34,7 @@ public class UserServiceTest {
     @Test
     void updateBossIdOfCourier200() {
         Courier courier11 = new Courier().id(100L).bossId(6L)
-            .currentLocation(new Location().latitude(0F).longitude(0F));
+                .currentLocation(new Location().latitude(0F).longitude(0F));
 
         Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
         Mockito.lenient().when(courierRepo.saveAndFlush(courier1)).thenReturn(courier11);
@@ -148,5 +147,20 @@ public class UserServiceTest {
         Mockito.when(courierRepo.existsById(1L)).thenReturn(false);
         boolean res = userService.existsCourier(1L);
         assertFalse(res);
+    }
+
+    @Test
+    void getCourierSuccess() {
+        Mockito.when(courierRepo.findById(1L)).thenReturn(Optional.of(courier1));
+        Optional<Courier> res = userService.getCourier(1L);
+        assertFalse(res.isEmpty());
+        assertEquals(res.get().getId(), courier1.getId());
+    }
+
+    @Test
+    void getCourierEmpty() {
+        Mockito.when(courierRepo.findById(1L)).thenReturn(Optional.empty());
+        Optional<Courier> res = userService.getCourier(1L);
+        assertTrue(res.isEmpty());
     }
 }
