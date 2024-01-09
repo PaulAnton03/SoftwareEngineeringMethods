@@ -206,10 +206,9 @@ public class StatusController implements StatusApi {
     public ResponseEntity updateToPreparing(Long orderId, Long authorization,
                                                   UpdateToPreparingRequest updateToPreparingRequest) {
 
-        Optional<ResponseEntity> auth = authorizationService.authorize(authorization, "updateToPreparing");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization,
+                "updateToPreparing", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 

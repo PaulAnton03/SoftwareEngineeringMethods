@@ -208,9 +208,9 @@ public class OrderService {
 
         Time timeOfOrder = order.get().getTimeValues();
         timeOfOrder.setPrepTime(body);
-        orderRepo.saveAndFlush(order.get());
+        Order newOrder = orderRepo.saveAndFlush(order.get());
 
-        return Optional.of(orderRepo.saveAndFlush(newOrder).getRatingNumber());
+        return Optional.of(body);
     }
 
     /**
