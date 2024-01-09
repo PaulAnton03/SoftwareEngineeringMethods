@@ -2,50 +2,42 @@ package nl.tudelft.sem.template.example.authorization;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import javax.annotation.PostConstruct;
+import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class AuthorizationService {
 
-    private static final int USER_SERVER_PORT = 5000;
-
-    public enum UserType {
-        VENDOR,
-        COURIER,
-        ADMIN,
-        CUSTOMER,
-
-        NAN
-    }
-
     // Maps method names to the user types that are allowed to call them
     private HashMap<String, List<UserType>> permissions;
+    private UserExternalService userExternalService;
 
-    // Default constructor. Use this one in test cases if you want to ignore authorization.
-    public AuthorizationService(){
-
+    public AuthorizationService() {
+        // default constructor so spring can initialize
     }
-
-    public AuthorizationService(HashMap<String, List<UserType>> permissions) {
+    public AuthorizationService(UserExternalService userExternalService, HashMap<String, List<UserType>> permissions) {
+        this.userExternalService = userExternalService;
         this.permissions = permissions;
     }
 
     /**
      * Authorizes a user based on the provided user ID and required user type.
      *
-     * @param userId          The ID of the user to be authorized.
-     * @param methodName      Name of the method that was called.
+     * @param userId     The ID of the user to be authorized.
+     * @param methodName Name of the method that was called.
      * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
      */
     public Optional<ResponseEntity> authorize(Long userId, String methodName) {
-        UserType actualUserType = getUserTypeFromService(userId);
+        UserType actualUserType = getUserType(userId);
         if (actualUserType == UserType.NAN) {
             return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
         }
-        if (actualUserType != UserType.ADMIN && !permissions.get(methodName).contains(actualUserType)) {
+        if ((actualUserType != UserType.ADMIN && !permissions.containsKey(methodName))
+            || (actualUserType != UserType.ADMIN && !permissions.get(methodName).contains(actualUserType))) {
             return Optional.of(ResponseEntity.status(403).body("User with id " + userId + " does not have access rights"));
         }
         return Optional.empty();
@@ -57,12 +49,9 @@ public class AuthorizationService {
      * @param userId The ID of the user.
      * @return The user type obtained from the user service, or UserType.NAN if an error occurs.
      */
-    private UserType getUserTypeFromService(Long userId) {
-        RestTemplate restTemplate = new RestTemplate();
-        String userTypeServiceEndpoint = "http://localhost:" + USER_SERVER_PORT + "/user/" + userId + "/type";
+    private UserType getUserType(Long userId) {
         try {
-            String actualUserType = restTemplate.getForObject(userTypeServiceEndpoint, String.class);
-            return parseUserType(actualUserType);
+            return parseUserType(userExternalService.getUserTypeFromService(userId));
         } catch (Exception e) {
             return UserType.NAN;
         }
@@ -83,6 +72,37 @@ public class AuthorizationService {
             case "customer" -> UserType.CUSTOMER;
             default -> throw new IllegalArgumentException("Invalid user type: " + userType);
         };
+    }
+
+    /**
+     * Initializes the permissions map with default values if it is null.
+     * You do not need to add permissions for admin only methods.
+     */
+    @PostConstruct
+    private void init() {
+        if (permissions == null) {
+            permissions = new HashMap<>(
+                Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
+                    "updateToDelivered", List.of(UserType.COURIER),
+                    "updateToInTransit", List.of(UserType.COURIER),
+                    "updateToGivenToCourier", List.of(UserType.VENDOR),
+                    "updateToRejected", List.of(UserType.VENDOR),
+                    "updateToAccepted", List.of(UserType.VENDOR),
+                    "getStatus", List.of(UserType.CUSTOMER, UserType.VENDOR, UserType.COURIER),
+                    "putOrderRating", List.of(UserType.CUSTOMER),
+                    "updateBossOfCourier", List.of(UserType.VENDOR)
+                )
+            );
+        }
+    }
+
+    public enum UserType {
+        VENDOR,
+        COURIER,
+        ADMIN,
+        CUSTOMER,
+
+        NAN
     }
 
 }
