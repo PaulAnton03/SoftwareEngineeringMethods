@@ -98,7 +98,7 @@ public class StatusController implements StatusApi {
 
         DeliveryException e = new DeliveryException().isResolved(false)
                 .exceptionType(DeliveryException.ExceptionTypeEnum.REJECTED)
-                .orderId(orderId).message("Order was rejected by the vendor");
+                .order(order.get()).message("Order was rejected by the vendor");
 
         statusService.addDeliveryException(e);
 

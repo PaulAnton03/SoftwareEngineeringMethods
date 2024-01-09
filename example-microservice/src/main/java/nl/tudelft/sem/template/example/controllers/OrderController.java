@@ -310,9 +310,10 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}/courier/{courierId}")
     public ResponseEntity<Void> setCourierId(
-            @RequestParam(name = "authorization") Long authorization,
+
             @PathVariable(name = "orderId") Long orderId,
             @PathVariable(name = "courierId") Long courierId,
+            @RequestParam(name = "authorization") Long authorization,
             @RequestBody @Valid Order order
     ) {
         var authorizationResponse =
