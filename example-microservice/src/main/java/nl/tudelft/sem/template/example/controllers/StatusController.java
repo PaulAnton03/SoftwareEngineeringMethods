@@ -206,10 +206,8 @@ public class StatusController implements StatusApi {
     public ResponseEntity<Void> updateToDelivered(@PathVariable("orderId") Long orderId,
                                                   @RequestParam(value = "authorization", required = true) Long authorization,
                                                   @Valid @RequestBody UpdateToDeliveredRequest updateToDeliveredRequest) {
-        var auth = authorizationService.authorize(authorization, "updateToDelivered");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToDelivered",orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         if (!orderService.orderExists(orderId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

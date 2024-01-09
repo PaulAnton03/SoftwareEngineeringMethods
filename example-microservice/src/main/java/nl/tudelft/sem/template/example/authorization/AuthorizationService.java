@@ -10,6 +10,7 @@ import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.*;
 
 @Service
 public class AuthorizationService {
@@ -81,14 +82,14 @@ public class AuthorizationService {
     private void init() throws NoSuchMethodException {
         permissions = new HashMap<>(
             Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
-                    "updateToDelivered", List.of(UserType.COURIER),
-                    "updateToInTransit", List.of(UserType.COURIER),
-                    "updateToGivenToCourier", List.of(UserType.VENDOR),
-                    "updateToRejected", List.of(UserType.VENDOR),
-                    "updateToAccepted", List.of(UserType.VENDOR),
-                    "getStatus", List.of(UserType.CUSTOMER, UserType.VENDOR, UserType.COURIER),
-                    "putOrderRating", List.of(UserType.CUSTOMER),
-                    "updateBossOfCourier", List.of(UserType.VENDOR)
+                    "updateToDelivered", List.of(COURIER),
+                    "updateToInTransit", List.of(COURIER),
+                    "updateToGivenToCourier", List.of(VENDOR),
+                    "updateToRejected", List.of(VENDOR),
+                    "updateToAccepted", List.of(VENDOR),
+                    "getStatus", List.of(CUSTOMER, VENDOR, COURIER),
+                    "putOrderRating", List.of(CUSTOMER),
+                    "updateBossOfCourier", List.of(VENDOR)
             ));
 
 
@@ -96,15 +97,6 @@ public class AuthorizationService {
             Map.of(//"Method name", "dbUtils::userBelongsToOrder" or "dbUtils::courierBelongsToVendor")
                 "getFinalDestination", dbUtils::userBelongsToOrder
             ));
-    }
-
-    public enum UserType {
-        VENDOR,
-        COURIER,
-        ADMIN,
-        CUSTOMER,
-
-        NAN
     }
 
 }

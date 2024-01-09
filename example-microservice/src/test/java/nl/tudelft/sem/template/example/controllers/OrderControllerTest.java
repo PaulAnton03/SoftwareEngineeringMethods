@@ -68,7 +68,7 @@ class OrderControllerTest {
     void getOrder200() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(proper);
-        var res = controller.getOrder(1L, 11L);
+        var res = controller.getOrder(11L, 1L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
 

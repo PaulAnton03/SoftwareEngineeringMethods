@@ -206,15 +206,13 @@ public class UserControllerTest {
         Optional<Courier> proper = Optional.of(courier);
 
         Mockito.when(userService.getCourier(1L)).thenReturn(proper);
-        Mockito.when(authorizationService.authorize(2L, "getCourier"))
-                .thenReturn(Optional.empty());
         var res = controller.getCourier(1L, 2L);
         assertEquals(new ResponseEntity<>(courier, HttpStatus.OK), res);
     }
 
     @Test
     void getCourier403() {
-        Mockito.when(authorizationService.authorize(1L, "getCourier"))
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         var res = controller.getCourier(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -223,8 +221,6 @@ public class UserControllerTest {
     @Test
     void getCourier404() {
         Mockito.when(userService.getCourier(1L)).thenReturn(Optional.empty());
-        Mockito.when(authorizationService.authorize(2L, "getCourier"))
-                .thenReturn(Optional.empty());
         var res = controller.getCourier(1L, 2L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }

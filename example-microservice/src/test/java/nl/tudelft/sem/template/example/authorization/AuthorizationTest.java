@@ -84,7 +84,7 @@ public class AuthorizationTest {
 
     @Test
     void adminOnlyMethodPermission() {
-        WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
+        WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/1/type")))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)

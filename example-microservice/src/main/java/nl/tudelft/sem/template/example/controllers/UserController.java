@@ -43,11 +43,8 @@ public class UserController implements UserApi {
             @PathVariable(name = "courierId") Long courierId,
             @RequestParam(name = "authorization") Long authorization) {
 
-        Optional<ResponseEntity> authorizationResponse =
-                authorizationService.authorize(authorization, "getCourier");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Courier> courier = userService.getCourier(courierId);
         if (courier.isEmpty()) {
