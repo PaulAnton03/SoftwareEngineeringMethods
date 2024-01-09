@@ -12,6 +12,7 @@ import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
+import nl.tudelft.sem.template.model.UpdateToPreparingRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -200,6 +201,34 @@ public class StatusController implements StatusApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Override
+    @PutMapping("/{orderId}/preparing")
+    public ResponseEntity updateToPreparing(Long orderId, Long authorization,
+                                                  UpdateToPreparingRequest updateToPreparingRequest) {
+
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization,
+                "updateToPreparing", orderId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
+        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
+
+        if (currentStatus.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (currentStatus.get() != Order.StatusEnum.ACCEPTED) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Order> order = statusService.updateStatusToPreparing(orderId, updateToPreparingRequest);
+
+        if (order.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     /**
      * PUT for /status/{orderId}/delivered.
      *
@@ -263,5 +292,7 @@ public class StatusController implements StatusApi {
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
+
+
 
 }

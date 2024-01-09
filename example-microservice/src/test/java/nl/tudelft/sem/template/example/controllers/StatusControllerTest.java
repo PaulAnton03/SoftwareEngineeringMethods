@@ -14,11 +14,13 @@ import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
+import nl.tudelft.sem.template.model.UpdateToPreparingRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import wiremock.org.apache.hc.core5.util.TimeValue;
 
 
 public class StatusControllerTest {
@@ -340,5 +342,53 @@ public class StatusControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
+    @Test
+    void updateToPreparingWorks200() {
+        OffsetDateTime time1 = OffsetDateTime.of(2023, 01, 01,
+                12, 30, 00, 0, ZoneOffset.ofHours(2));
+        OffsetDateTime time2 = OffsetDateTime.of(2024, 01, 01,
+                14, 30, 00, 0, ZoneOffset.ofHours(2));
+        UpdateToPreparingRequest req = new UpdateToPreparingRequest().expectedDeliveryTime(time2).prepTime("02:30:00");
+        Time tv = new Time().prepTime("01:30:00").expectedDeliveryTime(time1);
+        Time tv2 = new Time().prepTime("02:30:00").expectedDeliveryTime(time2);
+        Order order1 = new Order().id(11L).status(Order.StatusEnum.PREPARING).timeValues(tv);
+        Order order2 = new Order().id(11L).status(Order.StatusEnum.ACCEPTED).timeValues(tv2);
+
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+                Optional.of(Order.StatusEnum.ACCEPTED));
+        Mockito.when(statusService.updateStatusToPreparing(11L, req)).thenReturn(
+                Optional.of(order2));
+
+        var res = controller.updateToPreparing(11L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateToPreparingGives404() {
+        OffsetDateTime time2 = OffsetDateTime.of(2024, 01, 01,
+                14, 30, 00, 0, ZoneOffset.ofHours(2));
+        UpdateToPreparingRequest req = new UpdateToPreparingRequest().expectedDeliveryTime(time2).prepTime("02:30:00");
+
+        Mockito.when(statusService.getOrderStatus(anyLong())).thenReturn(
+                Optional.empty());
+
+        var res = controller.updateToPreparing(11L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateToPreparingGives404Variant() {
+        OffsetDateTime time2 = OffsetDateTime.of(2024, 01, 01,
+                14, 30, 00, 0, ZoneOffset.ofHours(2));
+        UpdateToPreparingRequest req = new UpdateToPreparingRequest().expectedDeliveryTime(time2).prepTime("02:30:00");
+
+        Mockito.when(statusService.getOrderStatus(anyLong())).thenReturn(
+                Optional.of(Order.StatusEnum.ACCEPTED));
+        Mockito.when(statusService.updateStatusToPreparing(11L, req)).thenReturn(
+                Optional.empty());
+
+        var res = controller.updateToPreparing(11L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
 
 }

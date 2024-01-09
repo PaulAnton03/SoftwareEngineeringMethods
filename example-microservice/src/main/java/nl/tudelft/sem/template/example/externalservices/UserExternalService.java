@@ -8,7 +8,7 @@ public class UserExternalService {
 
     private final RestTemplate restTemplate;
 
-    private final String userServerBaseUrl = "http://localhost:5000";
+    private final String userServerBaseUrl = "http://localhost:4269";
 
     public UserExternalService() {
         this.restTemplate = new RestTemplate();

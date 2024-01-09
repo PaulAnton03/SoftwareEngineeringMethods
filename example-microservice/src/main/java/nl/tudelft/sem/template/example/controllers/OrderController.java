@@ -317,4 +317,40 @@ public class OrderController implements OrderApi {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    /**
+     * PUT /order/{orderId}/preparation-time : Update prepTime of the order
+     * Update the preparation time of the specified order and return response.
+     *
+     * @param orderId id of the order to update (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param body New preparation time to be replaced (required)
+     * @return Successful response, preparation time of the order updated (status code 200)
+     *      or Unsuccessful, preparation time of the order cannot be updated
+     *                      because of a bad request (status code 400)
+     *      or Unsuccessful, entity does not have access rights to update
+     *                      preparation time (status code 403)
+     *      or Unsuccessful, preparation time for the order not found (status code 404)
+     */
+    @Override
+    @PutMapping("/{orderId}/preparation-time")
+    public ResponseEntity setDeliverTime(
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestBody @Valid String body
+    ) {
+        var auth =
+                authorizationService.checkIfUserIsAuthorized(authorization, "setDeliverTime", orderId);
+        if(doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<String> newPrepTime = orderService.updatePrepTime(orderId, body);
+
+        if(newPrepTime.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

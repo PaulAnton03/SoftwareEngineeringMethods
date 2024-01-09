@@ -215,6 +215,13 @@ class OrderControllerTest {
     }
 
     @Test
+    void updatePrepTime200() {
+        Optional<String> prepTime = Optional.of(new String("01:01:01"));
+        Mockito.when(orderService.updatePrepTime(1L, prepTime.get())).thenReturn(prepTime);
+        var res = controller.setDeliverTime(1L, 1L, prepTime.get());
+    }
+
+    @Test
     void setCourierId200() {
         Courier c = new Courier().id(2L);
         Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.of(c));
@@ -225,6 +232,12 @@ class OrderControllerTest {
 
         var res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updatePrepTime404() {
+        Mockito.when(orderService.updatePrepTime(1L, "01:01:01")).thenReturn(Optional.empty());
+        var res = controller.setDeliverTime(1L, 1L, "01:01:01");
     }
 
     @Test
