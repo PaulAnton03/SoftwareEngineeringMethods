@@ -1,8 +1,10 @@
-package nl.tudelft.sem.template.example.domain.order;
+package nl.tudelft.sem.template.example.domain.order.OrderStrategy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
@@ -14,8 +16,8 @@ public class GeneralOrdersStrategy implements NextOrderStrategy {
      * do not have any couriers on their own and the orders are being prepared.
      */
 
-    private OrderRepository orderRepository;
-    private VendorRepository vendorRepository;
+    private final OrderRepository orderRepository;
+    private final VendorRepository vendorRepository;
 
     public GeneralOrdersStrategy(OrderRepository orderRepository, VendorRepository vendorRepository) {
         this.orderRepository = orderRepository;
@@ -24,10 +26,11 @@ public class GeneralOrdersStrategy implements NextOrderStrategy {
 
     /**
      * Gets orders that are being prepared and that do not belong to an vendor that has couriers on their own.
+     *
      * @param vendorId the optional id of the vendor, in this strategy it has to be empty
      *                 as there is no specific vendor to get orders form
      * @return an optional list of available orders, empty list if there are currently none,
-     *      empty optional if there is a vendor id passed
+     * empty optional if there is a vendor id passed
      */
     @Override
     public Optional<List<Order>> availableOrders(Optional<Long> vendorId) {
@@ -38,10 +41,14 @@ public class GeneralOrdersStrategy implements NextOrderStrategy {
         // get all orders that are being prepared
         List<Order> all = orderRepository.findByStatus(Order.StatusEnum.PREPARING);
 
+        if (all.isEmpty()) {
+            return Optional.of(new ArrayList<>());
+        }
+
         // now we have to get the ones whose vendors don't have couriers
         List<Order> orders = all.stream()
-                .filter(order -> !vendorHasCouriers(order.getVendorId()))
-                .collect(Collectors.toList());
+            .filter(order -> !vendorHasCouriers(order.getVendorId()))
+            .collect(Collectors.toList());
 
 
         return Optional.of(orders);
@@ -49,6 +56,7 @@ public class GeneralOrdersStrategy implements NextOrderStrategy {
 
     /**
      * Returns if the given vendor exists and has its own couriers
+     *
      * @param vendorId the id of the vendor to check for
      * @return the boolean stating if the vendor has its oen couriers or not
      */

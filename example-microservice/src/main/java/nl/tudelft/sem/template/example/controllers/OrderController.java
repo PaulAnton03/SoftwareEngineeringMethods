@@ -9,11 +9,11 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.tudelft.sem.template.api.OrderApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
-import nl.tudelft.sem.template.example.domain.order.GeneralOrdersStrategy;
-import nl.tudelft.sem.template.example.domain.order.NextOrderStrategy;
-import nl.tudelft.sem.template.example.domain.order.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.order.OrderStrategy.GeneralOrdersStrategy;
+import nl.tudelft.sem.template.example.domain.order.OrderStrategy.NextOrderStrategy;
+import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
@@ -38,9 +38,9 @@ public class OrderController implements OrderApi {
 
     private final AuthorizationService authorizationService;
 
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    private VendorRepository vendorRepository;
+    private final VendorRepository vendorRepository;
 
     @Getter
     @Setter
@@ -68,7 +68,7 @@ public class OrderController implements OrderApi {
      * or Unsuccessful, no order was found (status code 404)
      */
     @Override
-    @GetMapping("/order/{vendorId}")
+    @GetMapping("/{vendorId}/get-next-order")
     public ResponseEntity<Order> getNextOrderForVendor(
         @PathVariable("vendorId") Long vendorId,
         @RequestParam(value = "authorization", required = true) Long authorization) {
@@ -105,22 +105,18 @@ public class OrderController implements OrderApi {
      * or Unsuccessful, no independent and unassigned orders were found (status code 404)
      */
     @Override
-    @GetMapping("/order/unassigned")
+    @GetMapping("/unassigned")
     public ResponseEntity<List<Order>> getIndependentOrders(
         @RequestParam(value = "authorization", required = true) Long authorization) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getIndependentOrders");
-        // if there is a response, then the authority is not sufficient
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+//        Optional<ResponseEntity> authorizationResponse =
+//            authorizationService.authorize(authorization, "getIndependentOrders");
+//        // if there is a response, then the authority is not sufficient
+//        if (authorizationResponse.isPresent()) {
+//            return authorizationResponse.get();
+//        }
 
         this.setStrategy(new GeneralOrdersStrategy(orderRepository, vendorRepository));
         Optional<List<Order>> orders = strategy.availableOrders(Optional.empty());
-
-        if (orders.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         if (orders.get().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -145,11 +141,11 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @PathVariable(name = "orderId") Long orderId
     ) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getFinalDestination");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+//        Optional<ResponseEntity> authorizationResponse =
+//            authorizationService.authorize(authorization, "getFinalDestination");
+//        if (authorizationResponse.isPresent()) {
+//            return authorizationResponse.get();
+//        }
         Optional<Location> location = orderService.getFinalDestinationOfOrder(orderId);
 
         if (location.isEmpty()) {

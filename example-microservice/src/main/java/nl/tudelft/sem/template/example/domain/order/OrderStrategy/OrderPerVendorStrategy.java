@@ -1,13 +1,10 @@
-package nl.tudelft.sem.template.example.domain.order;
+package nl.tudelft.sem.template.example.domain.order.OrderStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.model.Order;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
 
 public class OrderPerVendorStrategy implements NextOrderStrategy {
     /**
@@ -15,10 +12,7 @@ public class OrderPerVendorStrategy implements NextOrderStrategy {
      * They can only get - meaning "assigned" - one order that is available for that vendor.
      */
 
-
-//    private static final int DELIVERY_SERVER_PORT = 8082;
-
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
     public OrderPerVendorStrategy(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;

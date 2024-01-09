@@ -1,6 +1,6 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
@@ -31,12 +31,15 @@ class OrderPerVendorStrategyTest {
     void setUp() {
         this.orderRepo = mock(OrderRepository.class);
 
-        this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F)).status(Order.StatusEnum.PREPARING);
-        this.order2 = new Order().id(22L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F)).status(Order.StatusEnum.PREPARING);
+        this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+            .status(Order.StatusEnum.PREPARING);
+        this.order2 = new Order().id(22L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+            .status(Order.StatusEnum.PREPARING);
 
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F)).hasCouriers(false);
         this.strategy = new OrderPerVendorStrategy(orderRepo);
     }
+
     @Test
     void availableOrdersFiltersNull() {
         when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(null);

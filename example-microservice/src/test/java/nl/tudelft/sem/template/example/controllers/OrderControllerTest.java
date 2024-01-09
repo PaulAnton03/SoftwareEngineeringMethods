@@ -1,21 +1,23 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
-import nl.tudelft.sem.template.example.domain.order.GeneralOrdersStrategy;
-import nl.tudelft.sem.template.example.domain.order.NextOrderStrategy;
-import nl.tudelft.sem.template.example.domain.order.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
+import nl.tudelft.sem.template.example.domain.order.OrderStrategy.GeneralOrdersStrategy;
+import nl.tudelft.sem.template.example.domain.order.OrderStrategy.NextOrderStrategy;
+import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -32,6 +34,14 @@ class OrderControllerTest {
     private VendorRepository vendorRepo;
     private OrderController controller;
 
+    private Order order1;
+
+    private NextOrderStrategy strategy;
+
+    private OrderPerVendorStrategy perVendorStrategy;
+
+    private GeneralOrdersStrategy generalStrategy;
+
     private AuthorizationService authorizationService;
 
 
@@ -39,10 +49,93 @@ class OrderControllerTest {
     void setUp() {
         this.orderService = Mockito.mock(OrderService.class);
         this.orderRepo = Mockito.mock(OrderRepository.class);
+        this.strategy = Mockito.mock(NextOrderStrategy.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
         this.vendorRepo = Mockito.mock(VendorRepository.class);
-        Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString())).thenReturn(Optional.empty());
+        this.generalStrategy = Mockito.mock(GeneralOrdersStrategy.class);
+        this.perVendorStrategy = Mockito.mock(OrderPerVendorStrategy.class);
+        this.order1 = new Order().id(2L).status(Order.StatusEnum.PREPARING).vendorId(44L);
+        Mockito.when(authorizationService.authorize(anyLong(), anyString())).thenReturn(Optional.empty());
         this.controller = new OrderController(orderService, authorizationService, orderRepo, vendorRepo);
+    }
+
+    @Test
+    void getIndependentOrdersWorks() {
+        Mockito.when(orderRepo.findByStatus(any())).thenReturn(List.of(order1));
+        Mockito.when(vendorRepo.findById(any())).thenReturn(Optional.ofNullable(new Vendor().id(33L).hasCouriers(false)));
+        Mockito.when(generalStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
+
+        var res = controller.getIndependentOrders(11L);
+        assertEquals(new ResponseEntity<>(List.of(order1), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getIndependentOrdersForbidden() {
+        Mockito.when(orderRepo.findByStatus(any())).thenReturn(List.of(order1));
+        Mockito.when(vendorRepo.findById(any())).thenReturn(Optional.ofNullable(new Vendor().id(33L).hasCouriers(false)));
+        Mockito.when(generalStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
+        Mockito.when(authorizationService.authorize(any(), anyString()))
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getIndependentOrders(11L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getIndependentOrders404() {
+        Mockito.when(orderRepo.findByStatus(any())).thenReturn(List.of());
+        Mockito.when(vendorRepo.findById(any())).thenReturn(Optional.ofNullable(new Vendor().id(33L).hasCouriers(false)));
+        Mockito.when(generalStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
+
+        var res = controller.getIndependentOrders(11L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getNextOrderForVendorWorks() {
+        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of(order1));
+        Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
+
+        var res = controller.getNextOrderForVendor(11L, 1L);
+        assertEquals(new ResponseEntity<>(order1, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getNextOrderForVendorForbidden() {
+        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of(order1));
+        Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
+        Mockito.when(authorizationService.authorize(any(), anyString()))
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getNextOrderForVendor(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getNextOrderForVendorWorksMultipleOrders() {
+        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of(order1, new Order()));
+        Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
+
+        var res = controller.getNextOrderForVendor(11L, 1L);
+        assertEquals(new ResponseEntity<>(order1, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getNextOrderForVendorNotFound() {
+        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of());
+        Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of()));
+
+        var res = controller.getNextOrderForVendor(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getNextOrderForVendorBadRequest() {
+        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(null);
+        Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.empty());
+
+        var res = controller.getNextOrderForVendor(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
     @Test
