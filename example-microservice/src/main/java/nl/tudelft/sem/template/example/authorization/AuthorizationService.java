@@ -12,19 +12,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorizationService {
 
-    public enum UserType {
-        VENDOR,
-        COURIER,
-        ADMIN,
-        CUSTOMER,
-
-        NAN
-    }
-
     // Maps method names to the user types that are allowed to call them
     private HashMap<String, List<UserType>> permissions;
     private UserExternalService userExternalService;
 
+    public AuthorizationService() {
+        // default constructor so spring can initialize
+    }
     public AuthorizationService(UserExternalService userExternalService, HashMap<String, List<UserType>> permissions) {
         this.userExternalService = userExternalService;
         this.permissions = permissions;
@@ -89,9 +83,26 @@ public class AuthorizationService {
         if (permissions == null) {
             permissions = new HashMap<>(
                 Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
+                    "updateToDelivered", List.of(UserType.COURIER),
+                    "updateToInTransit", List.of(UserType.COURIER),
+                    "updateToGivenToCourier", List.of(UserType.VENDOR),
+                    "updateToRejected", List.of(UserType.VENDOR),
+                    "updateToAccepted", List.of(UserType.VENDOR),
+                    "getStatus", List.of(UserType.CUSTOMER, UserType.VENDOR, UserType.COURIER),
+                    "putOrderRating", List.of(UserType.CUSTOMER),
+                    "updateBossOfCourier", List.of(UserType.VENDOR)
                 )
             );
         }
+    }
+
+    public enum UserType {
+        VENDOR,
+        COURIER,
+        ADMIN,
+        CUSTOMER,
+
+        NAN
     }
 
 }

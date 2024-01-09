@@ -1,17 +1,20 @@
 package nl.tudelft.sem.template.example.domain.order;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.Vendor;
-import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -156,5 +159,48 @@ class OrderServiceTest {
 
         Optional<Order> o = os.updateCourier(order1.getId(), 2L);
         assertTrue(o.isEmpty());
+    }
+
+    @Test
+    void orderExistsTrue() {
+        Mockito.when(orderRepo.existsById(anyLong())).thenReturn(true);
+
+        Boolean res = os.orderExists(order1.getId());
+        assertTrue(res);
+    }
+
+    @Test
+    void orderExistsFalse() {
+        Mockito.when(orderRepo.existsById(anyLong())).thenReturn(false);
+
+        Boolean res = os.orderExists(order1.getId());
+        assertFalse(res);
+    }
+
+    @Test
+    void getTimeValuesWorks() {
+        OffsetDateTime delivTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
+        Time timeVals = new Time().prepTime("00::33::00").actualDeliveryTime(delivTime);
+        Order o = order1.timeValues(timeVals);
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o));
+
+        Optional<Time> res = os.getTimeValuesForOrder(order1.getId());
+        assertEquals(res.get(), timeVals);
+    }
+
+    @Test
+    void getTimeValuesNoOrder() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+        Optional<Time> res = os.getTimeValuesForOrder(order1.getId());
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getTimeValuesNoTimeVals() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+
+        Optional<Time> res = os.getTimeValuesForOrder(order1.getId());
+        assertTrue(res.isEmpty());
     }
 }
