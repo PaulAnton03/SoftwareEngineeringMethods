@@ -2,7 +2,9 @@ package nl.tudelft.sem.template.example.domain.order;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
+import nl.tudelft.sem.template.model.UpdateToPreparingRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -86,5 +88,19 @@ public class StatusService {
         Order order = o.get();
         order.setStatus(Order.StatusEnum.IN_TRANSIT);
         return Optional.of(orderRepo.save(order));
+    }
+
+    public Optional<Order> updateStatusToPreparing(Long orderId, UpdateToPreparingRequest req) {
+        Optional<Order> o = orderRepo.findById(orderId);
+
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order order = o.get();
+        order.setStatus(Order.StatusEnum.PREPARING);
+        order.getTimeValues().setPrepTime(req.getPrepTime());
+        order.getTimeValues().setExpectedDeliveryTime(req.getExpectedDeliveryTime());
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 }
