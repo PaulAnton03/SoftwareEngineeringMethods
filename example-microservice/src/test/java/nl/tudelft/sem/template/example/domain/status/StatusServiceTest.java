@@ -4,30 +4,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
 import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
+import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 public class StatusServiceTest {
 
     public OrderRepository orderRepo;
-    private DeliveryExceptionRepository exceptionRepo;
-
     public Order order1;
-
     public Order order2;
-
     public Order order3;
     public DeliveryException delException1;
-
+    public Order order4;
     public StatusService ss;
+    private DeliveryExceptionRepository exceptionRepo;
 
     @BeforeEach
     void setUp() {
@@ -36,8 +40,9 @@ public class StatusServiceTest {
         this.order1 = new Order().id(1L).status(Order.StatusEnum.PENDING);
         this.order2 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER);
         this.order3 = new Order().id(1L).status(Order.StatusEnum.PREPARING);
+        this.order4 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT).timeValues(new Time().prepTime("00:22::00"));
         this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
-                .message("Test exception").isResolved(false).orderId(1L);
+            .message("Test exception").isResolved(false).orderId(1L);
         this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 
@@ -163,5 +168,86 @@ public class StatusServiceTest {
         Optional<DeliveryException> res = Optional.of(delException1);
         assertEquals(res, ss.addDeliveryException(delException1));
     }
+
+    @Test
+    void updateStatusToDelivered200() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order4));
+        Mockito.when(orderRepo.saveAndFlush(order4)).thenReturn(order4);
+
+        OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
+        UpdateToDeliveredRequest req = new UpdateToDeliveredRequest().actualDeliveryTime(deliveryTime);
+        ss.updateStatusToDelivered(order4.getId(), req);
+
+        ArgumentCaptor<Order> argumentCaptor = ArgumentCaptor.forClass(Order.class);
+        verify(orderRepo).saveAndFlush(argumentCaptor.capture());
+        Order res = argumentCaptor.getValue();
+
+        assertEquals(res.getStatus(), Order.StatusEnum.DELIVERED);
+        assertEquals(res.getTimeValues().getActualDeliveryTime(), deliveryTime);
+    }
+
+    @Test
+    void updateStatusToDeliveredPrevStatusDoesntMatch() {
+        Order o4 = order4.status(Order.StatusEnum.PREPARING);
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o4));
+        Mockito.when(orderRepo.save(order4)).thenReturn(order4);
+
+        OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
+        UpdateToDeliveredRequest req = new UpdateToDeliveredRequest().actualDeliveryTime(deliveryTime);
+        Optional<Order> ret = ss.updateStatusToDelivered(order4.getId(), req);
+
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
+    void updateStatusToDeliveredNullTimeValues() {
+        Order o4 = new Order().id(22L);
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o4));
+        Mockito.when(orderRepo.save(order4)).thenReturn(order4);
+
+        OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
+        UpdateToDeliveredRequest req = new UpdateToDeliveredRequest().actualDeliveryTime(deliveryTime);
+        Optional<Order> ret = ss.updateStatusToDelivered(order4.getId(), req);
+
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
+    void updateStatusToDeliveredNullDeliveryTime() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order4));
+        Mockito.when(orderRepo.save(order4)).thenReturn(order4);
+
+        UpdateToDeliveredRequest req = new UpdateToDeliveredRequest();
+        Optional<Order> ret = ss.updateStatusToDelivered(order4.getId(), req);
+
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
+    void updateStatusToDeliveredDeliveryTimeAlreadySet() {
+        OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
+
+        Order o4 = order4.timeValues(new Time().actualDeliveryTime(deliveryTime));
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o4));
+        Mockito.when(orderRepo.save(order4)).thenReturn(order4);
+
+        UpdateToDeliveredRequest req = new UpdateToDeliveredRequest();
+        Optional<Order> ret = ss.updateStatusToDelivered(order4.getId(), req);
+
+        assertTrue(ret.isEmpty());
+    }
+
+
+    @Test
+    void updateStatusToDeliveredOrderDoesntExist() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(orderRepo.save(order4)).thenReturn(order4);
+
+        UpdateToDeliveredRequest req = new UpdateToDeliveredRequest();
+        Optional<Order> ret = ss.updateStatusToDelivered(order4.getId(), req);
+
+        assertTrue(ret.isEmpty());
+    }
+
 
 }
