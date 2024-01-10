@@ -114,4 +114,12 @@ public class AdminService {
     public List<DeliveryException> getAllExceptions() {
         return exceptionRepo.findAll();
     }
+
+
+    public Boolean doesExceptionExist(DeliveryException exception) {
+        if (exception == null) {
+            return false;
+        }
+        return exceptionRepo.existsById(exception.getId());
+    }
 }
