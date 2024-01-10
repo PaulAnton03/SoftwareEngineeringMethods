@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DeliveryExceptionRepository extends JpaRepository<DeliveryException, Long> {
     List<DeliveryException> findByOrder(Order o);
+
+    Boolean existsByOrder(Order o);
 }

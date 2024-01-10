@@ -74,4 +74,31 @@ public class AdminService {
         // only get the first exception as there only should be one
         return Optional.of(exceptionList.get(0));
     }
+
+    /**
+     * Saves the exception in the database
+     *
+     * @param deliveryException the exception to save
+     * @return the optional object saved, empty if there is an exception for that order
+     */
+    public Optional<DeliveryException> makeException(DeliveryException deliveryException) {
+
+        if (deliveryException == null) {
+            return Optional.empty();
+        }
+
+        // can not make an exception that is not linked to an order
+        if (deliveryException.getOrder() == null) {
+            return Optional.empty();
+        }
+
+        // can not add an exception if that order already has an exception
+        if (exceptionRepo.existsByOrder(deliveryException.getOrder())) {
+            return Optional.empty();
+        }
+
+        return Optional.of(exceptionRepo.saveAndFlush(deliveryException));
+    }
+
+
 }

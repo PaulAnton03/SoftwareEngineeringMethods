@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,26 @@ public class AdminController implements AdminApi {
     public AdminController(AdminService adminService, AuthorizationService authorizationService) {
         this.adminService = adminService;
         this.authorizationService = authorizationService;
+    }
+
+    @Override
+    @PostMapping("/exceptions/{orderId}")
+    public ResponseEntity<Void> makeException(@PathVariable("orderId") Long orderId,
+                                              @RequestParam(value = "authorization", required = true) Long authorization,
+                                              @RequestBody(required = false) DeliveryException deliveryException) {
+
+        var auth = authorizationService.authorize(authorization, "getExceptionForOrder");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
+
+        Optional<DeliveryException> res = adminService.makeException(deliveryException);
+
+        if (res.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
