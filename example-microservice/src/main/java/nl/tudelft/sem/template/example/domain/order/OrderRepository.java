@@ -7,7 +7,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+
     List<Order> findByVendorIdAndStatus(Long vendorId, Order.StatusEnum status);
 
     List<Order> findByStatus(Order.StatusEnum status);
+
+    boolean existsByIdAndVendorId(Long orderId, Long vendorId);
+
+    boolean existsByIdAndCourierId(Long orderId, Long courierId);
+
 }

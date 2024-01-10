@@ -1,11 +1,10 @@
 package nl.tudelft.sem.template.example.domain.user;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -58,6 +57,17 @@ public class UserService {
             return Optional.empty();
         }
     }
+
+    /**
+     * Gets the courier based on id.
+     *
+     * @param courierId the id of the courier
+     * @return empty optional if courier DNE, optional of Courier otherwise
+     */
+    public Optional<Courier> getCourierById(Long courierId) {
+        return courierRepo.findById(courierId);
+    }
+
 
     /**
      * Tries to add a new vendor with given id to the database

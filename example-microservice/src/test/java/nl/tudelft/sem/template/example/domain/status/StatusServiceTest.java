@@ -42,7 +42,7 @@ public class StatusServiceTest {
         this.order3 = new Order().id(1L).status(Order.StatusEnum.PREPARING);
         this.order4 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT).timeValues(new Time().prepTime("00:22::00"));
         this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
-            .message("Test exception").isResolved(false).orderId(1L);
+                .message("Test exception").isResolved(false).order(order1);
         this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 
