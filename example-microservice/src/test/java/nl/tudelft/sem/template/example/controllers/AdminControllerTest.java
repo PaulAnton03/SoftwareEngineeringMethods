@@ -89,4 +89,19 @@ class AdminControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
+    @Test
+    void makeException403() {
+        Mockito.when(adminService.makeException(exception1)).thenReturn(Optional.empty());
+        var res = controller.makeException(1L, 5L, exception1);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
+    void makeException200() {
+        Mockito.when(adminService.makeException(exception1)).thenReturn(Optional.of(exception1));
+        var res = controller.makeException(1L, 5L, exception1);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+
 }

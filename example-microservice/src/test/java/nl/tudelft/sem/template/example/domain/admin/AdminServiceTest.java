@@ -85,6 +85,42 @@ public class AdminServiceTest {
     }
 
     @Test
+    void makeExceptionWorks() {
+        when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
+        when(exceptionRepo.existsById(anyLong())).thenReturn(false);
+        var res = adminService.makeException(exception1);
+        assertEquals(Optional.of(exception1), res);
+    }
+
+    @Test
+    void makeExceptionButExceptionAlreadyExists() {
+        when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
+        when(exceptionRepo.existsByOrder(order1)).thenReturn(true);
+        var res = adminService.makeException(exception1);
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void makeExceptionButNotLinkedToOrder() {
+        when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
+        when(exceptionRepo.existsByOrder(order1)).thenReturn(false);
+        var res = adminService.makeException(new DeliveryException());
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void makeExceptionButNullInput() {
+        when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
+        when(exceptionRepo.existsByOrder(order1)).thenReturn(false);
+        var res = adminService.makeException(null);
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
     void updateDefaultRadiusEmpty() {
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(new ArrayList<>());
 
