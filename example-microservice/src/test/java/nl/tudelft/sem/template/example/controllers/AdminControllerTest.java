@@ -2,12 +2,15 @@ package nl.tudelft.sem.template.example.controllers;
 
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.admin.AdminService;
+import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,9 +39,10 @@ class AdminControllerTest {
 
     @Test
     void updateDefaultRadius200(){
-
-        var res = controller.getOrder(11L, 1L);
-        assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
+        List<Vendor> listVendors = new ArrayList<>();
+        Mockito.when(adminService.updateDefaultRadius(5D)).thenReturn(Optional.of(listVendors));
+        var res = controller.updateDefaultRadius(1L, 5D);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
 }
