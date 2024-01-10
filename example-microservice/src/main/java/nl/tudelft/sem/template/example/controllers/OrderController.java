@@ -55,8 +55,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/final-destination")
     public ResponseEntity getFinalDestination(
-            @RequestParam(name = "authorization") Long authorization,
-            @PathVariable(name = "orderId") Long orderId
+        @RequestParam(name = "authorization") Long authorization,
+        @PathVariable(name = "orderId") Long orderId
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getFinalDestination", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -84,8 +84,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(
-            @PathVariable(name = "orderId") Long orderId,
-            @RequestParam(name = "authorization") Long authorization
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrder", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -166,9 +166,9 @@ public class OrderController implements OrderApi {
     @Override
     @PostMapping("/{orderId}")
     public ResponseEntity<Void> makeOrder(
-            @PathVariable(name = "orderId") Long orderId,
-            @RequestParam(name = "authorization") Long authorization,
-            @Parameter(name = "Order") @RequestBody @Valid Order order
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization,
+        @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "makeOrder", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -229,8 +229,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/rating")
     public ResponseEntity getOrderRating(
-            @PathVariable(name = "orderId") Long orderId,
-            @RequestParam(name = "authorization") Long authorization
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrderRating", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }
@@ -260,9 +260,9 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}/rating")
     public ResponseEntity putOrderRating(
-            @PathVariable(name = "orderId") Long orderId,
-            @RequestParam(name = "authorization") Long authorization,
-            @RequestBody @Valid BigDecimal body
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization,
+        @RequestBody @Valid BigDecimal body
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "putOrderRating", orderId);
         if (doesNotHaveAuthority(auth)) { return auth.get(); }

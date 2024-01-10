@@ -43,7 +43,7 @@ public class StatusServiceTest {
         this.order5 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED);
         this.order6 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED).timeValues(new Time());
         this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
-                .message("Test exception").isResolved(false).order(order1);
+            .message("Test exception").isResolved(false).id(1L);
         this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 

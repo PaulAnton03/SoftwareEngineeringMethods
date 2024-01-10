@@ -35,7 +35,7 @@ public class UserServiceTest {
     @Test
     void updateBossIdOfCourier200() {
         Courier courier11 = new Courier().id(100L).bossId(6L)
-                .currentLocation(new Location().latitude(0F).longitude(0F));
+            .currentLocation(new Location().latitude(0F).longitude(0F));
 
         Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
         Mockito.lenient().when(courierRepo.saveAndFlush(courier1)).thenReturn(courier11);
