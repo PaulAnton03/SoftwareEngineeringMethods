@@ -44,9 +44,6 @@ public class AuthorizationServiceTest {
     private UserService userService;
     private OrderController controller;
 
-    private OrderRepository orderRepo;
-    private VendorRepository vendorRepo;
-
     private final UserExternalService userExternalService = new UserExternalService();
 
     private AuthorizationService authorizationService;
@@ -67,7 +64,7 @@ public class AuthorizationServiceTest {
         WireMockConfig.startUserServer();
         this.orderService = Mockito.mock(OrderService.class);
         this.userService = Mockito.mock(UserService.class);
-        this.controller = new OrderController(orderService, userService, authorizationService);
+        this.controller = new OrderController(orderService, userService, authorizationService, orderRepo, vendorRepo);
         orderService = Mockito.mock(OrderService.class);
         orderRepo = mock(OrderRepository.class);
         vendorRepo = mock(VendorRepository.class);
@@ -81,8 +78,7 @@ public class AuthorizationServiceTest {
         );
         order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F));
         vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
-        authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
-        controller = new OrderController(orderService, userService, authorizationService);
+        this.authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
     }
 
     @Test
@@ -98,44 +94,6 @@ public class AuthorizationServiceTest {
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
-
-//    @Test
-//    void getFinalDestinationWorksA() {
-//        WireMockConfig.orderMicroservice.stubFor(WireMock.get(urlPathMatching(("/order/11/pending")))
-//            .willReturn(aResponse()
-//                .withStatus(200)
-//                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-//                .withBody("[\n" +
-//                    "  {\n" +
-//                    "    \"id\": 1,\n" +
-//                    "    \"customerId\": 1,\n" +
-//                    "    \"vendorId\": 1,\n" +
-//                    "    \"ratingNumber\": 1,\n" +
-//                    "    \"orderTime\": \"1985-04-12T23:20:50.520Z\",\n" +
-//                    "    \"dishes\": [\n" +
-//                    "      1\n" +
-//                    "    ],\n" +
-//                    "    \"dishRequirements\": [\n" +
-//                    "      \"no nuts\"\n" +
-//                    "    ],\n" +
-//                    "    \"status\": {\n" +
-//                    "      \"status\": \"pending\"\n" +
-//                    "    },\n" +
-//                    "    \"deliveryDestination\": {\n" +
-//                    "      \"latitude\": 51.925298,\n" +
-//                    "      \"longitude\": 4.754099\n" +
-//                    "    },\n" +
-//                    "    \"comment\": \"deliver on the door\",\n" +
-//                    "    \"price\": 14.5,\n" +
-//                    "    \"isPayed\": true\n" +
-//                    "  }\n" +
-//                    "]")));
-//        Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
-//        Mockito.when(orderService.getPendingOrdersForVendor(anyLong())).thenReturn(proper);
-//
-//        var res = controller.getFinalDestination(11L, 1L);
-//        assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
-//    }
 
     @Test
     void getFinalDestinationNoAuthorization() {

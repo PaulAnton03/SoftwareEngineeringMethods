@@ -14,8 +14,8 @@ import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.GeneralOrdersStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.NextOrderStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
@@ -56,13 +56,14 @@ class OrderControllerTest {
         this.userService = Mockito.mock(UserService.class);
         this.orderRepo = Mockito.mock(OrderRepository.class);
         this.strategy = Mockito.mock(NextOrderStrategy.class);
+        this.userService = Mockito.mock(UserService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
         this.vendorRepo = Mockito.mock(VendorRepository.class);
         this.generalStrategy = Mockito.mock(GeneralOrdersStrategy.class);
         this.perVendorStrategy = Mockito.mock(OrderPerVendorStrategy.class);
         this.order1 = new Order().id(2L).status(Order.StatusEnum.PREPARING).vendorId(44L);
-        Mockito.when(authorizationService.authorize(anyLong(), anyString())).thenReturn(Optional.empty());
-        this.controller = new OrderController(orderService, authorizationService, orderRepo, vendorRepo);
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(any(), anyString(), any())).thenReturn(Optional.empty());
+        this.controller = new OrderController(orderService, userService, authorizationService, orderRepo, vendorRepo);
     }
 
     @Test
@@ -80,7 +81,7 @@ class OrderControllerTest {
         Mockito.when(orderRepo.findByStatus(any())).thenReturn(List.of(order1));
         Mockito.when(vendorRepo.findById(any())).thenReturn(Optional.ofNullable(new Vendor().id(33L).hasCouriers(false)));
         Mockito.when(generalStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
-        Mockito.when(authorizationService.authorize(any(), anyString()))
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(any(), anyString(), any()))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getIndependentOrders(11L);
@@ -110,7 +111,7 @@ class OrderControllerTest {
     void getNextOrderForVendorForbidden() {
         Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of(order1));
         Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
-        Mockito.when(authorizationService.authorize(any(), anyString()))
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(any(), anyString(), any()))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getNextOrderForVendor(11L, 1L);
@@ -325,7 +326,7 @@ class OrderControllerTest {
 
     @Test
     void updatePrepTime200() {
-        Optional<String> prepTime = Optional.of(new String("01:01:01"));
+        Optional<String> prepTime = Optional.of("01:01:01");
         Mockito.when(orderService.updatePrepTime(1L, prepTime.get())).thenReturn(prepTime);
         var res = controller.setDeliverTime(1L, 1L, prepTime.get());
     }
@@ -352,7 +353,7 @@ class OrderControllerTest {
     @Test
     void setCourierId403() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         Order o = new Order().id(11L).courierId(3L);
 

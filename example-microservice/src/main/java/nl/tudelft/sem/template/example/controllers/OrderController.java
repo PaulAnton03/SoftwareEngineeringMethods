@@ -40,6 +40,8 @@ public class OrderController implements OrderApi {
 
     private final OrderService orderService;
 
+    private UserService userService;
+
     private final AuthorizationService authorizationService;
 
     private final OrderRepository orderRepository;
@@ -79,7 +81,7 @@ public class OrderController implements OrderApi {
         @RequestParam(value = "authorization", required = true) Long authorization) {
 
         Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getNextOrderForVendor");
+            authorizationService.checkIfUserIsAuthorized(authorization, "getNextOrderForVendor", authorization);
         // if there is a response, then the authority is not sufficient
         if (authorizationResponse.isPresent()) {
             return authorizationResponse.get();
@@ -113,12 +115,8 @@ public class OrderController implements OrderApi {
     @GetMapping("/unassigned")
     public ResponseEntity<List<Order>> getIndependentOrders(
         @RequestParam(value = "authorization", required = true) Long authorization) {
-        Optional<ResponseEntity> authorizationResponse =
-            authorizationService.authorize(authorization, "getIndependentOrders");
-        // if there is a response, then the authority is not sufficient
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getIndependentOrders", authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         this.setStrategy(new GeneralOrdersStrategy(orderRepository, vendorRepository));
         Optional<List<Order>> orders = strategy.availableOrders(Optional.empty());
