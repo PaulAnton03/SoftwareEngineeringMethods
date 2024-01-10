@@ -30,6 +30,33 @@ public class AdminController implements AdminApi {
         this.authorizationService = authorizationService;
     }
 
+    /**
+     * GET /admin/exceptions : Retrieve all exceptions.
+     * Return a list of all exceptions collected from orders. To be used by admin.
+     *
+     * @param authorization the userId to check if they have the rights to make this request (required)
+     * @return Successful response, all exceptions received (status code 200)
+     *         or Unsuccessful, exceptions cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve exceptions (status code 403)
+     *         or Unsuccessful, no exceptions were found (status code 404)
+     */
+    @Override
+    @GetMapping("/exceptions")
+    public ResponseEntity<List<DeliveryException>> getExceptions(@RequestParam(value = "authorization", required = true) Long authorization) {
+        var auth = authorizationService.authorize(authorization, "getExceptionForOrder");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
+
+        List<DeliveryException> all = adminService.getAllExceptions();
+
+        if (all.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(all, HttpStatus.OK);
+    }
+
     @Override
     @PostMapping("/exceptions/{orderId}")
     public ResponseEntity<Void> makeException(@PathVariable("orderId") Long orderId,
@@ -41,7 +68,8 @@ public class AdminController implements AdminApi {
             return auth.get();
         }
 
-        Optional<DeliveryException> res = adminService.makeException(deliveryException);
+
+        Optional<DeliveryException> res = adminService.makeException(deliveryException, orderId);
 
         if (res.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
