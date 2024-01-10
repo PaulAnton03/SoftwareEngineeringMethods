@@ -18,6 +18,7 @@ import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.user.CourierRepository;
 import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.externalservices.OrderExternalService;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
@@ -46,6 +47,8 @@ public class AuthorizationServiceTest {
 
     private final UserExternalService userExternalService = new UserExternalService();
 
+    private final OrderExternalService orderExternalService = new OrderExternalService();
+
     private AuthorizationService authorizationService;
 
     private Order order1;
@@ -69,7 +72,7 @@ public class AuthorizationServiceTest {
         orderRepo = mock(OrderRepository.class);
         vendorRepo = mock(VendorRepository.class);
         courierRepo = mock(CourierRepository.class);
-        dbUtils = new DbUtils(orderRepo, vendorRepo, courierRepo);
+        dbUtils = new DbUtils(orderRepo, vendorRepo, courierRepo, orderExternalService);
         validationMethods = new HashMap<>(
             Map.of(
                 "getFinalDestination", dbUtils::userBelongsToOrder,
