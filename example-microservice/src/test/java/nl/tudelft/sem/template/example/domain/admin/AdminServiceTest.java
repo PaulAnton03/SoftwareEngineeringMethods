@@ -35,6 +35,8 @@ public class AdminServiceTest {
     private AuthorizationService authorizationService;
 
     private DeliveryException exception1;
+
+    private DeliveryException exception2;
     private Order order1;
 
     private Vendor vendor1;
@@ -48,12 +50,16 @@ public class AdminServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.order1 = new Order().status(Order.StatusEnum.DELIVERED).id(3L);
+        this.order1 = new Order().status(Order.StatusEnum.DELIVERED).id(2L);
         this.exception1 = new DeliveryException().id(2L)
             .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
             .isResolved(false)
             .order(order1);
         this.vendor1 = new Vendor().radius(1D).id(2L).location(new Location().latitude(22F).longitude(33F));
+        this.exception2 = new DeliveryException().id(2L)
+            .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
+            .isResolved(false)
+            .order(new Order().id(6L));
         this.vendorRepo = Mockito.mock(VendorRepository.class);
         this.orderRepo = Mockito.mock(OrderRepository.class);
         this.exceptionRepo = Mockito.mock(DeliveryExceptionRepository.class);
@@ -89,7 +95,7 @@ public class AdminServiceTest {
         when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
         when(exceptionRepo.existsById(anyLong())).thenReturn(false);
-        var res = adminService.makeException(exception1);
+        var res = adminService.makeException(exception1, 2L);
         assertEquals(Optional.of(exception1), res);
     }
 
@@ -98,7 +104,7 @@ public class AdminServiceTest {
         when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
         when(exceptionRepo.existsByOrder(order1)).thenReturn(true);
-        var res = adminService.makeException(exception1);
+        var res = adminService.makeException(exception1, 2L);
         assertEquals(Optional.empty(), res);
     }
 
@@ -107,7 +113,16 @@ public class AdminServiceTest {
         when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
         when(exceptionRepo.existsByOrder(order1)).thenReturn(false);
-        var res = adminService.makeException(new DeliveryException());
+        var res = adminService.makeException(new DeliveryException(), 2L);
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void makeExceptionButPathIdDoesNotMatch() {
+        when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
+        when(exceptionRepo.existsByOrder(order1)).thenReturn(false);
+        var res = adminService.makeException(exception1, 9L);
         assertEquals(Optional.empty(), res);
     }
 
@@ -116,8 +131,15 @@ public class AdminServiceTest {
         when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
         when(exceptionRepo.existsByOrder(order1)).thenReturn(false);
-        var res = adminService.makeException(null);
+        var res = adminService.makeException(null, 3L);
         assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void getAllExceptionsWorks() {
+        when(exceptionRepo.findAll()).thenReturn(List.of(exception1, exception2));
+        var res = adminService.getAllExceptions();
+        assertEquals(List.of(exception1, exception2), res);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.domain.admin;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
@@ -81,7 +82,7 @@ public class AdminService {
      * @param deliveryException the exception to save
      * @return the optional object saved, empty if there is an exception for that order
      */
-    public Optional<DeliveryException> makeException(DeliveryException deliveryException) {
+    public Optional<DeliveryException> makeException(DeliveryException deliveryException, Long orderId) {
 
         if (deliveryException == null) {
             return Optional.empty();
@@ -89,6 +90,11 @@ public class AdminService {
 
         // can not make an exception that is not linked to an order
         if (deliveryException.getOrder() == null) {
+            return Optional.empty();
+        }
+
+        // order id on the path does not match order id in the object
+        if (!Objects.equals(orderId, deliveryException.getOrder().getId())) {
             return Optional.empty();
         }
 
@@ -101,4 +107,11 @@ public class AdminService {
     }
 
 
+    /**
+     * Returns all the exceptions stored in the database
+     * @return the list of exceptions, empty if there are none
+     */
+    public List<DeliveryException> getAllExceptions() {
+        return exceptionRepo.findAll();
+    }
 }

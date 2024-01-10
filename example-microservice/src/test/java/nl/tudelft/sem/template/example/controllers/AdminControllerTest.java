@@ -30,6 +30,8 @@ class AdminControllerTest {
 
     private DeliveryException exception1;
 
+    private DeliveryException exception2;
+
     private Order order1;
 
 
@@ -40,6 +42,10 @@ class AdminControllerTest {
             .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
             .isResolved(false)
             .order(order1);
+        this.exception2 = new DeliveryException().id(2L)
+            .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
+            .isResolved(false)
+            .order(new Order().id(6L));
         this.adminService = Mockito.mock(AdminService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
         this.controller = new AdminController(adminService, authorizationService);
@@ -91,16 +97,30 @@ class AdminControllerTest {
 
     @Test
     void makeException403() {
-        Mockito.when(adminService.makeException(exception1)).thenReturn(Optional.empty());
+        Mockito.when(adminService.makeException(exception1, anyLong())).thenReturn(Optional.empty());
         var res = controller.makeException(1L, 5L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
     @Test
     void makeException200() {
-        Mockito.when(adminService.makeException(exception1)).thenReturn(Optional.of(exception1));
+        Mockito.when(adminService.makeException(exception1, anyLong())).thenReturn(Optional.of(exception1));
         var res = controller.makeException(1L, 5L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void getAllExceptions200() {
+        Mockito.when(adminService.getAllExceptions()).thenReturn(List.of(exception1, exception2));
+        var res = controller.getExceptions(1L);
+        assertEquals(new ResponseEntity<>(List.of(exception1, exception2), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getAllExceptions404() {
+        Mockito.when(adminService.getAllExceptions()).thenReturn(List.of());
+        var res = controller.getExceptions(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
 
