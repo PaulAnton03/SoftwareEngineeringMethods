@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.util.ArrayList;
@@ -97,14 +98,14 @@ class AdminControllerTest {
 
     @Test
     void makeException403() {
-        Mockito.when(adminService.makeException(exception1, anyLong())).thenReturn(Optional.empty());
+        Mockito.when(adminService.makeException(any(), anyLong())).thenReturn(Optional.empty());
         var res = controller.makeException(1L, 5L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
     @Test
     void makeException200() {
-        Mockito.when(adminService.makeException(exception1, anyLong())).thenReturn(Optional.of(exception1));
+        Mockito.when(adminService.makeException(any(), anyLong())).thenReturn(Optional.of(exception1));
         var res = controller.makeException(1L, 5L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
@@ -121,6 +122,30 @@ class AdminControllerTest {
         Mockito.when(adminService.getAllExceptions()).thenReturn(List.of());
         var res = controller.getExceptions(1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateException200() {
+        Mockito.when(adminService.doesExceptionExist(any())).thenReturn(true);
+        Mockito.when(adminService.makeException(any(), anyLong())).thenReturn(Optional.of(exception1));
+        var res = controller.updateException(1L, 3L, exception1);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateException404() {
+        Mockito.when(adminService.doesExceptionExist(any())).thenReturn(false);
+        Mockito.when(adminService.makeException(any(), anyLong())).thenReturn(Optional.of(exception1));
+        var res = controller.updateException(1L, 3L, exception1);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateException403() {
+        Mockito.when(adminService.doesExceptionExist(any())).thenReturn(true);
+        Mockito.when(adminService.makeException(any(), anyLong())).thenReturn(Optional.empty());
+        var res = controller.updateException(1L, 3L, exception1);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
 
 

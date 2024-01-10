@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.example.domain.admin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -140,6 +142,20 @@ public class AdminServiceTest {
         when(exceptionRepo.findAll()).thenReturn(List.of(exception1, exception2));
         var res = adminService.getAllExceptions();
         assertEquals(List.of(exception1, exception2), res);
+    }
+
+    @Test
+    void doesExceptionExistWorks() {
+        when(exceptionRepo.existsById(anyLong())).thenReturn(true);
+        var res = adminService.doesExceptionExist(exception1);
+        assertTrue(res);
+    }
+
+    @Test
+    void doesExceptionExistNullInput() {
+        when(exceptionRepo.existsById(anyLong())).thenReturn(true);
+        var res = adminService.doesExceptionExist(null);
+        assertFalse(res);
     }
 
     @Test
