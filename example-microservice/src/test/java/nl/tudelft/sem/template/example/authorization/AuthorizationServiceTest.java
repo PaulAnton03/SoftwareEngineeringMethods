@@ -34,18 +34,13 @@ import org.springframework.http.ResponseEntity;
 
 public class AuthorizationServiceTest {
 
+    private final UserExternalService userExternalService = new UserExternalService();
     private OrderRepository orderRepo;
-
     private VendorRepository vendorRepo;
-
     private CourierRepository courierRepo;
-
     private OrderService orderService;
     private UserService userService;
     private OrderController controller;
-
-    private final UserExternalService userExternalService = new UserExternalService();
-
     private AuthorizationService authorizationService;
 
     private Order order1;
@@ -54,7 +49,7 @@ public class AuthorizationServiceTest {
 
     private DbUtils dbUtils;
     private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
-    private HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
+    private final HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
         Map.of("getFinalDestination", List.of(Authorization.UserType.VENDOR),
             "getPickupDestination", List.of(Authorization.UserType.VENDOR))
     );
@@ -64,7 +59,7 @@ public class AuthorizationServiceTest {
         WireMockConfig.startUserServer();
         this.orderService = Mockito.mock(OrderService.class);
         this.userService = Mockito.mock(UserService.class);
-        this.controller = new OrderController(orderService, userService, authorizationService, orderRepo, vendorRepo);
+
         orderService = Mockito.mock(OrderService.class);
         orderRepo = mock(OrderRepository.class);
         vendorRepo = mock(VendorRepository.class);
@@ -78,7 +73,8 @@ public class AuthorizationServiceTest {
         );
         order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F));
         vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
-        this.authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
+        authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
+        this.controller = new OrderController(orderService, userService, authorizationService, orderRepo, vendorRepo);
     }
 
     @Test
@@ -156,3 +152,4 @@ public class AuthorizationServiceTest {
         WireMockConfig.stopUserServer();
     }
 }
+
