@@ -438,4 +438,33 @@ public class StatusControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
+    @Test
+    void updateToPreparingGives400() {
+        OffsetDateTime time2 = OffsetDateTime.of(2024, 01, 01,
+                14, 30, 00, 0, ZoneOffset.ofHours(2));
+        UpdateToPreparingRequest req = new UpdateToPreparingRequest().expectedDeliveryTime(time2).prepTime("02:30:00");
+
+        Mockito.when(statusService.getOrderStatus(anyLong())).thenReturn(
+                Optional.of(Order.StatusEnum.DELIVERED));
+
+        var res = controller.updateToPreparing(11L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
+    void updateToPreparingGives403() {
+        OffsetDateTime time2 = OffsetDateTime.of(2024, 01, 01,
+                14, 30, 00, 0, ZoneOffset.ofHours(2));
+        UpdateToPreparingRequest req = new UpdateToPreparingRequest().expectedDeliveryTime(time2).prepTime("02:30:00");
+
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "updateToPreparing", 11L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        Mockito.when(statusService.getOrderStatus(anyLong())).thenReturn(
+                Optional.empty());
+
+
+        var res = controller.updateToPreparing(11L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
 }
