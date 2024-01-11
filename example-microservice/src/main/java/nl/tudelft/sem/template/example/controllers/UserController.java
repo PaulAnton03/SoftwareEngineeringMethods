@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+
+import java.util.Optional;
 import nl.tudelft.sem.template.api.UserApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.user.UserService;
@@ -27,7 +30,7 @@ public class UserController implements UserApi {
     }
 
     /**
-     * GET /user/courier/{courierId} : Retrieve a courier given the courier id
+     * GET /user/courier/{courierId} : Retrieve a courier given the courier id.
      * return the courier corresponding to the id
      *
      * @param courierId     id of the courier to retrieve (required)
@@ -38,8 +41,20 @@ public class UserController implements UserApi {
      * or Unauthorized (status code 403)
      */
     @Override
-    public ResponseEntity<Courier> getCourier(Long courierId, Long authorization) {
-        return UserApi.super.getCourier(courierId, authorization);
+    @GetMapping("/courier/{courierId}")
+    public ResponseEntity<Courier> getCourier(
+            @PathVariable(name = "courierId") Long courierId,
+            @RequestParam(name = "authorization") Long authorization) {
+
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
+        Optional<Courier> courier = userService.getCourier(courierId);
+        if (courier.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(courier.get(), HttpStatus.OK);
     }
 
     /**
@@ -84,14 +99,13 @@ public class UserController implements UserApi {
      * or Unsuccessful, no courier was found (status code 404)
      */
     @Override
-    public ResponseEntity<Void> makeCourier(Long authorization, Courier courier) {
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeCourier");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+    @PostMapping("/courier/add-whole")
+    public ResponseEntity<Void> makeCourier(@RequestParam(value = "authorization", required = true) Long authorization,
+                                            @RequestBody(required = false) Courier courier) {
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
-        if (userService.existsCourier(courier.getId())){
+        if (userService.existsCourier(courier.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -116,14 +130,13 @@ public class UserController implements UserApi {
      * or Unsuccessful, no courier was found (status code 404)
      */
     @Override
-    public ResponseEntity<Void> makeCourierById(Long authorization, Long courierId) {
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeCourierById");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+    @PostMapping("/courier/{courierId}")
+    public ResponseEntity<Void> makeCourierById(@RequestParam(value = "authorization", required = true) Long authorization,
+                                                @PathVariable(name = "courierId") Long courierId) {
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
-        if (userService.existsCourier(courierId)){
+        if (userService.existsCourier(courierId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -147,14 +160,17 @@ public class UserController implements UserApi {
      * or Unsuccessful, courier updated be retrieved because of bad request (status code 400)
      * or Unsuccessful, no courier was found (status code 404)
      * or Unauthorized (status code 403)
+     * only for vendors
      */
     @Override
-    public ResponseEntity<Void> updateBossOfCourier(Long courierId, Long bossId, Long authorization) {
-        var auth = authorizationService.authorize(authorization, "updateBossOfCourier");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
-
+    @PutMapping("/courier/{courierId}/{bossId}")
+    public ResponseEntity<Void> updateBossOfCourier(@PathVariable("courierId") Long courierId,
+                                                    @PathVariable("bossId") Long bossId,
+                                                    @RequestParam(value = "authorization", required = true)
+                                                    Long authorization) {
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateBossOfCourier",bossId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+        
         Optional<Long> newBossId = userService.updateBossIdOfCourier(courierId, bossId);
 
         if (newBossId.isEmpty()) {
@@ -205,8 +221,9 @@ public class UserController implements UserApi {
 
     /**
      * Adds the given user to the database
+     *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param vendor  (optional)
+     * @param vendor        (optional)
      * @return the saved user
      */
     @Override
@@ -215,13 +232,10 @@ public class UserController implements UserApi {
             @RequestParam(name = "authorization") Long authorization,
             @RequestBody Vendor vendor) {
 
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendor");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
-        if (userService.existsVendor(vendor.getId())){
+        if (userService.existsVendor(vendor.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -236,23 +250,22 @@ public class UserController implements UserApi {
 
     /**
      * Creates a new user with given id and adds it to database
+     *
      * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param vendorId Id of the vendor to create (required)
+     * @param vendorId      Id of the vendor to create (required)
      * @return the saved user
      */
     @Override
     @PostMapping("/vendor/{vendorId}")
     public ResponseEntity<Void> makeVendorById(
-                        @RequestParam(name = "authorization") Long authorization,
-                        @PathVariable(name = "vendorId") Long vendorId) {
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "vendorId") Long vendorId) {
 
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendorById");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
-        if (userService.existsVendor(vendorId)){
+
+        if (userService.existsVendor(vendorId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
