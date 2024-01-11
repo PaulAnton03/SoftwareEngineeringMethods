@@ -15,7 +15,6 @@ import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -279,11 +278,10 @@ class OrderControllerTest {
         Courier c = new Courier().id(2L);
         Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.of(c));
         Order o = new Order().id(11L).courierId(3L);
-        Order o1 = o;
-        o1.setCourierId(2L);
+        Order o1 = new Order().id(11L).courierId(2L);
         Mockito.when(orderService.updateCourier(11L, 2L)).thenReturn(Optional.of(o1));
 
-        var res = controller.setCourierId(11L, 2L, 1L, o);
+        ResponseEntity<Void> res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
@@ -300,7 +298,7 @@ class OrderControllerTest {
 
         Order o = new Order().id(11L).courierId(3L);
 
-        var res = controller.setCourierId(11L, 2L, 1L, o);
+        ResponseEntity<Void> res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
@@ -309,7 +307,7 @@ class OrderControllerTest {
         Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.empty());
         Order o = new Order().id(11L).courierId(3L);
 
-        var res = controller.setCourierId(1L, 11L, 2L, o);
+        ResponseEntity<Void> res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
@@ -320,7 +318,7 @@ class OrderControllerTest {
         Order o = new Order().id(11L).courierId(3L);
         Mockito.when(orderService.updateCourier(11L, 2L)).thenReturn(Optional.empty());
 
-        var res = controller.setCourierId(1L, 11L, 2L, o);
+        ResponseEntity<Void> res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
