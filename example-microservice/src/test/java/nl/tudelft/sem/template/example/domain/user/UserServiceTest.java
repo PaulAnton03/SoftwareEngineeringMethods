@@ -42,8 +42,10 @@ public class UserServiceTest {
 
         assertEquals(5L, courier1.getBossId());
 
-        userService.updateBossIdOfCourier(100L, 6L);
+        var res = userService.updateBossIdOfCourier(100L, 6L);
         assertEquals(courier1.getBossId(), courier11.getBossId());
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), 6L);
     }
 
     @Test
