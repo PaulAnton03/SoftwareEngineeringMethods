@@ -1,18 +1,19 @@
 package nl.tudelft.sem.template.example.domain.user;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+
+import java.util.Optional;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
 
 public class UserServiceTest {
 
@@ -56,6 +57,22 @@ public class UserServiceTest {
     }
 
     @Test
+    void getCourierById200() {
+        Mockito.when(courierRepo.findById(courier1.getId())).thenReturn(Optional.of(courier1));
+
+        Optional<Courier> ret = userService.getCourierById(courier1.getId());
+        assertEquals(ret.get(), courier1);
+    }
+
+    @Test
+    void getCourierById404() {
+        Mockito.when(courierRepo.findById(courier1.getId())).thenReturn(Optional.empty());
+
+        Optional<Courier> ret = userService.getCourierById(courier1.getId());
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
     void makeVendorWorks() {
         Mockito.when(vendorRepo.saveAndFlush(any())).thenReturn(vendor1);
 
@@ -75,7 +92,6 @@ public class UserServiceTest {
     @Test
     void makeVendorByIdWorks() {
         Mockito.when(vendorRepo.saveAndFlush(any())).thenReturn(vendor1);
-
         Optional<Vendor> res = userService.makeVendorById(vendor1.getId());
         assert (res.isPresent());
         assertEquals(res.get().getId(), vendor1.getId());

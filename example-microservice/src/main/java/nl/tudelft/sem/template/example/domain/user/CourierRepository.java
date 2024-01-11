@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CourierRepository extends JpaRepository<Courier, Long> {
+    boolean existsByIdAndBossId(Long courierId, Long vendorId);
 }
