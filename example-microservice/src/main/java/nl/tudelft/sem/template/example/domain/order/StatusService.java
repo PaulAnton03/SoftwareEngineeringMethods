@@ -155,7 +155,8 @@ public class StatusService {
         // Something is wrong if the previous status is not in-transit, if there is no timeValues,
         // if there is no time to set to, and if there is already an actual delivery time
         if (currentStatus != Order.StatusEnum.IN_TRANSIT || timeValues == null
-            || updateToDeliveredRequest.getActualDeliveryTime() == null || timeValues.getActualDeliveryTime() != null) {
+            || updateToDeliveredRequest.getActualDeliveryTime() == null
+                || timeValues.getActualDeliveryTime() != null) {
             return Optional.empty();
         }
 
