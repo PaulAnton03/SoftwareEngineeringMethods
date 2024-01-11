@@ -122,7 +122,7 @@ class AdminControllerTest {
     @Test
     void updateException200() {
         Mockito.when(adminService.doesExceptionExist(any())).thenReturn(true);
-        Mockito.when(adminService.makeException(any(), anyLong())).thenReturn(Optional.of(exception1));
+        Mockito.when(adminService.updateException(any(), anyLong())).thenReturn(Optional.of(exception1));
         var res = controller.updateException(1L, 3L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
@@ -130,7 +130,7 @@ class AdminControllerTest {
     @Test
     void updateException404() {
         Mockito.when(adminService.doesExceptionExist(any())).thenReturn(false);
-        Mockito.when(adminService.makeException(any(), anyLong())).thenReturn(Optional.of(exception1));
+        Mockito.when(adminService.updateException(any(), anyLong())).thenReturn(Optional.of(exception1));
         var res = controller.updateException(1L, 3L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
@@ -138,7 +138,7 @@ class AdminControllerTest {
     @Test
     void updateException403() {
         Mockito.when(adminService.doesExceptionExist(any())).thenReturn(true);
-        Mockito.when(adminService.makeException(any(), anyLong())).thenReturn(Optional.empty());
+        Mockito.when(adminService.updateException(any(), anyLong())).thenReturn(Optional.empty());
         var res = controller.updateException(1L, 3L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }

@@ -31,31 +31,32 @@ public class AdminController implements AdminApi {
     }
 
     /**
+     * This is a way where the admin can mark an exception as "resolved" by changing the field
      * PUT /admin/exceptions/{orderId} : Update exception for a specific order.
      * Update exception information for a specific order. To be used by admin.
      *
-     * @param orderId  (required)
-     * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param deliveryException  (optional)
+     * @param orderId           (required)
+     * @param authorization     The userId to check if they have the rights to make this request (required)
+     * @param deliveryException (optional)
      * @return Successful response, exception for the specific order updated (status code 200)
-     *         or Unsuccessful, specific exception cannot be updated because of a bad request (status code 400)
-     *         or Unsuccessful, entity does not have access rights to update specific exception (status code 403)
-     *         or Unsuccessful, no specific exception was found (status code 404)
+     * or Unsuccessful, specific exception cannot be updated because of a bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to update specific exception (status code 403)
+     * or Unsuccessful, no specific exception was found (status code 404)
      */
     @Override
     @PutMapping("/exceptions/{orderId}")
     public ResponseEntity<Void> updateException(@PathVariable("orderId") Long orderId,
                                                 @RequestParam(value = "authorization", required = true) Long authorization,
                                                 @RequestBody(required = false) DeliveryException deliveryException) {
-//        var auth = authorizationService.authorize(authorization, "updateException");
-//        if (auth.isPresent()) {
-//            return auth.get();
-//        }
+        var auth = authorizationService.authorize(authorization, "updateException");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
 
         if (!adminService.doesExceptionExist(deliveryException)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        var saved = adminService.makeException(deliveryException, orderId);
+        var saved = adminService.updateException(deliveryException, orderId);
 
         if (saved.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -70,13 +71,14 @@ public class AdminController implements AdminApi {
      *
      * @param authorization the userId to check if they have the rights to make this request (required)
      * @return Successful response, all exceptions received (status code 200)
-     *         or Unsuccessful, exceptions cannot be retrieved because of a bad request (status code 400)
-     *         or Unsuccessful, entity does not have access rights to retrieve exceptions (status code 403)
-     *         or Unsuccessful, no exceptions were found (status code 404)
+     * or Unsuccessful, exceptions cannot be retrieved because of a bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve exceptions (status code 403)
+     * or Unsuccessful, no exceptions were found (status code 404)
      */
     @Override
     @GetMapping("/exceptions")
-    public ResponseEntity<List<DeliveryException>> getExceptions(@RequestParam(value = "authorization", required = true) Long authorization) {
+    public ResponseEntity<List<DeliveryException>> getExceptions(
+        @RequestParam(value = "authorization", required = true) Long authorization) {
         var auth = authorizationService.authorize(authorization, "getExceptions");
         if (auth.isPresent()) {
             return auth.get();
@@ -97,10 +99,10 @@ public class AdminController implements AdminApi {
                                               @RequestParam(value = "authorization", required = true) Long authorization,
                                               @RequestBody(required = false) DeliveryException deliveryException) {
 
-//        var auth = authorizationService.authorize(authorization, "getExceptionForOrder");
-//        if (auth.isPresent()) {
-//            return auth.get();
-//        }
+        var auth = authorizationService.authorize(authorization, "getExceptionForOrder");
+        if (auth.isPresent()) {
+            return auth.get();
+        }
 
 
         Optional<DeliveryException> res = adminService.makeException(deliveryException, orderId);
