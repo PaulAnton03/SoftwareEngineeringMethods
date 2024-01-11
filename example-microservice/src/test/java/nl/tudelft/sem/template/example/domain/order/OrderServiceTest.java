@@ -208,6 +208,7 @@ class OrderServiceTest {
 
     @Test
     void getRatingNoRatingNumber() {
+        order1.setRatingNumber(null);
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         Optional<BigDecimal> res = os.getRating(order1.getId());
         assertTrue(res.isEmpty());
