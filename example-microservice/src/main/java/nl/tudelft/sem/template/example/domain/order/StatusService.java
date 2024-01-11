@@ -127,7 +127,7 @@ public class StatusService {
 
         if (ret.isEmpty()) {
             // order doesn't exist :(
-            return ret;
+            return Optional.empty();
         }
 
         Order order = ret.get();

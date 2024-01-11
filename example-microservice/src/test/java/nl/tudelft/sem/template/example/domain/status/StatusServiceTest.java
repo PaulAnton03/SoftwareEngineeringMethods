@@ -58,6 +58,8 @@ public class StatusServiceTest {
         Optional<Order> res = ss.updateStatusToAccepted(order1.getId());
         assertTrue(res.isPresent());
         assertEquals(res.get().getStatus(), Order.StatusEnum.ACCEPTED);
+
+        assertEquals(order1.getStatus(), Order.StatusEnum.ACCEPTED);
     }
 
     @Test
@@ -80,6 +82,8 @@ public class StatusServiceTest {
         Optional<Order> res = ss.updateStatusToRejected(order1.getId());
         assertTrue(res.isPresent());
         assertEquals(res.get().getStatus(), Order.StatusEnum.REJECTED);
+
+        assertEquals(order1.getStatus(), Order.StatusEnum.REJECTED);
     }
 
     @Test
@@ -106,6 +110,9 @@ public class StatusServiceTest {
         assertTrue(ret.isPresent());
         assertEquals(ret.get().getStatus(), Order.StatusEnum.GIVEN_TO_COURIER);
         assertEquals(ret.get().getCourierId(), 3L);
+
+        assertEquals(order3.getStatus(), Order.StatusEnum.GIVEN_TO_COURIER);
+        assertEquals(order3.getCourierId(), 3L);
     }
 
     @Test
@@ -131,6 +138,8 @@ public class StatusServiceTest {
         Optional<Order> ret = ss.updateStatusToInTransit(order2.getId());
         assertTrue(ret.isPresent());
         assertEquals(ret.get().getStatus(), Order.StatusEnum.IN_TRANSIT);
+
+        assertEquals(order2.getStatus(), Order.StatusEnum.IN_TRANSIT);
     }
 
     @Test
