@@ -63,6 +63,7 @@ public class AdminController implements AdminApi {
      * or Unsuccessful, no specific radius was found (status code 404)
      */
     @Override
+    @GetMapping("/vendor/radius")
     public ResponseEntity<Double> getDefaultRadius(
             @RequestParam(name = "authorization") Long authorization) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
