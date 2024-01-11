@@ -11,11 +11,7 @@ import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
-import nl.tudelft.sem.template.model.DeliveryException;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.model.Time;
-import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
-import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
+import nl.tudelft.sem.template.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -29,6 +25,8 @@ public class StatusServiceTest {
     public Order order3;
     public DeliveryException delException1;
     public Order order4;
+    public Order order5;
+
     public StatusService ss;
     private DeliveryExceptionRepository exceptionRepo;
 
@@ -40,6 +38,7 @@ public class StatusServiceTest {
         this.order2 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER);
         this.order3 = new Order().id(1L).status(Order.StatusEnum.PREPARING);
         this.order4 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT).timeValues(new Time().prepTime("00:22::00"));
+        this.order5 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED);
         this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
                 .message("Test exception").isResolved(false).order(order1);
         this.ss = new StatusService(orderRepo, exceptionRepo);
@@ -262,6 +261,37 @@ public class StatusServiceTest {
         UpdateToDeliveredRequest req = new UpdateToDeliveredRequest();
         Optional<Order> ret = ss.updateStatusToDelivered(order4.getId(), req);
 
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
+    void updateStatusToPreparing200() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order5));
+        UpdateToPreparingRequest updateToPreparingRequest = new UpdateToPreparingRequest().prepTime("00:22::00");
+        OffsetDateTime currentDateTime = OffsetDateTime.now();
+        updateToPreparingRequest.setExpectedDeliveryTime(currentDateTime);
+        Time timeValues = new Time().expectedDeliveryTime(updateToPreparingRequest.getExpectedDeliveryTime())
+                .prepTime(updateToPreparingRequest.getPrepTime());
+        Order order55 = new Order().id(order5.getId()).status(Order.StatusEnum.PREPARING).timeValues(timeValues);
+        Mockito.when(orderRepo.saveAndFlush(order5)).thenReturn(order55);
+
+        Optional<Order> ret = ss.updateStatusToPreparing(order5.getId(), updateToPreparingRequest);
+        assertTrue(ret.isPresent());
+        assertEquals(ret.get().getStatus(), Order.StatusEnum.PREPARING);
+        assertEquals(ret.get().getTimeValues(), timeValues);
+    }
+
+    @Test
+    void updateStatusToPreparing404() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        UpdateToPreparingRequest updateToPreparingRequest = new UpdateToPreparingRequest().prepTime("00:22::00");
+        OffsetDateTime currentDateTime = OffsetDateTime.now();
+        updateToPreparingRequest.setExpectedDeliveryTime(currentDateTime);
+        Time timeValues = new Time().expectedDeliveryTime(updateToPreparingRequest.getExpectedDeliveryTime())
+                .prepTime(updateToPreparingRequest.getPrepTime());
+
+
+        Optional<Order> ret = ss.updateStatusToPreparing(order5.getId(), updateToPreparingRequest);
         assertTrue(ret.isEmpty());
     }
 

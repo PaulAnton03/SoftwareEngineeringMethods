@@ -124,6 +124,9 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.PREPARING);
+        if (order.getTimeValues() == null) {
+            order.setTimeValues(new Time());
+        }
         order.getTimeValues().setPrepTime(req.getPrepTime());
         order.getTimeValues().setExpectedDeliveryTime(req.getExpectedDeliveryTime());
         return Optional.of(orderRepo.saveAndFlush(order));
