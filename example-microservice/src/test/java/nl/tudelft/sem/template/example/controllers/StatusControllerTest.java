@@ -74,12 +74,36 @@ public class StatusControllerTest {
     }
 
     @Test
+    void updateStatusToAccepted404second() {
+        Mockito.when(authorizationService.authorize(1L, "updateToAccepted"))
+                .thenReturn(Optional.empty());
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+                Optional.of(Order.StatusEnum.PENDING));
+        Mockito.when(statusService.updateStatusToAccepted(11L)).thenReturn(Optional.empty());
+
+        var res = controller.updateToAccepted(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
     void updateStatusToRejected404() {
         Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
             .thenReturn(Optional.empty());
         Mockito.when(statusService.updateStatusToRejected(anyLong())).thenReturn(Optional.empty());
 
         var res = controller.updateToRejected(1L, 11L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateStatusToRejected404second() {
+        Mockito.when(authorizationService.authorize(1L, "updateToRejected"))
+                .thenReturn(Optional.empty());
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+                Optional.of(Order.StatusEnum.PENDING));
+        Mockito.when(statusService.updateStatusToRejected(11L)).thenReturn(Optional.empty());
+
+        var res = controller.updateToRejected(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
@@ -203,6 +227,21 @@ public class StatusControllerTest {
     }
 
     @Test
+    void updateStatusToGivenToCourier404second() {
+        UpdateToGivenToCourierRequest req = new UpdateToGivenToCourierRequest();
+        req.courierId(3L);
+
+        Mockito.when(authorizationService.authorize(1L, "updateToGivenToCourier"))
+                .thenReturn(Optional.empty());
+        Mockito.when(statusService.getOrderStatus(2L)).thenReturn(
+                Optional.of(Order.StatusEnum.PREPARING));
+        Mockito.when(statusService.updateStatusToGivenToCourier(2L, req)).thenReturn(Optional.empty());
+
+        var res = controller.updateToGivenToCourier(2L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
     void updateStatusToGivenToCourier500() {
         Mockito.when(authorizationService.authorize(1L, "updateToGivenToCourier"))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
@@ -259,6 +298,18 @@ public class StatusControllerTest {
         Mockito.when(authorizationService.authorize(1L, "updateToInTransit"))
             .thenReturn(Optional.empty());
         Mockito.when(statusService.updateStatusToInTransit(anyLong())).thenReturn(Optional.empty());
+
+        var res = controller.updateToInTransit(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateStatusToInTransit404second() {
+        Mockito.when(authorizationService.authorize(1L, "updateToInTransit"))
+                .thenReturn(Optional.empty());
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+                Optional.of(Order.StatusEnum.GIVEN_TO_COURIER));
+        Mockito.when(statusService.updateStatusToInTransit(11L)).thenReturn(Optional.empty());
 
         var res = controller.updateToInTransit(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
