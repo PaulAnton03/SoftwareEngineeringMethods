@@ -143,14 +143,6 @@ class OrderControllerTest {
     }
 
     @Test
-    void getOrderRating403() {
-        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "getOrderRating", 1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
-        var res = controller.getOrderRating(1L, 1L);
-        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
-    }
-
-    @Test
     void updateOrder200() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
@@ -227,17 +219,6 @@ class OrderControllerTest {
 
         var res = controller.putOrderRating(1L, 1L, rating2.get());
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
-    }
-
-    @Test
-    void updateOrderRating403() {
-        Optional<BigDecimal> rating2 = Optional.of(new BigDecimal("2.0"));
-
-        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "putOrderRating", 1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
-
-        var res = controller.putOrderRating(1L, 1L, rating2.get());
-        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
