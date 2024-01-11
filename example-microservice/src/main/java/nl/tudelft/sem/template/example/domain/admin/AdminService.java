@@ -84,6 +84,28 @@ public class AdminService {
      */
     public Optional<DeliveryException> makeException(DeliveryException deliveryException, Long orderId) {
 
+        Optional<DeliveryException> empty = validateException(deliveryException, orderId);
+        // the order is not valid
+        if (empty.isEmpty()) {
+            return empty;
+        }
+
+        // can not add an exception if that order already has an exception
+        if (exceptionRepo.existsByOrder(deliveryException.getOrder())) {
+            return Optional.empty();
+        }
+
+        return Optional.of(exceptionRepo.saveAndFlush(deliveryException));
+    }
+
+    /**
+     * Checks if the exception has valid fields to continue performing operations
+     *
+     * @param deliveryException the exception to be checked
+     * @param orderId           the id of the related order gathered form the path of the request
+     * @return an empty optional if it is not valid
+     */
+    private Optional<DeliveryException> validateException(DeliveryException deliveryException, Long orderId) {
         if (deliveryException == null) {
             return Optional.empty();
         }
@@ -97,18 +119,29 @@ public class AdminService {
         if (!Objects.equals(orderId, deliveryException.getOrder().getId())) {
             return Optional.empty();
         }
+        return Optional.of(deliveryException);
+    }
 
-        // can not add an exception if that order already has an exception
-        if (exceptionRepo.existsByOrder(deliveryException.getOrder())) {
-            return Optional.empty();
+    /**
+     * Updates an exception
+     *
+     * @param deliveryException the exception to be checked
+     * @param orderId           the id of the related order gathered form the path of the request
+     */
+    public Optional<DeliveryException> updateException(DeliveryException deliveryException, Long orderId) {
+
+        Optional<DeliveryException> empty = validateException(deliveryException, orderId);
+        // the order is not valid
+        if (empty.isEmpty()) {
+            return empty;
         }
-
         return Optional.of(exceptionRepo.saveAndFlush(deliveryException));
     }
 
 
     /**
      * Returns all the exceptions stored in the database
+     *
      * @return the list of exceptions, empty if there are none
      */
     public List<DeliveryException> getAllExceptions() {
@@ -116,8 +149,18 @@ public class AdminService {
     }
 
 
+    /**
+     * Checks if the current exception exists by id
+     *
+     * @param exception the exception to check
+     * @return the boolean value
+     */
     public Boolean doesExceptionExist(DeliveryException exception) {
         if (exception == null) {
+            return false;
+        }
+
+        if (exception.getOrder() == null) {
             return false;
         }
         return exceptionRepo.existsById(exception.getId());

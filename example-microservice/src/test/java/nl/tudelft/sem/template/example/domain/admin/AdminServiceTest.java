@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -138,6 +140,29 @@ public class AdminServiceTest {
     }
 
     @Test
+    void updateExceptionWorks() {
+        when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
+        when(exceptionRepo.existsByOrder(order1)).thenReturn(false);
+        var updated = exception1.exceptionType(DeliveryException.ExceptionTypeEnum.OTHER);
+        var res = adminService.updateException(updated, updated.getOrder().getId());
+
+        verify(exceptionRepo).saveAndFlush(exception1.exceptionType(DeliveryException.ExceptionTypeEnum.OTHER));
+        assertEquals(Optional.of(updated), res);
+    }
+
+    @Test
+    void updateExceptionNotValid() {
+        when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        when(exceptionRepo.saveAndFlush(exception1)).thenReturn(exception1);
+        when(exceptionRepo.existsByOrder(order1)).thenReturn(false);
+        var updated = exception1.exceptionType(DeliveryException.ExceptionTypeEnum.OTHER);
+        var res = adminService.updateException(null, updated.getOrder().getId());
+
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
     void getAllExceptionsWorks() {
         when(exceptionRepo.findAll()).thenReturn(List.of(exception1, exception2));
         var res = adminService.getAllExceptions();
@@ -153,8 +178,15 @@ public class AdminServiceTest {
 
     @Test
     void doesExceptionExistNullInput() {
-        when(exceptionRepo.existsById(anyLong())).thenReturn(true);
+        when(exceptionRepo.existsByOrder(any())).thenReturn(true);
         var res = adminService.doesExceptionExist(null);
+        assertFalse(res);
+    }
+
+    @Test
+    void doesExceptionExistNullOrder() {
+        when(exceptionRepo.existsByOrder(any())).thenReturn(true);
+        var res = adminService.doesExceptionExist(new DeliveryException());
         assertFalse(res);
     }
 
