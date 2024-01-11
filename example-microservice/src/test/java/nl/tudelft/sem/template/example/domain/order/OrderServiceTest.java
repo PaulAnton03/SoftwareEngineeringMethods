@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -17,7 +18,10 @@ import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import javax.swing.text.html.Option;
 
 class OrderServiceTest {
     private OrderRepository orderRepo;
@@ -32,7 +36,8 @@ class OrderServiceTest {
     void setUp() {
         this.orderRepo = mock(OrderRepository.class);
         this.vendorRepo = mock(VendorRepository.class);
-        this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F));
+        this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+                .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.os = new OrderService(orderRepo, vendorRepo);
     }
@@ -91,6 +96,67 @@ class OrderServiceTest {
     }
 
     @Test
+    void getRatingWorks() {
+        order1.ratingNumber(new BigDecimal(5));
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+
+        BigDecimal res = os.getRating(order1.getId()).get();
+        assertEquals(order1.getRatingNumber(), res);
+    }
+
+    @Test
+    void getRatingGives404NoOrder() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+        Optional<BigDecimal> res = os.getRating(order1.getId());
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void updateRatingWorks() {
+        order1.ratingNumber(new BigDecimal(5));
+        Order order11 = new Order().id(1L).ratingNumber(new BigDecimal(3));
+
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Mockito.lenient().when(orderRepo.save(order1)).thenReturn(order11);
+
+        BigDecimal res = os.updateRating(order1.getId(), new BigDecimal(3)).get();
+        assertEquals(order11.getRatingNumber(), res);
+    }
+
+    @Test
+    void updateRatingGives404NoOrder() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+        Optional<BigDecimal> res = os.getRating(order1.getId());
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void updatePrepTimeWorks() {
+        Time time1 = new Time().prepTime(new String("01:30:00"));
+        Time time2 = new Time().prepTime(new String("03:30:00"));
+        order1.setTimeValues(time1);
+        Order order11 = new Order().id(1L).timeValues(time2);
+
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Mockito.lenient().when(orderRepo.saveAndFlush(order1)).thenReturn(order11);
+
+        Optional<String> res = os.updatePrepTime(order1.getId(), order11.getTimeValues().getPrepTime());
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), time2.getPrepTime());
+        assertEquals(order1.getTimeValues().getPrepTime(), time2.getPrepTime());
+    }
+
+    @Test
+    void updatePrepTimeGives404NoOrder() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+        Optional<String> res = os.updatePrepTime(order1.getId(), new String("03:30:00"));
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
     void getOrder200() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         Optional<Order> res = os.getOrderById(order1.getId());
@@ -143,6 +209,26 @@ class OrderServiceTest {
     }
 
     @Test
+    void updateCourier200() {
+        Mockito.when(orderRepo.findById(order1.getId())).thenReturn(Optional.of(order1));
+        Order order2 = new Order().id(order1.getId()).courierId(2L);
+        Mockito.when(orderRepo.saveAndFlush(order1)).thenReturn(order2);
+
+        Optional<Order> o = os.updateCourier(order1.getId(), 2L);
+        assertTrue(o.isPresent());
+        assertEquals(o.get().getCourierId(), 2L);
+        assertEquals(order1.getCourierId(), order2.getCourierId());
+    }
+
+    @Test
+    void updateCourier404() {
+        Mockito.when(orderRepo.findById(order1.getId())).thenReturn(Optional.empty());
+
+        Optional<Order> o = os.updateCourier(order1.getId(), 2L);
+        assertTrue(o.isEmpty());
+    }
+
+    @Test
     void orderExistsTrue() {
         Mockito.when(orderRepo.existsById(anyLong())).thenReturn(true);
 
@@ -182,6 +268,50 @@ class OrderServiceTest {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
 
         Optional<Time> res = os.getTimeValuesForOrder(order1.getId());
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getRating200() {
+        Order o = order1;
+        o.setId(10L);
+        o.setRatingNumber(BigDecimal.valueOf(5));
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o));
+        Optional<BigDecimal> res = os.getRating(o.getId());
+        assertTrue(res.isPresent());
+        assertEquals(res.get(),o.getRatingNumber());
+    }
+
+    @Test
+    void getRating404() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<BigDecimal> res = os.getRating(order1.getId());
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getRatingNoRatingNumber() {
+        order1.setRatingNumber(null);
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Optional<BigDecimal> res = os.getRating(order1.getId());
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void updateRating200() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
+        Order order3 = new Order().id(order1.getId()).ratingNumber(BigDecimal.valueOf(10));
+        Mockito.when(orderRepo.saveAndFlush(order1)).thenReturn(order3);
+        Optional<BigDecimal> res = os.updateRating(order1.getId(), BigDecimal.valueOf(10));
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), order3.getRatingNumber());
+        assertEquals(order1.getRatingNumber(), order3.getRatingNumber());
+    }
+
+    @Test
+    void updateRating404() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<BigDecimal> res = os.updateRating(order1.getId(), BigDecimal.valueOf(10));
         assertTrue(res.isEmpty());
     }
 }

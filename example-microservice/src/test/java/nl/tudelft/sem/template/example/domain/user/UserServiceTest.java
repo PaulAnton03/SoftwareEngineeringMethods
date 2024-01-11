@@ -1,18 +1,19 @@
 package nl.tudelft.sem.template.example.domain.user;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+
+import java.util.Optional;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
 
 public class UserServiceTest {
 
@@ -41,8 +42,10 @@ public class UserServiceTest {
 
         assertEquals(5L, courier1.getBossId());
 
-        userService.updateBossIdOfCourier(100L, 6L);
+        var res = userService.updateBossIdOfCourier(100L, 6L);
         assertEquals(courier1.getBossId(), courier11.getBossId());
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), 6L);
     }
 
     @Test
@@ -50,6 +53,22 @@ public class UserServiceTest {
         Mockito.when(courierRepo.getOne(anyLong())).thenThrow(new javax.persistence.EntityNotFoundException());
 
         Optional<Long> ret = userService.updateBossIdOfCourier(courier1.getId(), 6L);
+        assertTrue(ret.isEmpty());
+    }
+
+    @Test
+    void getCourierById200() {
+        Mockito.when(courierRepo.findById(courier1.getId())).thenReturn(Optional.of(courier1));
+
+        Optional<Courier> ret = userService.getCourierById(courier1.getId());
+        assertEquals(ret.get(), courier1);
+    }
+
+    @Test
+    void getCourierById404() {
+        Mockito.when(courierRepo.findById(courier1.getId())).thenReturn(Optional.empty());
+
+        Optional<Courier> ret = userService.getCourierById(courier1.getId());
         assertTrue(ret.isEmpty());
     }
 
@@ -73,7 +92,6 @@ public class UserServiceTest {
     @Test
     void makeVendorByIdWorks() {
         Mockito.when(vendorRepo.saveAndFlush(any())).thenReturn(vendor1);
-
         Optional<Vendor> res = userService.makeVendorById(vendor1.getId());
         assert (res.isPresent());
         assertEquals(res.get().getId(), vendor1.getId());
