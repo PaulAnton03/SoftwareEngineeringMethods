@@ -24,7 +24,7 @@ public class AdminServiceTest {
     @BeforeEach
     void setUp() {
         this.vendorRepo = mock(VendorRepository.class);
-        this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
+        this.vendor1 = new Vendor().radius(1D).id(2L).location(new Location().latitude(22F).longitude(33F));
         this.adminService = new AdminService(vendorRepo);
     }
 
@@ -44,5 +44,23 @@ public class AdminServiceTest {
 
         Optional<List<Vendor>> res = adminService.updateDefaultRadius(5D);
         assertEquals(res.get(), vendors);
+    }
+
+    @Test
+    void getDefaultRadiusEmpty(){
+        Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(new ArrayList<>());
+
+        Optional<Double> res = adminService.getDefaultRadius();
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDefaultRadiusNotEmpty(){
+        List<Vendor> vendors = new ArrayList<>();
+        vendors.add(vendor1);
+        Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(vendors);
+
+        Optional<Double> res = adminService.getDefaultRadius();
+        assertEquals(res.get(), 1D);
     }
 }
