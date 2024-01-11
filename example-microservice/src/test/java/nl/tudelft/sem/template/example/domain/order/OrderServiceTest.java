@@ -211,10 +211,11 @@ class OrderServiceTest {
         Mockito.when(orderRepo.findById(order1.getId())).thenReturn(Optional.of(order1));
         Order order2 = order1;
         order2.setCourierId(2L);
-        Mockito.when(orderRepo.saveAndFlush(order2)).thenReturn(order2);
+        Mockito.when(orderRepo.saveAndFlush(order1)).thenReturn(order2);
 
         Optional<Order> o = os.updateCourier(order1.getId(), 2L);
-        assertEquals(o.get(), order2);
+        assertTrue(o.isPresent());
+        assertEquals(o.get().getCourierId(), 2L);
     }
 
     @Test
