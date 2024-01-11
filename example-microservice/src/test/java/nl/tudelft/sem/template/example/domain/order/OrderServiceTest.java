@@ -217,9 +217,8 @@ class OrderServiceTest {
     @Test
     void updateRating200() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
-        Order order3 = order1;
-        order3.setRatingNumber(BigDecimal.valueOf(10));
-        Mockito.when(orderRepo.saveAndFlush(order3)).thenReturn(order3);
+        Order order3 = new Order().id(order1.getId()).ratingNumber(BigDecimal.valueOf(10));
+        Mockito.when(orderRepo.saveAndFlush(order1)).thenReturn(order3);
         Optional<BigDecimal> res = os.updateRating(order1.getId(), BigDecimal.valueOf(10));
         assertTrue(res.isPresent());
         assertEquals(res.get(), order3.getRatingNumber());

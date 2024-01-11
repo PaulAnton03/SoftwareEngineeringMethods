@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.example.domain.status;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -184,8 +183,8 @@ public class StatusServiceTest {
     void updateStatusToDelivered200() {
         OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
         UpdateToDeliveredRequest req = new UpdateToDeliveredRequest().actualDeliveryTime(deliveryTime);
-        Order order44 = new Order().id(1L).status(Order.StatusEnum.DELIVERED).timeValues(
-                new Time().actualDeliveryTime(deliveryTime));
+        Order order44 = new Order().id(order4.getId()).status(Order.StatusEnum.DELIVERED).timeValues(
+                new Time().actualDeliveryTime(deliveryTime).prepTime(order4.getTimeValues().getPrepTime()));
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order4));
         Mockito.when(orderRepo.saveAndFlush(order4)).thenReturn(order44);
 
@@ -193,14 +192,15 @@ public class StatusServiceTest {
 
         assertTrue(ret.isPresent());
         assertEquals(Order.StatusEnum.DELIVERED, ret.get().getStatus());
+        assertNotNull(ret.get().getTimeValues().getActualDeliveryTime());
         assertEquals(deliveryTime, ret.get().getTimeValues().getActualDeliveryTime());
+        assertEquals(order4.getTimeValues(), ret.get().getTimeValues());
 
         ArgumentCaptor<Order> argumentCaptor = ArgumentCaptor.forClass(Order.class);
         verify(orderRepo).saveAndFlush(argumentCaptor.capture());
         Order res = argumentCaptor.getValue();
 
         assertEquals(res.getStatus(), Order.StatusEnum.DELIVERED);
-        assertEquals(res.getTimeValues().getActualDeliveryTime(), deliveryTime);
     }
 
     @Test
@@ -218,8 +218,8 @@ public class StatusServiceTest {
 
     @Test
     void updateStatusToDeliveredNullTimeValues() {
-        Order o4 = new Order().id(22L);
-        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o4));
+        order4.setTimeValues(null);
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order4));
         Mockito.when(orderRepo.saveAndFlush(order4)).thenReturn(order4);
 
         OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);

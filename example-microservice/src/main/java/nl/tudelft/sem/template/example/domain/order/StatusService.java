@@ -143,10 +143,13 @@ public class StatusService {
 
         // set the timeValues of the order object
         OffsetDateTime deliveredTime = updateToDeliveredRequest.getActualDeliveryTime();
-        timeValues.setActualDeliveryTime(deliveredTime);
+        Time newTimeValues = new Time().prepTime(timeValues.getPrepTime())
+                                                .expectedDeliveryTime(timeValues.getExpectedDeliveryTime())
+                                                .orderTime(timeValues.getOrderTime())
+                                                .actualDeliveryTime(deliveredTime);
 
         order.setStatus(Order.StatusEnum.DELIVERED);
-        order.setTimeValues(timeValues);
+        order.setTimeValues(newTimeValues);
 
         return Optional.of(orderRepo.saveAndFlush(order));
     }
