@@ -34,7 +34,8 @@ class OrderServiceTest {
     void setUp() {
         this.orderRepo = mock(OrderRepository.class);
         this.vendorRepo = mock(VendorRepository.class);
-        this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F));
+        this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+                .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.os = new OrderService(orderRepo, vendorRepo);
     }
