@@ -128,7 +128,7 @@ public class StatusServiceTest {
     void updateStatusToInTransit200() {
         Order order22 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT);
 
-        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.ofNullable(order2));
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order2));
         Mockito.lenient().when(orderRepo.saveAndFlush(order2)).thenReturn(order22);
 
         assertEquals(order2.getStatus(), Order.StatusEnum.GIVEN_TO_COURIER);
@@ -281,6 +281,10 @@ public class StatusServiceTest {
         assertTrue(ret.isPresent());
         assertEquals(ret.get().getStatus(), Order.StatusEnum.PREPARING);
         assertEquals(ret.get().getTimeValues(), timeValues);
+
+        assertEquals(order5.getStatus(), Order.StatusEnum.PREPARING);
+        assertEquals(order5.getTimeValues(), timeValues);
+
     }
 
     @Test

@@ -213,7 +213,6 @@ public class OrderService {
         Order o = order.get();
         Time timeOfOrder = o.getTimeValues();
         timeOfOrder.setPrepTime(body);
-        o.setTimeValues(timeOfOrder);
 
         Order newOrder = orderRepo.saveAndFlush(o);
 

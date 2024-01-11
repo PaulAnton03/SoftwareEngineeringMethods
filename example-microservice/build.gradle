@@ -145,6 +145,7 @@ pitest {
 	junit5PluginVersion = '0.12'
 
 	targetClasses = ['nl.tudelft.sem.template.*']  //by default "${project.group}.*"
+	excludedTestClasses = ['nl.tudelft.sem.template.*API']
 	pitestVersion = '1.5.1' //not needed when a default PIT version should be used
 	threads = 4
 	outputFormats = ['XML', 'HTML']
@@ -154,7 +155,7 @@ pitest {
 apply plugin: 'org.openapi.generator'
 openApiGenerate {
 	generatorName.set("spring")
-	inputSpec.set("$rootDir/src/main/resources/openapi.yaml")
+	inputSpec.set("$rootDir/example-microservice/src/main/resources/openapi.yaml")
 	outputDir.set("$buildDir/generated")
 	apiPackage.set("nl.tudelft.sem.template.api")
 	modelPackage.set("nl.tudelft.sem.template.model")

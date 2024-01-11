@@ -127,8 +127,10 @@ public class StatusService {
         if (order.getTimeValues() == null) {
             order.setTimeValues(new Time());
         }
-        order.getTimeValues().setPrepTime(req.getPrepTime());
-        order.getTimeValues().setExpectedDeliveryTime(req.getExpectedDeliveryTime());
+        Time timeValues = order.getTimeValues();
+        timeValues.setPrepTime(req.getPrepTime());
+        timeValues.setExpectedDeliveryTime(req.getExpectedDeliveryTime());
+
         return Optional.of(orderRepo.saveAndFlush(order));
     }
 

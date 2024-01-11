@@ -136,15 +136,16 @@ class OrderServiceTest {
     void updatePrepTimeWorks() {
         Time time1 = new Time().prepTime(new String("01:30:00"));
         Time time2 = new Time().prepTime(new String("03:30:00"));
-        order1.timeValues(time1);
+        order1.setTimeValues(time1);
         Order order11 = new Order().id(1L).timeValues(time2);
 
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
-        Mockito.lenient().when(orderRepo.save(order1)).thenReturn(order11);
+        Mockito.lenient().when(orderRepo.saveAndFlush(order1)).thenReturn(order11);
 
-        Optional<String> res = os.updatePrepTime(order1.getId(), new String("03:30:00"));
+        Optional<String> res = os.updatePrepTime(order1.getId(), order11.getTimeValues().getPrepTime());
         assertTrue(res.isPresent());
-        assertEquals(order11.getTimeValues().getPrepTime(), res.get());
+        assertEquals(res.get(), time2.getPrepTime());
+        assertEquals(order1.getTimeValues().getPrepTime(), time2.getPrepTime());
     }
 
     @Test
@@ -210,13 +211,13 @@ class OrderServiceTest {
     @Test
     void updateCourier200() {
         Mockito.when(orderRepo.findById(order1.getId())).thenReturn(Optional.of(order1));
-        Order order2 = order1;
-        order2.setCourierId(2L);
+        Order order2 = new Order().id(order1.getId()).courierId(2L);
         Mockito.when(orderRepo.saveAndFlush(order1)).thenReturn(order2);
 
         Optional<Order> o = os.updateCourier(order1.getId(), 2L);
         assertTrue(o.isPresent());
         assertEquals(o.get().getCourierId(), 2L);
+        assertEquals(order1.getCourierId(), order2.getCourierId());
     }
 
     @Test
