@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -320,6 +322,36 @@ class OrderControllerTest {
 
         var res = controller.setCourierId(1L, 11L, 2L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void setDeliverTime200() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
+                .thenReturn(Optional.empty());
+        Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.of("03:30:00"));
+        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), ret);
+    }
+
+    @Test
+    void setDeliverTime403() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.of("03:30:00"));
+        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), ret);
+    }
+
+    @Test
+    void setDeliverTime404() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
+                .thenReturn(Optional.empty());
+        Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.empty());
+        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), ret);
     }
 
 }

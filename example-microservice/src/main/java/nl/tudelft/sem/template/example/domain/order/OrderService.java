@@ -210,9 +210,12 @@ public class OrderService {
             return Optional.empty();
         }
 
-        Time timeOfOrder = order.get().getTimeValues();
+        Order o = order.get();
+        Time timeOfOrder = o.getTimeValues();
         timeOfOrder.setPrepTime(body);
-        Order newOrder = orderRepo.saveAndFlush(order.get());
+        o.setTimeValues(timeOfOrder);
+
+        Order newOrder = orderRepo.saveAndFlush(o);
 
         return Optional.of(body);
     }

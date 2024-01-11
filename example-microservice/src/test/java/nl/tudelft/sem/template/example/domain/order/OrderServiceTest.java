@@ -142,8 +142,9 @@ class OrderServiceTest {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         Mockito.lenient().when(orderRepo.save(order1)).thenReturn(order11);
 
-        String res = os.updatePrepTime(order1.getId(), new String("03:30:00")).get();
-        assertEquals(order11.getTimeValues().getPrepTime(), res);
+        Optional<String> res = os.updatePrepTime(order1.getId(), new String("03:30:00"));
+        assertTrue(res.isPresent());
+        assertEquals(order11.getTimeValues().getPrepTime(), res.get());
     }
 
     @Test
