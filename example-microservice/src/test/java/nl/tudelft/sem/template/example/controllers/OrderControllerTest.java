@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.math.BigDecimal;
@@ -53,6 +54,15 @@ class OrderControllerTest {
     }
 
     @Test
+    void getFinalDestinationGives403() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "getFinalDestination", 11L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getFinalDestination(1L, 11L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
     void getPickUpDestinationWorks() {
         var proper = Optional.of(new Location().longitude(11f).latitude(22f));
         Mockito.when(orderService.getPickupDestination(anyLong())).thenReturn(proper);
@@ -66,6 +76,15 @@ class OrderControllerTest {
         Mockito.when(orderService.getPickupDestination(anyLong())).thenReturn(proper);
         var res = controller.getPickupDestination(1L, 22L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getPickUpDestinationGives403() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "getPickupDestination", 11L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getPickupDestination(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
@@ -124,6 +143,14 @@ class OrderControllerTest {
     }
 
     @Test
+    void getOrderRating403() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "getOrderRating", 1L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        var res = controller.getOrderRating(1L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
     void updateOrder200() {
         Optional<Order> proper = Optional.of(new Order().id(11L).status(Order.StatusEnum.ACCEPTED));
         Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
@@ -138,6 +165,7 @@ class OrderControllerTest {
         Order updated = new Order().id(11L).status(Order.StatusEnum.PENDING);
         Mockito.when(orderService.updateOrderById(11L, updated)).thenReturn(Optional.empty());
         var res = controller.updateOrder(11L, 1L, updated);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
     @Test
@@ -184,6 +212,7 @@ class OrderControllerTest {
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
 
         var res = controller.makeOrder(11L, 1L, o);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
     @Test
@@ -198,6 +227,17 @@ class OrderControllerTest {
 
         var res = controller.putOrderRating(1L, 1L, rating2.get());
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateOrderRating403() {
+        Optional<BigDecimal> rating2 = Optional.of(new BigDecimal("2.0"));
+
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "putOrderRating", 1L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.putOrderRating(1L, 1L, rating2.get());
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
@@ -241,6 +281,18 @@ class OrderControllerTest {
     }
 
     @Test
+    void updateOrderRating404second() {
+        Optional<BigDecimal> rating1 = Optional.of(new BigDecimal("5.0"));
+        Optional<BigDecimal> rating2 = Optional.of(new BigDecimal("2.0"));
+
+        Mockito.when(orderService.getRating(1L)).thenReturn(rating1);
+        Mockito.when(orderService.updateRating(1L, rating2.get())).thenReturn(Optional.empty());
+
+        var res = controller.putOrderRating(1L, 1L, rating2.get());
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
     void updatePrepTime200() {
         Optional<String> prepTime = Optional.of(new String("01:01:01"));
         Mockito.when(orderService.updatePrepTime(1L, prepTime.get())).thenReturn(prepTime);
@@ -252,11 +304,10 @@ class OrderControllerTest {
         Courier c = new Courier().id(2L);
         Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.of(c));
         Order o = new Order().id(11L).courierId(3L);
-        Order o1 = o;
-        o1.setCourierId(2L);
+        Order o1 = new Order().id(11L).courierId(2L);
         Mockito.when(orderService.updateCourier(11L, 2L)).thenReturn(Optional.of(o1));
 
-        var res = controller.setCourierId(11L, 2L, 1L, o);
+        ResponseEntity<Void> res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
@@ -273,7 +324,7 @@ class OrderControllerTest {
 
         Order o = new Order().id(11L).courierId(3L);
 
-        var res = controller.setCourierId(11L, 2L, 1L, o);
+        ResponseEntity<Void> res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
@@ -282,7 +333,7 @@ class OrderControllerTest {
         Mockito.when(userService.getCourierById(2L)).thenReturn(Optional.empty());
         Order o = new Order().id(11L).courierId(3L);
 
-        var res = controller.setCourierId(1L, 11L, 2L, o);
+        ResponseEntity<Void> res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
@@ -293,8 +344,38 @@ class OrderControllerTest {
         Order o = new Order().id(11L).courierId(3L);
         Mockito.when(orderService.updateCourier(11L, 2L)).thenReturn(Optional.empty());
 
-        var res = controller.setCourierId(1L, 11L, 2L, o);
+        ResponseEntity<Void> res = controller.setCourierId(11L, 2L, 1L, o);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void setDeliverTime200() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
+                .thenReturn(Optional.empty());
+        Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.of("03:30:00"));
+        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), ret);
+    }
+
+    @Test
+    void setDeliverTime403() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.of("03:30:00"));
+        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), ret);
+    }
+
+    @Test
+    void setDeliverTime404() {
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
+                .thenReturn(Optional.empty());
+        Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.empty());
+        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), ret);
     }
 
 }

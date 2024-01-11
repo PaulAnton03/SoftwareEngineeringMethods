@@ -166,6 +166,10 @@ public class OrderService {
             return Optional.empty();
         }
 
+        if (order.get().getRatingNumber() == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(order.get().getRatingNumber());
     }
 
@@ -206,9 +210,11 @@ public class OrderService {
             return Optional.empty();
         }
 
-        Time timeOfOrder = order.get().getTimeValues();
+        Order o = order.get();
+        Time timeOfOrder = o.getTimeValues();
         timeOfOrder.setPrepTime(body);
-        Order newOrder = orderRepo.saveAndFlush(order.get());
+
+        Order newOrder = orderRepo.saveAndFlush(o);
 
         return Optional.of(body);
     }
