@@ -86,6 +86,19 @@ public class AuthorizationServiceTest {
     }
 
     @Test
+    void authorizeAdminOnlyWorks(){
+        WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .withBody("admin")));
+        List<Order> proper = List.of(new Order().id(11L), new Order().id(22L), new Order().id(33L));
+        Mockito.when(orderService.getOrders()).thenReturn(Optional.of(proper));
+        var res = controller.getOrders(11L);
+        assertEquals(new ResponseEntity<>(proper, HttpStatus.OK), res);
+
+    }
+    @Test
     void getFinalDestinationWorks() {
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
             .willReturn(aResponse()

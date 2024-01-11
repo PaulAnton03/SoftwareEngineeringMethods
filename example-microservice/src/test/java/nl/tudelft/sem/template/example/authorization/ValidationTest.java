@@ -83,6 +83,14 @@ public class ValidationTest {
         assertEquals(ResponseEntity.status(403).body("User with id " + 11 + " does not have access rights"), res);
     }
 
+    @Test
+    void getFinalDestinationNoMapping() {
+        validationMethods.remove("getFinalDestination");
+        var res = controller.getFinalDestination(11L, 1L);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res.getStatusCode());
+    }
+
+
     @AfterEach()
     void tearDown() {
         WireMockConfig.stopUserServer();
