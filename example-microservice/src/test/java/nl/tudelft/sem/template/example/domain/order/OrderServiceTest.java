@@ -221,6 +221,7 @@ class OrderServiceTest {
         Optional<BigDecimal> res = os.updateRating(order1.getId(), BigDecimal.valueOf(10));
         assertTrue(res.isPresent());
         assertEquals(res.get(), order3.getRatingNumber());
+        assertEquals(order1.getRatingNumber(), order3.getRatingNumber());
     }
 
     @Test
