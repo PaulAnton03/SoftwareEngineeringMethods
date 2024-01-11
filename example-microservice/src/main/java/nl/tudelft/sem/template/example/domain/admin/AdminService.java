@@ -31,4 +31,14 @@ public class AdminService {
 
         return Optional.of(vendors);
     }
+
+    public Optional<Double> getDefaultRadius(){
+        List<Vendor> vendors = vendorRepo.findVendorsByHasCouriers(false);
+
+        if(vendors.isEmpty()){
+            return Optional.empty();
+        }
+
+        return Optional.of(vendors.get(0).getRadius());
+    }
 }

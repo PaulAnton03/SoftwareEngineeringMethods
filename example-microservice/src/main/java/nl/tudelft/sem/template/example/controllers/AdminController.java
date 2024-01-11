@@ -1,7 +1,5 @@
 package nl.tudelft.sem.template.example.controllers;
 
-
-import io.swagger.v3.oas.annotations.Parameter;
 import nl.tudelft.sem.template.api.AdminApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.admin.AdminService;
@@ -40,7 +38,7 @@ public class AdminController implements AdminApi {
             @RequestParam(name = "authorization") Long authorization,
             @RequestBody Double body) {
 
-        var auth = authorizationService.authorize(authorization, "updateDefaultRadius");
+        var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -51,5 +49,31 @@ public class AdminController implements AdminApi {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * GET /admin/vendor/radius : Retrieve the default radius for vendors that don&#39;t have their own couriers
+     * (independent vendors)
+     * Return the default radius of all independent vendors. To be used by admin.
+     *
+     * @param authorization the userId to check if they have the rights to make this request (required)
+     * @return Successful response, default radius of vendors with independent couriers received (status code 200)
+     * or Unsuccessful, default radius cannot be retrieved because of a bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve specific radius (status code 403)
+     * or Unsuccessful, no specific radius was found (status code 404)
+     */
+    @Override
+    public ResponseEntity<Double> getDefaultRadius(
+            @RequestParam(name = "authorization") Long authorization) {
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (auth.isPresent()) {
+            return auth.get();
+        }
+
+        Optional<Double> res = adminService.getDefaultRadius();
+
+        return res.map(aDouble -> new ResponseEntity<>(aDouble, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
     }
 }

@@ -27,7 +27,6 @@ class AdminControllerTest {
     void setUp() {
         this.adminService = Mockito.mock(AdminService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
-        Mockito.when(authorizationService.authorize(anyLong(), Mockito.anyString())).thenReturn(Optional.empty());
         this.controller = new AdminController(adminService, authorizationService);
     }
 
@@ -45,6 +44,20 @@ class AdminControllerTest {
         Mockito.when(adminService.updateDefaultRadius(5D)).thenReturn(Optional.of(listVendors));
         var res = controller.updateDefaultRadius(1L, 5D);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void getDefaultRadius200(){
+        Mockito.when(adminService.getDefaultRadius()).thenReturn(Optional.of(5D));
+        var res = controller.getDefaultRadius(1L);
+        assertEquals(new ResponseEntity<>(5D, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getDefaultRadius404(){
+        Mockito.when(adminService.getDefaultRadius()).thenReturn(Optional.empty());
+        var res = controller.getDefaultRadius(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
 }
