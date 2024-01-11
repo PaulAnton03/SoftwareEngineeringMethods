@@ -167,6 +167,10 @@ public class OrderService {
             return Optional.empty();
         }
 
+        if (order.get().getRatingNumber() == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(order.get().getRatingNumber());
     }
 

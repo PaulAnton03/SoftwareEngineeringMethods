@@ -189,15 +189,25 @@ class OrderServiceTest {
 
     @Test
     void getRating200() {
-        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
-        Optional<BigDecimal> res = os.getRating(order1.getId());
+        Order o = order1;
+        o.setId(10L);
+        o.setRatingNumber(BigDecimal.valueOf(5));
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o));
+        Optional<BigDecimal> res = os.getRating(o.getId());
         assertTrue(res.isPresent());
-        assertEquals(res.get(),order1.getRatingNumber());
+        assertEquals(res.get(),o.getRatingNumber());
     }
 
     @Test
     void getRating404() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<BigDecimal> res = os.getRating(order1.getId());
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getRatingNoRatingNumber() {
+        Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order1));
         Optional<BigDecimal> res = os.getRating(order1.getId());
         assertTrue(res.isEmpty());
     }
