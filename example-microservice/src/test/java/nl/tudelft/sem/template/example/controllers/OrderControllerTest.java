@@ -280,4 +280,16 @@ class OrderControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
+    @Test
+    void updateOrderRating404second() {
+        Optional<BigDecimal> rating1 = Optional.of(new BigDecimal("5.0"));
+        Optional<BigDecimal> rating2 = Optional.of(new BigDecimal("2.0"));
+
+        Mockito.when(orderService.getRating(1L)).thenReturn(rating1);
+        Mockito.when(orderService.updateRating(1L, rating2.get())).thenReturn(Optional.empty());
+
+        var res = controller.putOrderRating(1L, 1L, rating2.get());
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
 }
