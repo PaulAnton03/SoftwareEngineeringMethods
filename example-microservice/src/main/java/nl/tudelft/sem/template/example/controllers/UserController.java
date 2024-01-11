@@ -72,10 +72,10 @@ public class UserController implements UserApi {
     public ResponseEntity getSpecificRadius(
             @RequestParam(name = "authorization") Long authorization
     ) {
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "getSpecificRadius");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
+        var auth =
+                authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) {
+            return auth.get();
         }
 
         Optional<Double> ratingReceived = userService.getRadiusOfVendor(authorization);
@@ -197,10 +197,10 @@ public class UserController implements UserApi {
             @RequestParam(name = "authorization") Long authorization,
             @RequestBody @Valid Double body
     ) {
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "updateSpecificRadius");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
+        var auth =
+                authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) {
+            return auth.get();
         }
 
         Optional<Vendor> vendor = userService.getVendor(authorization);
