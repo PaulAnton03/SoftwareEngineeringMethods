@@ -20,7 +20,6 @@ class AdminControllerTest {
 
     private AdminService adminService;
     private AdminController controller;
-
     private AuthorizationService authorizationService;
 
 
@@ -34,12 +33,15 @@ class AdminControllerTest {
 
     @Test
     void updateDefaultRadius404(){
-
+        Mockito.when(adminService.updateDefaultRadius(5D)).thenReturn(Optional.empty());
+        var res = controller.updateDefaultRadius(1L, 5D);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
     @Test
     void updateDefaultRadius200(){
         List<Vendor> listVendors = new ArrayList<>();
+        listVendors.add(new Vendor());
         Mockito.when(adminService.updateDefaultRadius(5D)).thenReturn(Optional.of(listVendors));
         var res = controller.updateDefaultRadius(1L, 5D);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
