@@ -66,6 +66,7 @@ public class AuthorizationServiceTest {
     @BeforeEach
     void setUp() {
         WireMockConfig.startUserServer();
+        WireMockConfig.startOrderServer();
         this.orderService = Mockito.mock(OrderService.class);
         this.userService = Mockito.mock(UserService.class);
         this.controller = new OrderController(orderService, userService, authorizationService);
@@ -136,9 +137,12 @@ public class AuthorizationServiceTest {
                 .withStatus(200)
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .withBody("customer")));
+        WireMockConfig.orderMicroservice.stubFor(WireMock.get(urlPathMatching("/order/11"))
+            .withHeader("userId", WireMock.equalTo("1"))
+            .willReturn(aResponse()
+                .withStatus(401)));
         Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
         Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);
-
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(ResponseEntity.status(403).body("User with id " + 11 + " does not have access rights"), res);
     }
@@ -230,5 +234,6 @@ public class AuthorizationServiceTest {
     @AfterEach()
     void tearDown() {
         WireMockConfig.stopUserServer();
+        WireMockConfig.stopOrderServer();
     }
 }
