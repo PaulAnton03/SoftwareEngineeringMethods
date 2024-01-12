@@ -85,7 +85,8 @@ jacocoTestReport {
 			fileTree(dir: it,
 					exclude: ['**/nl/tudelft/sem/template/api/**',
 							  '**/nl/tudelft/sem/template/model/**',
-							  '**/nl/tudelft/sem/template/example/config/**']) // Exclude the specified package
+							  '**/nl/tudelft/sem/template/example/config/**',
+							  '**/nl/tudelft/sem/template/example/Application.class']) // Exclude the specified package
 		}))
 	}
 }
