@@ -48,7 +48,7 @@ public class AdminController implements AdminApi {
     public ResponseEntity<Void> updateException(@PathVariable("orderId") Long orderId,
                                                 @RequestParam(value = "authorization", required = true) Long authorization,
                                                 @RequestBody(required = false) DeliveryException deliveryException) {
-        var auth = authorizationService.authorize(authorization, "updateException");
+        var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -79,7 +79,7 @@ public class AdminController implements AdminApi {
     @GetMapping("/exceptions")
     public ResponseEntity<List<DeliveryException>> getExceptions(
         @RequestParam(value = "authorization", required = true) Long authorization) {
-        var auth = authorizationService.authorize(authorization, "getExceptions");
+        var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -99,7 +99,7 @@ public class AdminController implements AdminApi {
                                               @RequestParam(value = "authorization", required = true) Long authorization,
                                               @RequestBody(required = false) DeliveryException deliveryException) {
 
-        var auth = authorizationService.authorize(authorization, "getExceptionForOrder");
+        var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
             return auth.get();
         }
@@ -188,7 +188,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/vendor/radius")
     public ResponseEntity<Double> getDefaultRadius(
-            @RequestParam(name = "authorization") Long authorization) {
+        @RequestParam(name = "authorization") Long authorization) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
             return auth.get();
@@ -197,7 +197,7 @@ public class AdminController implements AdminApi {
         Optional<Double> res = adminService.getDefaultRadius();
 
         return res.map(aDouble -> new ResponseEntity<>(aDouble, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 }

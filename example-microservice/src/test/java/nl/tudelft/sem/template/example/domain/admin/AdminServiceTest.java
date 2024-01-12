@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.example.domain.admin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -17,16 +16,8 @@ import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionReposit
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.DeliveryException;
-import nl.tudelft.sem.template.model.Order;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
