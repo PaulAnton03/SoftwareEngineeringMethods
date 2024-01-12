@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.example.domain.admin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -17,9 +16,8 @@ import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionReposit
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.DeliveryException;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -184,7 +182,7 @@ class AdminServiceTest {
     }
 
     @Test
-    void updateDefaultRadiusEmpty(){
+    void updateDefaultRadiusEmpty() {
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(new ArrayList<>());
 
         Optional<List<Vendor>> res = adminService.updateDefaultRadius(5D);
@@ -192,7 +190,7 @@ class AdminServiceTest {
     }
 
     @Test
-    void updateDefaultRadiusNotEmpty(){
+    void updateDefaultRadiusNotEmpty() {
         List<Vendor> vendors = new ArrayList<>();
         vendors.add(vendor1);
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(vendors);
@@ -202,7 +200,7 @@ class AdminServiceTest {
     }
 
     @Test
-    void getDefaultRadiusEmpty(){
+    void getDefaultRadiusEmpty() {
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(new ArrayList<>());
 
         Optional<Double> res = adminService.getDefaultRadius();
@@ -210,7 +208,7 @@ class AdminServiceTest {
     }
 
     @Test
-    void getDefaultRadiusNotEmpty(){
+    void getDefaultRadiusNotEmpty() {
         List<Vendor> vendors = new ArrayList<>();
         vendors.add(vendor1);
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(vendors);
