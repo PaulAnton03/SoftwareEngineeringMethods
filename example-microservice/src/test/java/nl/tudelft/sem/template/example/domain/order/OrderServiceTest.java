@@ -345,6 +345,16 @@ class OrderServiceTest {
     }
 
     @Test
+    void getOrderLocationDELIVERED() {
+        Location finalLocation = new Location().latitude(11F).longitude(22F);
+        order1.setStatus(Order.StatusEnum.DELIVERED);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), finalLocation);
+    }
+
+    @Test
     void getOrderLocationGIVENTOCOURIER() {
         order1.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
