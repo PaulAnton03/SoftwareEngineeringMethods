@@ -371,6 +371,12 @@ public class OrderController implements OrderApi {
     public ResponseEntity<Location> getOrderLocation(
             @PathVariable(name = "orderId") Long orderId,
             @RequestParam(name = "authorization") Long authorization) {
+        var auth = authorizationService
+                .checkIfUserIsAuthorized(authorization, "getOrderLocation", orderId);
+        if(doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
         Optional<Order> order = orderService.getOrderById(orderId);
         if(order.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -399,6 +405,11 @@ public class OrderController implements OrderApi {
             @PathVariable(name = "orderId") Long orderId,
             @RequestParam(name = "authorization") Long authorization,
             @RequestBody Location location) {
+        var auth = authorizationService
+                .checkIfUserIsAuthorized(authorization, "updateLocation", orderId);
+        if(doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
         Optional<Order> order = orderService.getOrderById(orderId);
         if(order.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
