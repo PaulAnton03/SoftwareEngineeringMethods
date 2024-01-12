@@ -14,6 +14,7 @@ import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -352,5 +353,64 @@ public class OrderController implements OrderApi {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * GET /order/{orderId}/current : Retrieve the current location of the courier with this order
+     * return the location of the courier who has the order corresponding to the id
+     *
+     * @param orderId       id of the order with the location to retrieve (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @return Successful response, location received (status code 200)
+     * or Unsuccessful, location cannot be retrieved because of bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve order location (status code 403)
+     * or Unsuccessful, no location was found (status code 404)
+     */
+    @Override
+    @GetMapping("/{orderId}/current")
+    public ResponseEntity<Location> getOrderLocation(
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization) {
+        Optional<Order> order = orderService.getOrderById(orderId);
+        if(order.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Optional<Location> res = orderService.getOrderLocation(order.get());
+
+        return res.map(location -> new ResponseEntity<>(location, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    /**
+     * PUT /order/{orderId}/current : Update the current location of the courier with this order
+     * update the location of the courier who has the order corresponding to the id
+     *
+     * @param orderId       id of the order with the location to update (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param location      Location object (required)
+     * @return Successful response, location updated (status code 200)
+     * or Unsuccessful, location cannot be updated because of bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to update order location (status code 403)
+     * or Unsuccessful, no location was found (status code 404)
+     */
+    @Override
+    @PutMapping("/{orderId}/current")
+    public ResponseEntity<Void> updateLocation(
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody Location location) {
+        Optional<Order> order = orderService.getOrderById(orderId);
+        if(order.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Location> res = orderService.updateLocation(order.get(), location);
+
+        if(res.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 }

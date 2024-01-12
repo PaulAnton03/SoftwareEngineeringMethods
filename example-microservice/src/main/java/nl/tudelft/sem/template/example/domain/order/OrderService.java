@@ -3,25 +3,29 @@ package nl.tudelft.sem.template.example.domain.order;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
+import nl.tudelft.sem.template.example.domain.user.CourierRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.model.Time;
-import nl.tudelft.sem.template.model.Vendor;
+import nl.tudelft.sem.template.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepo;
     private final VendorRepository vendorRepo;
+    private final CourierRepository courierRepo;
 
 
     @Autowired
-    public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo) {
+    public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo, CourierRepository courierRepo) {
         this.vendorRepo = vendorRepo;
         this.orderRepo = orderRepo;
+        this.courierRepo = courierRepo;
     }
 
     /**
@@ -237,5 +241,58 @@ public class OrderService {
         o.setCourierId(courierId);
 
         return Optional.of(orderRepo.saveAndFlush(o));
+    }
+
+    public Optional<Location> getOrderLocation(Order o){
+        Order.StatusEnum status = o.getStatus();
+
+        Optional<Vendor> v = vendorRepo.findById(o.getVendorId());
+        if(v.isEmpty()) {
+            return Optional.empty();
+        }
+        Location vLocation = v.get().getLocation();
+
+        Optional<Courier> c = courierRepo.findById(o.getCourierId());
+        Location cLocation = null;
+        if(c.isPresent()){
+            cLocation = c.get().getCurrentLocation();
+        }
+        switch(status){
+            case ACCEPTED, PREPARING -> {
+                return Optional.of(vLocation);
+            }
+            case GIVEN_TO_COURIER, IN_TRANSIT -> {
+                if(cLocation == null){
+                    return Optional.empty();
+                }
+                return Optional.of(cLocation);
+            }
+            case DELIVERED -> {
+                return Optional.of(o.getDeliveryDestination());
+            }
+            default -> {
+                return Optional.empty();
+            }
+        }
+    }
+
+    public Optional<Location> updateLocation(Order order, Location location){
+        Order.StatusEnum status = order.getStatus();
+
+        Optional<Courier> c = courierRepo.findById(order.getCourierId());
+        if(c.isEmpty()){
+            return Optional.empty();
+        }
+        Courier courier = c.get();
+        switch(status){
+            case GIVEN_TO_COURIER, IN_TRANSIT -> {
+                courier.setCurrentLocation(location);
+                Courier res = courierRepo.saveAndFlush(courier);
+                return Optional.of(res.getCurrentLocation());
+            }
+            default -> {
+                return Optional.empty();
+            }
+        }
     }
 }
