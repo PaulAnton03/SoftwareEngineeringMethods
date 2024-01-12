@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.example.authorization;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -166,6 +167,64 @@ public class AuthorizationServiceTest {
         Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
+    }
+
+    @Test
+    void permissionsAndValidations() throws NoSuchMethodException {
+        HashMap<String, List<Authorization.UserType>> permissionsExpected = new HashMap<>();
+        HashMap<String, BiFunction<Long, Long, Boolean>> validationMethodsExpected = new HashMap<>();
+
+        // OrderController
+        permissionsExpected.put("getFinalDestination", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getOrder", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getPickupDestination", List.of(COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateOrder", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getOrderRating", List.of(CUSTOMER, VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("putOrderRating", List.of(CUSTOMER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("setDeliverTime", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        // StatusController
+        permissionsExpected.put("updateToAccepted", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToRejected", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToGivenToCourier", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToInTransit", List.of(COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToPreparing", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToDelivered", List.of(COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getStatus", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        // UserController
+        permissionsExpected.put("updateBossOfCourier", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::courierBelongsToVendor);
+        authorizationService.init();
+        assertEquals(permissionsExpected, authorizationService.getPermissions());
+        assertEquals(validationMethodsExpected.keySet(), authorizationService.getValidationMethods().keySet());
+
     }
 
     @AfterEach()
