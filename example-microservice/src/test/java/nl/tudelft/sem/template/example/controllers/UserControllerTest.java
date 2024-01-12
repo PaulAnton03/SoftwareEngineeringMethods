@@ -201,6 +201,25 @@ public class UserControllerTest {
     }
 
     @Test
+    void getSpecificRadiusWorks200() {
+        Vendor vendor = new Vendor().id(1L).radius(3.0);
+        Mockito.when(userService.getRadiusOfVendor(vendor.getId()))
+                .thenReturn(Optional.of(vendor.getRadius()));
+
+        var res = controller.getSpecificRadius(1L);
+        assertEquals(new ResponseEntity<>(vendor.getRadius(), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getSpecificRadius403() {
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getSpecificRadius(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
     void getCourier200() {
         Courier courier = new Courier().id(1L);
         Optional<Courier> proper = Optional.of(courier);
@@ -215,6 +234,64 @@ public class UserControllerTest {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         var res = controller.getCourier(2L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getSpecificRadius404() {
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.empty());
+        Mockito.when(userService.getRadiusOfVendor(anyLong()))
+                .thenReturn(Optional.empty());
+
+        var res = controller.getSpecificRadius(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateSpecificRadiusWorks200() {
+        Vendor vendor = new Vendor().id(1L).radius(3.0);
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.empty());
+        Mockito.when(userService.getVendor(vendor.getId())).thenReturn(Optional.of(vendor));
+        Mockito.when(userService.updateRadiusOfVendor(vendor.getId(), 5.0))
+                .thenReturn(Optional.of(5.0));
+
+        var res = controller.updateSpecificRadius(1L, 5.0);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void updateSpecificRadius404() {
+        Vendor vendor = new Vendor().id(1L).radius(3.0);
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.empty());
+        Mockito.when(userService.getVendor(vendor.getId())).thenReturn(Optional.of(vendor));
+        Mockito.when(userService.updateRadiusOfVendor(vendor.getId(), 5.0))
+                .thenReturn(Optional.empty());
+
+        var res = controller.updateSpecificRadius(1L, 5.0);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateSpecificRadius404second() {
+        Vendor vendor = new Vendor().id(1L).radius(3.0);
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.empty());
+        Mockito.when(userService.getVendor(vendor.getId())).thenReturn(Optional.empty());
+
+        var res = controller.updateSpecificRadius(1L, 5.0);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateSpecificRadius403() {
+        Vendor vendor = new Vendor().id(1L).radius(3.0);
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.updateSpecificRadius(1L, 5.0);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 

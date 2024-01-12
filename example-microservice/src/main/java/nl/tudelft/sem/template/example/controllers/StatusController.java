@@ -204,8 +204,9 @@ public class StatusController implements StatusApi {
 
     @Override
     @PutMapping("/{orderId}/preparing")
-    public ResponseEntity updateToPreparing(Long orderId, Long authorization,
-                                                  UpdateToPreparingRequest updateToPreparingRequest) {
+    public ResponseEntity updateToPreparing(@PathVariable(name= "orderId") Long orderId,
+                                            @RequestParam(name= "authorization") Long authorization,
+                                            @Valid @RequestBody UpdateToPreparingRequest updateToPreparingRequest) {
 
         var auth = authorizationService.checkIfUserIsAuthorized(authorization,
                 "updateToPreparing", orderId);

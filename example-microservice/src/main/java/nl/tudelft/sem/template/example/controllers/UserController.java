@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/user")
@@ -65,8 +68,23 @@ public class UserController implements UserApi {
      * or Unsuccessful, no specific radius was found (status code 404)
      */
     @Override
-    public ResponseEntity<Double> getSpecificRadius(Long authorization) {
-        return UserApi.super.getSpecificRadius(authorization);
+    @GetMapping("/vendor/radius")
+    public ResponseEntity getSpecificRadius(
+            @RequestParam(name = "authorization") Long authorization
+    ) {
+        var auth =
+                authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<Double> ratingReceived = userService.getRadiusOfVendor(authorization);
+
+        if (ratingReceived.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(ratingReceived.get(), HttpStatus.OK);
     }
 
     /**
@@ -174,8 +192,30 @@ public class UserController implements UserApi {
      * or Unsuccessful, no specific radius was found. (status code 404)
      */
     @Override
-    public ResponseEntity<Void> updateSpecificRadius(Long authorization, Double body) {
-        return UserApi.super.updateSpecificRadius(authorization, body);
+    @PutMapping("/vendor/radius")
+    public ResponseEntity updateSpecificRadius(
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody @Valid Double body
+    ) {
+        var auth =
+                authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<Vendor> vendor = userService.getVendor(authorization);
+
+        if (vendor.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Double> newRadius = userService.updateRadiusOfVendor(authorization, body);
+
+        if(newRadius.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -237,4 +277,5 @@ public class UserController implements UserApi {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

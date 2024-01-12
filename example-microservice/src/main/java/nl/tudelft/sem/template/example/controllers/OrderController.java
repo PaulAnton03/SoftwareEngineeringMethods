@@ -268,10 +268,8 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
-        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "makeOrder", orderId);
-        if (doesNotHaveAuthority(auth)) {
-            return auth.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Order> o = orderService.getOrderById(orderId);
         if (o.isPresent()) {

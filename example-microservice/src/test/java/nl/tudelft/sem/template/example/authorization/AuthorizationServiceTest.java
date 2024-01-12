@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.example.authorization;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -18,6 +19,7 @@ import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.user.CourierRepository;
 import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.externalservices.OrderExternalService;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
@@ -41,6 +43,11 @@ public class AuthorizationServiceTest {
     private OrderService orderService;
     private UserService userService;
     private OrderController controller;
+
+    private final UserExternalService userExternalService = new UserExternalService();
+
+    private final OrderExternalService orderExternalService = new OrderExternalService();
+
     private AuthorizationService authorizationService;
 
     private Order order1;
@@ -57,6 +64,7 @@ public class AuthorizationServiceTest {
     @BeforeEach
     void setUp() {
         WireMockConfig.startUserServer();
+        WireMockConfig.startOrderServer();
         this.orderService = Mockito.mock(OrderService.class);
         this.userService = Mockito.mock(UserService.class);
 
@@ -64,7 +72,7 @@ public class AuthorizationServiceTest {
         orderRepo = mock(OrderRepository.class);
         vendorRepo = mock(VendorRepository.class);
         courierRepo = mock(CourierRepository.class);
-        dbUtils = new DbUtils(orderRepo, vendorRepo, courierRepo);
+        dbUtils = new DbUtils(orderRepo, vendorRepo, courierRepo, orderExternalService);
         validationMethods = new HashMap<>(
             Map.of(
                 "getFinalDestination", dbUtils::userBelongsToOrder,
@@ -77,6 +85,19 @@ public class AuthorizationServiceTest {
         this.controller = new OrderController(orderService, userService, authorizationService, orderRepo, vendorRepo);
     }
 
+    @Test
+    void authorizeAdminOnlyWorks(){
+        WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .withBody("admin")));
+        List<Order> proper = List.of(new Order().id(11L), new Order().id(22L), new Order().id(33L));
+        Mockito.when(orderService.getOrders()).thenReturn(Optional.of(proper));
+        var res = controller.getOrders(11L);
+        assertEquals(new ResponseEntity<>(proper, HttpStatus.OK), res);
+
+    }
     @Test
     void getFinalDestinationWorks() {
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
@@ -114,9 +135,12 @@ public class AuthorizationServiceTest {
                 .withStatus(200)
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .withBody("customer")));
+        WireMockConfig.orderMicroservice.stubFor(WireMock.get(urlPathMatching("/order/11"))
+            .withHeader("userId", WireMock.equalTo("1"))
+            .willReturn(aResponse()
+                .withStatus(401)));
         Optional<Location> proper = Optional.of(new Location().latitude(1F).longitude(2F));
         Mockito.when(orderService.getFinalDestinationOfOrder(anyLong())).thenReturn(proper);
-
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(ResponseEntity.status(403).body("User with id " + 11 + " does not have access rights"), res);
     }
@@ -147,9 +171,68 @@ public class AuthorizationServiceTest {
         assertEquals(new ResponseEntity<>(proper.get(), HttpStatus.OK), res);
     }
 
+    @Test
+    void permissionsAndValidations() throws NoSuchMethodException {
+        HashMap<String, List<Authorization.UserType>> permissionsExpected = new HashMap<>();
+        HashMap<String, BiFunction<Long, Long, Boolean>> validationMethodsExpected = new HashMap<>();
+
+        // OrderController
+        permissionsExpected.put("getFinalDestination", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getOrder", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getPickupDestination", List.of(COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateOrder", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getOrderRating", List.of(CUSTOMER, VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("putOrderRating", List.of(CUSTOMER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("setDeliverTime", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        // StatusController
+        permissionsExpected.put("updateToAccepted", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToRejected", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToGivenToCourier", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToInTransit", List.of(COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToPreparing", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("updateToDelivered", List.of(COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getStatus", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        // UserController
+        permissionsExpected.put("updateBossOfCourier", List.of(VENDOR));
+        validationMethodsExpected.put("getFinalDestination", dbUtils::courierBelongsToVendor);
+        authorizationService.init();
+        assertEquals(permissionsExpected, authorizationService.getPermissions());
+        assertEquals(validationMethodsExpected.keySet(), authorizationService.getValidationMethods().keySet());
+
+    }
+
     @AfterEach()
     void tearDown() {
         WireMockConfig.stopUserServer();
+        WireMockConfig.stopOrderServer();
     }
 }
 

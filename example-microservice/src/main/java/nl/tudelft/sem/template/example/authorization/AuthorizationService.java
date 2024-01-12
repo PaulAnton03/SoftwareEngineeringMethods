@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import javax.annotation.PostConstruct;
+import lombok.Getter;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,10 @@ public class AuthorizationService {
 
     private final UserExternalService userExternalService;
     private DbUtils dbUtils;
+    @Getter
     private HashMap<String, List<Authorization.UserType>> permissions;
 
+    @Getter
     private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
 
     /**
@@ -79,24 +82,59 @@ public class AuthorizationService {
      * Initializes the validationMethods map with default values if it is null.
      */
     @PostConstruct
-    private void init() throws NoSuchMethodException {
-        permissions = new HashMap<>(
-            Map.of(//"Method name", List.of(UserType.ALLOWED_USER_TYPES) no need to add ADMIN
-                    "updateToDelivered", List.of(COURIER),
-                    "updateToInTransit", List.of(COURIER),
-                    "updateToGivenToCourier", List.of(VENDOR),
-                    "updateToRejected", List.of(VENDOR),
-                    "updateToAccepted", List.of(VENDOR),
-                    "getStatus", List.of(CUSTOMER, VENDOR, COURIER),
-                    "putOrderRating", List.of(CUSTOMER),
-                    "updateBossOfCourier", List.of(VENDOR)
-            ));
+    public void init() throws NoSuchMethodException {
+        permissions = new HashMap<>();
+        validationMethods = new HashMap<>();
 
+        // OrderController
+        permissions.put("getFinalDestination", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
 
-        validationMethods = new HashMap<>(
-            Map.of(//"Method name", "dbUtils::userBelongsToOrder" or "dbUtils::courierBelongsToVendor")
-                "getFinalDestination", dbUtils::userBelongsToOrder
-            ));
+        permissions.put("getOrder", List.of(VENDOR));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("getPickupDestination", List.of(COURIER));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("updateOrder", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("getOrderRating", List.of(CUSTOMER, VENDOR));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("putOrderRating", List.of(CUSTOMER));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("setDeliverTime", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        // StatusController
+        permissions.put("updateToAccepted", List.of(VENDOR));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("updateToRejected", List.of(VENDOR));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("updateToGivenToCourier", List.of(VENDOR));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("updateToInTransit", List.of(COURIER));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("updateToPreparing", List.of(VENDOR));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("updateToDelivered", List.of(COURIER));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        permissions.put("getStatus", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+
+        // UserController
+        permissions.put("updateBossOfCourier", List.of(VENDOR));
+        validationMethods.put("getFinalDestination", dbUtils::courierBelongsToVendor);
+
     }
+
 
 }
