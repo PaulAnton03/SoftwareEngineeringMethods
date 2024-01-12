@@ -224,7 +224,7 @@ class OrderControllerTest {
     @Test
     void makeOrder403() {
         Order o = new Order().id(11L);
-        Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "makeOrder", 11L))
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         Mockito.when(orderService.createOrder(o)).thenReturn(Optional.of(o));
         Mockito.when(orderService.getOrderById(11L)).thenReturn(Optional.empty());
