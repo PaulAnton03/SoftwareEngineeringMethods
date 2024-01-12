@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    List<Order> findByVendorIdAndStatus(Long vendorId, Order.StatusEnum status);
+    List<Order> findByVendorIdAndStatusAndCourierId(Long vendorId, Order.StatusEnum status, Long courierId);
 
     List<Order> findByStatus(Order.StatusEnum status);
 

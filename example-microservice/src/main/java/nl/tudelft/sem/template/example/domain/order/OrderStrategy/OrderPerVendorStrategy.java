@@ -22,6 +22,11 @@ public class OrderPerVendorStrategy implements NextOrderStrategy {
      * The strategy used for couriers working for a vendor (dependent couriers).
      *
      * @return a list containing a single order that was assigned by the vendor to that courier
+     * <p>
+     * !! This does not set the courierId of the order as only the available order is returned,
+     * there is a separate endpoint for the courier to "claim" an order which sets its courierId.
+     * Imagine a UI where it first shows the courier what order they're going to get,
+     * then they push an "accept" button to make another request that will set the courierId of the order
      */
     @Override
     public Optional<List<Order>> availableOrders(Optional<Long> vendorId) {
@@ -29,7 +34,8 @@ public class OrderPerVendorStrategy implements NextOrderStrategy {
             return Optional.empty(); // well something went wrong
         }
 
-        List<Order> availableOrders = orderRepository.findByVendorIdAndStatus(vendorId.get(), Order.StatusEnum.PREPARING);
+        List<Order> availableOrders =
+            orderRepository.findByVendorIdAndStatusAndCourierId(vendorId.get(), Order.StatusEnum.PREPARING, null);
 
         if (availableOrders == null) {
             // something went wrong with communication
@@ -46,22 +52,4 @@ public class OrderPerVendorStrategy implements NextOrderStrategy {
         return Optional.of(List.of(availableOrders.get(0)));
     }
 
-
-//    private List<Order> getOrdersFromDeliveryMicroservice(Long vendorId) {
-//        RestTemplate restTemplate = new RestTemplate();
-//        String ordersServiceEndpoint = "http://localhost:" + DELIVERY_SERVER_PORT + "/ORDER/" + vendorId + "/type";
-//        try {
-//            ParameterizedTypeReference<List<Order>> responseType = new ParameterizedTypeReference<>() {
-//            };
-//
-////            List<Order> orders = restTemplate.getForObject(ordersServiceEndpoint);
-////            return parseUserType(actualUserType);
-//
-//            return restTemplate.exchange(ordersServiceEndpoint, HttpMethod.GET, null, responseType)
-//                .getBody();
-//
-//        } catch (Exception e) {
-//            return new ArrayList<>();
-//        }
-//    }
 }

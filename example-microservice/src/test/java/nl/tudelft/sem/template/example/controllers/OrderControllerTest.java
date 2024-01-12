@@ -100,7 +100,8 @@ class OrderControllerTest {
 
     @Test
     void getNextOrderForVendorWorks() {
-        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of(order1));
+        Mockito.when(userService.getCourierById(anyLong())).thenReturn(Optional.of(new Courier().bossId(4L)));
+        Mockito.when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(List.of(order1));
         Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
 
         var res = controller.getNextOrderForVendor(11L, 1L);
@@ -109,7 +110,8 @@ class OrderControllerTest {
 
     @Test
     void getNextOrderForVendorForbidden() {
-        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of(order1));
+        Mockito.when(userService.getCourierById(anyLong())).thenReturn(Optional.of(new Courier().bossId(4L)));
+        Mockito.when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(List.of(order1));
         Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
         Mockito.when(authorizationService.checkIfUserIsAuthorized(any(), anyString(), any()))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
@@ -119,8 +121,20 @@ class OrderControllerTest {
     }
 
     @Test
+    void getNextOrderForVendorForbiddenNotCourier() {
+        Mockito.when(userService.getCourierById(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(List.of(order1));
+        Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
+
+        var res = controller.getNextOrderForVendor(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
     void getNextOrderForVendorWorksMultipleOrders() {
-        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of(order1, new Order()));
+        Mockito.when(userService.getCourierById(anyLong())).thenReturn(Optional.of(new Courier().bossId(4L)));
+        Mockito.when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any()))
+            .thenReturn(List.of(order1, new Order()));
         Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of(order1)));
 
         var res = controller.getNextOrderForVendor(11L, 1L);
@@ -129,7 +143,8 @@ class OrderControllerTest {
 
     @Test
     void getNextOrderForVendorNotFound() {
-        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of());
+        Mockito.when(userService.getCourierById(anyLong())).thenReturn(Optional.of(new Courier().bossId(4L)));
+        Mockito.when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(List.of());
         Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.of(List.of()));
 
         var res = controller.getNextOrderForVendor(11L, 1L);
@@ -138,7 +153,8 @@ class OrderControllerTest {
 
     @Test
     void getNextOrderForVendorBadRequest() {
-        Mockito.when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(null);
+        Mockito.when(userService.getCourierById(anyLong())).thenReturn(Optional.of(new Courier().bossId(4L)));
+        Mockito.when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(null);
         Mockito.when(perVendorStrategy.availableOrders(any())).thenReturn(Optional.empty());
 
         var res = controller.getNextOrderForVendor(11L, 1L);

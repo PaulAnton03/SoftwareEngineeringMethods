@@ -31,6 +31,11 @@ public class GeneralOrdersStrategy implements NextOrderStrategy {
      *                 as there is no specific vendor to get orders form
      * @return an optional list of available orders, empty list if there are currently none,
      * empty optional if there is a vendor id passed
+     * <p>
+     * !! This does not set the courierId of the order as only the available orders are returned,
+     * there is a separate endpoint for the courier to "claim" an order which sets its courierId.
+     * Imagine a UI where it first shows the courier what order they're going to get,
+     * then they push an "accept" button to make another request that will set the courierId of the order
      */
     @Override
     public Optional<List<Order>> availableOrders(Optional<Long> vendorId) {
@@ -45,9 +50,10 @@ public class GeneralOrdersStrategy implements NextOrderStrategy {
             return Optional.of(new ArrayList<>());
         }
 
-        // now we have to get the ones whose vendors don't have couriers
+        // now we have to get the ones whose vendors don't have couriers and whose couriers have not been assigned yet
         List<Order> orders = all.stream()
             .filter(order -> !vendorHasCouriers(order.getVendorId()))
+            .filter(order -> order.getCourierId() == null)
             .collect(Collectors.toList());
 
 

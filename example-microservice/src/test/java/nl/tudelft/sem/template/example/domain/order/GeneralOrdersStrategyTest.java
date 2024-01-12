@@ -69,6 +69,16 @@ class GeneralOrdersStrategyTest {
     }
 
     @Test
+    void availableOrdersFilters2() {
+        when(orderRepo.findByStatus(any())).thenReturn(List.of(order1, order2.status(Order.StatusEnum.PREPARING)));
+        when(vendorRepo.findById(2L)).thenReturn(Optional.of(vendor1));
+        when(vendorRepo.findById(3L)).thenReturn(Optional.of(vendor2));
+        // this checks filtering out both for invalid vendor and status values
+        assertEquals(Optional.of(List.of(order1, order2.status(Order.StatusEnum.PREPARING))),
+            generalStrategy.availableOrders(Optional.empty()));
+    }
+
+    @Test
     void availableOrdersNoOutput() {
         when(orderRepo.findByStatus(any())).thenReturn(List.of());
         when(vendorRepo.findById(2L)).thenReturn(Optional.of(vendor1));
@@ -98,6 +108,15 @@ class GeneralOrdersStrategyTest {
     @Test
     void availableOrdersFilters() {
         when(orderRepo.findByStatus(any())).thenReturn(List.of(order1, order3));
+        when(vendorRepo.findById(2L)).thenReturn(Optional.of(vendor1));
+        when(vendorRepo.findById(3L)).thenReturn(Optional.of(vendor2));
+        // this checks filtering out both for invalid vendor and status values
+        assertEquals(Optional.of(List.of(order1)), generalStrategy.availableOrders(Optional.empty()));
+    }
+
+    @Test
+    void availableOrdersFiltersNull() {
+        when(orderRepo.findByStatus(any())).thenReturn(List.of(order3.courierId(5L), order1));
         when(vendorRepo.findById(2L)).thenReturn(Optional.of(vendor1));
         when(vendorRepo.findById(3L)).thenReturn(Optional.of(vendor2));
         // this checks filtering out both for invalid vendor and status values

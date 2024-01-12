@@ -42,25 +42,25 @@ class OrderPerVendorStrategyTest {
 
     @Test
     void availableOrdersFiltersNull() {
-        when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(null);
+        when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(null);
         assertEquals(Optional.empty(), strategy.availableOrders(Optional.of(2L)));
     }
 
     @Test
     void availableOrdersGetsFirstOne() {
-        when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of(order1, order2));
+        when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(List.of(order1, order2));
         assertEquals(Optional.of(List.of(order1)), strategy.availableOrders(Optional.of(2L)));
     }
 
     @Test
-    void availableOrdersNoneAvailable() {
-        when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of());
+    void availableOrdersEmptyList() {
+        when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(List.of());
         assertEquals(Optional.of(List.of()), strategy.availableOrders(Optional.of(2L)));
     }
 
     @Test
     void availableOrdersNoVendorId() {
-        when(orderRepo.findByVendorIdAndStatus(anyLong(), any())).thenReturn(List.of());
+        when(orderRepo.findByVendorIdAndStatusAndCourierId(anyLong(), any(), any())).thenReturn(List.of());
         assertEquals(Optional.empty(), strategy.availableOrders(Optional.empty()));
     }
 }
