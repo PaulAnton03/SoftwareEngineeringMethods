@@ -216,6 +216,7 @@ public class UserControllerTest {
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getSpecificRadius(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
@@ -268,6 +269,17 @@ public class UserControllerTest {
         Mockito.when(userService.getVendor(vendor.getId())).thenReturn(Optional.of(vendor));
         Mockito.when(userService.updateRadiusOfVendor(vendor.getId(), 5.0))
                 .thenReturn(Optional.empty());
+
+        var res = controller.updateSpecificRadius(1L, 5.0);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateSpecificRadius404second() {
+        Vendor vendor = new Vendor().id(1L).radius(3.0);
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.empty());
+        Mockito.when(userService.getVendor(vendor.getId())).thenReturn(Optional.empty());
 
         var res = controller.updateSpecificRadius(1L, 5.0);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
