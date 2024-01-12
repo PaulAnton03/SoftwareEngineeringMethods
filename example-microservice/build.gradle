@@ -72,6 +72,11 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+	jacoco {
+		enabled = true;
+		includes = ['nl.tudelft.sem.template.*']
+		excludes =[]
+	}
 }
 
 jacocoTestReport {
