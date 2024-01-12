@@ -2,7 +2,9 @@ package nl.tudelft.sem.template.example.authorization;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.*;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.COURIER;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.CUSTOMER;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.VENDOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -37,29 +39,22 @@ import org.springframework.http.ResponseEntity;
 public class AuthorizationServiceTest {
 
     private final UserExternalService userExternalService = new UserExternalService();
+    private final OrderExternalService orderExternalService = new OrderExternalService();
+    private final HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
+        Map.of("getFinalDestination", List.of(Authorization.UserType.VENDOR),
+            "getPickupDestination", List.of(Authorization.UserType.VENDOR))
+    );
     private OrderRepository orderRepo;
     private VendorRepository vendorRepo;
     private CourierRepository courierRepo;
     private OrderService orderService;
     private UserService userService;
     private OrderController controller;
-
-    private final UserExternalService userExternalService = new UserExternalService();
-
-    private final OrderExternalService orderExternalService = new OrderExternalService();
-
     private AuthorizationService authorizationService;
-
     private Order order1;
-
     private Vendor vendor1;
-
     private DbUtils dbUtils;
     private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
-    private final HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
-        Map.of("getFinalDestination", List.of(Authorization.UserType.VENDOR),
-            "getPickupDestination", List.of(Authorization.UserType.VENDOR))
-    );
 
     @BeforeEach
     void setUp() {
@@ -86,7 +81,7 @@ public class AuthorizationServiceTest {
     }
 
     @Test
-    void authorizeAdminOnlyWorks(){
+    void authorizeAdminOnlyWorks() {
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -98,6 +93,7 @@ public class AuthorizationServiceTest {
         assertEquals(new ResponseEntity<>(proper, HttpStatus.OK), res);
 
     }
+
     @Test
     void getFinalDestinationWorks() {
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))

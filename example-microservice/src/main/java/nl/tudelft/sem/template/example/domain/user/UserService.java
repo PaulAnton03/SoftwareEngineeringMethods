@@ -6,9 +6,6 @@ import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.util.Optional;
-
 @Service
 public class UserService {
 
@@ -121,6 +118,7 @@ public class UserService {
 
     /**
      * Check if id of courier exists
+     *
      * @param id id of courier to check
      * @return boolean true if courier with this id exists
      */
@@ -134,6 +132,7 @@ public class UserService {
 
     /**
      * Check if id of vendor exists
+     *
      * @param id id of vendor to check
      * @return boolean true if vendor with this id exists
      */
@@ -144,7 +143,7 @@ public class UserService {
     public Optional<Double> getRadiusOfVendor(Long id) {
         Optional<Vendor> vendor = vendorRepo.findById(id);
 
-        if(vendor.isEmpty()){
+        if (vendor.isEmpty()) {
             return Optional.empty();
         }
 
@@ -154,7 +153,7 @@ public class UserService {
     public Optional<Double> updateRadiusOfVendor(Long id, Double body) {
         Optional<Vendor> vendor = vendorRepo.findById(id);
 
-        if(vendor.isEmpty()){
+        if (vendor.isEmpty()) {
             return Optional.empty();
         }
 
