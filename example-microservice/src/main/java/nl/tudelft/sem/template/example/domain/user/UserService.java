@@ -121,8 +121,12 @@ public class UserService {
      * @param id id of courier to check
      * @return boolean true if courier with this id exists
      */
-    public boolean existsCourier(Long id) {
-        return courierRepo.existsById(id);
+    public boolean existsCourier(Long id) throws IllegalArgumentException {
+        try {
+            return courierRepo.existsById(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error while checking courier existence for ID: " + id, e);
+        }
     }
 
     /**

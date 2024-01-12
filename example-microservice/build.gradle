@@ -145,7 +145,6 @@ pitest {
 	junit5PluginVersion = '0.12'
 
 	targetClasses = ['nl.tudelft.sem.template.*']  //by default "${project.group}.*"
-	excludedTestClasses = ['nl.tudelft.sem.template.*API']
 	pitestVersion = '1.5.1' //not needed when a default PIT version should be used
 	threads = 4
 	outputFormats = ['XML', 'HTML']
