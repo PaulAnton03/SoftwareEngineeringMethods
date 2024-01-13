@@ -171,6 +171,10 @@ public class OrderService {
             return Optional.empty();
         }
 
+        if (order.get().getRatingNumber() == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(order.get().getRatingNumber());
     }
 
@@ -179,8 +183,8 @@ public class OrderService {
      * updates it using the body parameter provided in the signature.
      *
      * @param orderId the id of the order
-     * @param body    the new rating that the order will have
-     * @return empty optional if either order DNE, optional of updated rating otherwise
+     * @param body the new rating that the order will have
+     * @return empty optional if order DNE, optional of rating otherwise
      */
     public Optional<BigDecimal> updateRating(Long orderId, BigDecimal body) {
         Optional<Order> order = orderRepo.findById(orderId);
@@ -191,6 +195,31 @@ public class OrderService {
 
         Order newOrder = order.get();
         newOrder.setRatingNumber(body);
+        orderRepo.saveAndFlush(newOrder);
+
+        return Optional.of(body);
+    }
+
+    /**
+     * Update the rating per order, uses the order id to get the rating of the order and
+     * updates it using the body parameter provided in the signature.
+     *
+     * @param orderId the id of the order
+     * @param body the new preparation time that the order will have
+     * @return empty optional if the order DNE, optional of prepTime otherwise
+     */
+    public Optional<String> updatePrepTime(Long orderId, String body) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        if(order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order o = order.get();
+        Time timeOfOrder = o.getTimeValues();
+        timeOfOrder.setPrepTime(body);
+
+        Order newOrder = orderRepo.saveAndFlush(o);
 
         return Optional.of(body);
     }
@@ -203,5 +232,25 @@ public class OrderService {
         }
 
         return Optional.of(navigationMock.getETA(orderId));
+    }
+
+    /**
+     * Update the courier of the order.
+     *
+     * @param orderId the id of the order
+     * @param courierId the new courier of the order
+     * @return empty optional if either order DNE, optional of updated order otherwise
+     */
+    public Optional<Order> updateCourier(Long orderId, Long courierId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        if(order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order o = order.get();
+        o.setCourierId(courierId);
+
+        return Optional.of(orderRepo.saveAndFlush(o));
     }
 }

@@ -1,11 +1,10 @@
 package nl.tudelft.sem.template.example.domain.user;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -60,6 +59,17 @@ public class UserService {
     }
 
     /**
+     * Gets the courier based on id.
+     *
+     * @param courierId the id of the courier
+     * @return empty optional if courier DNE, optional of Courier otherwise
+     */
+    public Optional<Courier> getCourierById(Long courierId) {
+        return courierRepo.findById(courierId);
+    }
+
+
+    /**
      * Tries to add a new vendor with given id to the database
      *
      * @param vendorId the id to create a vendor with
@@ -106,11 +116,53 @@ public class UserService {
         }
     }
 
-    public boolean existsCourier(Long id) {
-        return courierRepo.existsById(id);
+    /**
+     * Check if id of courier exists
+     *
+     * @param id id of courier to check
+     * @return boolean true if courier with this id exists
+     */
+    public boolean existsCourier(Long id) throws IllegalArgumentException {
+        try {
+            return courierRepo.existsById(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error while checking courier existence for ID: " + id, e);
+        }
     }
 
+    /**
+     * Check if id of vendor exists
+     *
+     * @param id id of vendor to check
+     * @return boolean true if vendor with this id exists
+     */
     public boolean existsVendor(Long id) {
         return vendorRepo.existsById(id);
+    }
+
+    public Optional<Double> getRadiusOfVendor(Long id) {
+        Optional<Vendor> vendor = vendorRepo.findById(id);
+
+        if (vendor.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(vendor.get().getRadius());
+    }
+
+    public Optional<Double> updateRadiusOfVendor(Long id, Double body) {
+        Optional<Vendor> vendor = vendorRepo.findById(id);
+
+        if (vendor.isEmpty()) {
+            return Optional.empty();
+        }
+
+        vendor.get().setRadius(body);
+
+        return Optional.of(vendorRepo.saveAndFlush(vendor.get()).getRadius());
+    }
+
+    public Optional<Vendor> getVendor(Long id) {
+        return vendorRepo.findById(id);
     }
 }

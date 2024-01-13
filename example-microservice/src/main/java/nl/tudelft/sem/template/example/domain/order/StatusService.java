@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
 import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
+import nl.tudelft.sem.template.model.UpdateToPreparingRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,7 +51,7 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.ACCEPTED);
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
 
@@ -70,7 +71,7 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.REJECTED);
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
 
@@ -91,7 +92,7 @@ public class StatusService {
         Order order = o.get();
         order.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
         order.courierId(req.getCourierId());
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
 
@@ -111,7 +112,26 @@ public class StatusService {
 
         Order order = o.get();
         order.setStatus(Order.StatusEnum.IN_TRANSIT);
-        return Optional.of(orderRepo.save(order));
+        return Optional.of(orderRepo.saveAndFlush(order));
+    }
+
+    public Optional<Order> updateStatusToPreparing(Long orderId, UpdateToPreparingRequest req) {
+        Optional<Order> o = orderRepo.findById(orderId);
+
+        if (o.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order order = o.get();
+        order.setStatus(Order.StatusEnum.PREPARING);
+        if (order.getTimeValues() == null) {
+            order.setTimeValues(new Time());
+        }
+        Time timeValues = order.getTimeValues();
+        timeValues.setPrepTime(req.getPrepTime());
+        timeValues.setExpectedDeliveryTime(req.getExpectedDeliveryTime());
+
+        return Optional.of(orderRepo.saveAndFlush(order));
     }
 
     /**
@@ -127,7 +147,7 @@ public class StatusService {
 
         if (ret.isEmpty()) {
             // order doesn't exist :(
-            return ret;
+            return Optional.empty();
         }
 
         Order order = ret.get();
@@ -137,16 +157,20 @@ public class StatusService {
         // Something is wrong if the previous status is not in-transit, if there is no timeValues,
         // if there is no time to set to, and if there is already an actual delivery time
         if (currentStatus != Order.StatusEnum.IN_TRANSIT || timeValues == null
-            || updateToDeliveredRequest.getActualDeliveryTime() == null || timeValues.getActualDeliveryTime() != null) {
+            || updateToDeliveredRequest.getActualDeliveryTime() == null
+                || timeValues.getActualDeliveryTime() != null) {
             return Optional.empty();
         }
 
         // set the timeValues of the order object
         OffsetDateTime deliveredTime = updateToDeliveredRequest.getActualDeliveryTime();
-        timeValues.setActualDeliveryTime(deliveredTime);
+        Time newTimeValues = new Time().prepTime(timeValues.getPrepTime())
+                                                .expectedDeliveryTime(timeValues.getExpectedDeliveryTime())
+                                                .orderTime(timeValues.getOrderTime())
+                                                .actualDeliveryTime(deliveredTime);
 
         order.setStatus(Order.StatusEnum.DELIVERED);
-        order.setTimeValues(timeValues);
+        order.setTimeValues(newTimeValues);
 
         return Optional.of(orderRepo.saveAndFlush(order));
     }

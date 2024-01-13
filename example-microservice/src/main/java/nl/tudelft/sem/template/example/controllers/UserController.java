@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+
+import java.util.Optional;
 import nl.tudelft.sem.template.api.UserApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.user.UserService;
@@ -9,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 
@@ -42,11 +46,8 @@ public class UserController implements UserApi {
             @PathVariable(name = "courierId") Long courierId,
             @RequestParam(name = "authorization") Long authorization) {
 
-        Optional<ResponseEntity> authorizationResponse =
-                authorizationService.authorize(authorization, "getCourier");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         Optional<Courier> courier = userService.getCourier(courierId);
         if (courier.isEmpty()) {
@@ -67,8 +68,23 @@ public class UserController implements UserApi {
      * or Unsuccessful, no specific radius was found (status code 404)
      */
     @Override
-    public ResponseEntity<Double> getSpecificRadius(Long authorization) {
-        return UserApi.super.getSpecificRadius(authorization);
+    @GetMapping("/vendor/radius")
+    public ResponseEntity getSpecificRadius(
+            @RequestParam(name = "authorization") Long authorization
+    ) {
+        var auth =
+                authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<Double> ratingReceived = userService.getRadiusOfVendor(authorization);
+
+        if (ratingReceived.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(ratingReceived.get(), HttpStatus.OK);
     }
 
     /**
@@ -86,11 +102,8 @@ public class UserController implements UserApi {
     @PostMapping("/courier/add-whole")
     public ResponseEntity<Void> makeCourier(@RequestParam(value = "authorization", required = true) Long authorization,
                                             @RequestBody(required = false) Courier courier) {
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeCourier");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         if (userService.existsCourier(courier.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -120,11 +133,8 @@ public class UserController implements UserApi {
     @PostMapping("/courier/{courierId}")
     public ResponseEntity<Void> makeCourierById(@RequestParam(value = "authorization", required = true) Long authorization,
                                                 @PathVariable(name = "courierId") Long courierId) {
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeCourierById");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         if (userService.existsCourier(courierId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -158,11 +168,9 @@ public class UserController implements UserApi {
                                                     @PathVariable("bossId") Long bossId,
                                                     @RequestParam(value = "authorization", required = true)
                                                     Long authorization) {
-        var auth = authorizationService.authorize(authorization, "updateBossOfCourier");
-        if (auth.isPresent()) {
-            return auth.get();
-        }
-
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateBossOfCourier",bossId);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+        
         Optional<Long> newBossId = userService.updateBossIdOfCourier(courierId, bossId);
 
         if (newBossId.isEmpty()) {
@@ -184,8 +192,30 @@ public class UserController implements UserApi {
      * or Unsuccessful, no specific radius was found. (status code 404)
      */
     @Override
-    public ResponseEntity<Void> updateSpecificRadius(Long authorization, Double body) {
-        return UserApi.super.updateSpecificRadius(authorization, body);
+    @PutMapping("/vendor/radius")
+    public ResponseEntity updateSpecificRadius(
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody @Valid Double body
+    ) {
+        var auth =
+                authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<Vendor> vendor = userService.getVendor(authorization);
+
+        if (vendor.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Double> newRadius = userService.updateRadiusOfVendor(authorization, body);
+
+        if(newRadius.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -202,11 +232,8 @@ public class UserController implements UserApi {
             @RequestParam(name = "authorization") Long authorization,
             @RequestBody Vendor vendor) {
 
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendor");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
 
         if (userService.existsVendor(vendor.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -234,11 +261,9 @@ public class UserController implements UserApi {
             @RequestParam(name = "authorization") Long authorization,
             @PathVariable(name = "vendorId") Long vendorId) {
 
-        var authorizationResponse =
-                authorizationService.authorize(authorization, "makeVendorById");
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
-        }
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if (doesNotHaveAuthority(auth)) { return auth.get(); }
+
 
         if (userService.existsVendor(vendorId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -252,4 +277,5 @@ public class UserController implements UserApi {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
