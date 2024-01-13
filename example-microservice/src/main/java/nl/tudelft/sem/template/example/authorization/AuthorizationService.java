@@ -87,52 +87,61 @@ public class AuthorizationService {
         validationMethods = new HashMap<>();
 
         // OrderController
+        permissions.put("getNextOrderForVendor", List.of(COURIER));
+        validationMethods.put("getNextOrderForVendor", dbUtils::courierBelongsToVendor);
+
+        permissions.put("getIndependentOrders", List.of(COURIER));
+        validationMethods.put("getIndependentOrders", dbUtils::courierBelongsToVendor);
+
         permissions.put("getFinalDestination", List.of(CUSTOMER, VENDOR, COURIER));
         validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
 
         permissions.put("getOrder", List.of(VENDOR));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("getOrder", dbUtils::userBelongsToOrder);
 
         permissions.put("getPickupDestination", List.of(COURIER));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("getPickupDestination", dbUtils::userBelongsToOrder);
 
         permissions.put("updateOrder", List.of(CUSTOMER, VENDOR, COURIER));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("updateOrder", dbUtils::userBelongsToOrder);
 
         permissions.put("getOrderRating", List.of(CUSTOMER, VENDOR));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("getOrderRating", dbUtils::userBelongsToOrder);
 
         permissions.put("putOrderRating", List.of(CUSTOMER));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("putOrderRating", dbUtils::userBelongsToOrder);
 
         permissions.put("setDeliverTime", List.of(CUSTOMER, VENDOR, COURIER));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("setDeliverTime", dbUtils::userBelongsToOrder);
+
+        permissions.put("getETA", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethods.put("getETA", dbUtils::userBelongsToOrder);
 
         // StatusController
         permissions.put("updateToAccepted", List.of(VENDOR));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("updateToAccepted", dbUtils::userBelongsToOrder);
 
         permissions.put("updateToRejected", List.of(VENDOR));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("updateToRejected", dbUtils::userBelongsToOrder);
 
         permissions.put("updateToGivenToCourier", List.of(VENDOR));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("updateToGivenToCourier", dbUtils::userBelongsToOrder);
 
         permissions.put("updateToInTransit", List.of(COURIER));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("updateToInTransit", dbUtils::userBelongsToOrder);
 
         permissions.put("updateToPreparing", List.of(VENDOR));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("updateToPreparing", dbUtils::userBelongsToOrder);
 
         permissions.put("updateToDelivered", List.of(COURIER));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("updateToDelivered", dbUtils::userBelongsToOrder);
 
         permissions.put("getStatus", List.of(CUSTOMER, VENDOR, COURIER));
-        validationMethods.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethods.put("getStatus", dbUtils::userBelongsToOrder);
 
         // UserController
         permissions.put("updateBossOfCourier", List.of(VENDOR));
-        validationMethods.put("getFinalDestination", dbUtils::courierBelongsToVendor);
+        validationMethods.put("updateBossOfCourier", dbUtils::courierBelongsToVendor);
 
     }
 

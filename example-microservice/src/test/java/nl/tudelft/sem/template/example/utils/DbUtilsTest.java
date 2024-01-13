@@ -63,6 +63,19 @@ public class DbUtilsTest {
 
         assertFalse(dbUtils.userBelongsToOrder(1L, 11L));
     }
+    @Test
+    void testCourierBelongsToOrder(){
+        Mockito.when(orderRepo.existsByIdAndCourierId(11L, 1L)).thenReturn(true);
+        Mockito.when(orderRepo.existsByIdAndVendorId(11L, 1L)).thenReturn(false);
+        Mockito.when(courierRepo.existsByIdAndBossId(11L, 1L)).thenReturn(false);
+        assertTrue(dbUtils.userBelongsToOrder(1L, 11L));
+    }
+
+    @Test
+    void testCourierDoesNotBelongToVendor(){
+        Mockito.when(courierRepo.existsByIdAndBossId(11L, 1L)).thenReturn(false);
+        assertFalse(dbUtils.courierBelongsToVendor(11L, 1L));
+    }
 
     @AfterEach()
     void tearDown() {

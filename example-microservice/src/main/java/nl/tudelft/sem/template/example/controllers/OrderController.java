@@ -78,11 +78,9 @@ public class OrderController implements OrderApi {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        Optional<ResponseEntity> authorizationResponse =
-                authorizationService.checkIfUserIsAuthorized(authorization, "getNextOrderForVendor", courier.get().getBossId());
-        // if there is a response, then the authority is not sufficient
-        if (authorizationResponse.isPresent()) {
-            return authorizationResponse.get();
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getNextOrderForVendor", courier.get().getBossId());
+        if (doesNotHaveAuthority(auth)) {
+            return auth.get();
         }
 
         this.setStrategy(new OrderPerVendorStrategy(orderRepository));

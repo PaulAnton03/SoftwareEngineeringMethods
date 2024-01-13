@@ -25,6 +25,7 @@ import nl.tudelft.sem.template.example.externalservices.OrderExternalService;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
+import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
@@ -42,7 +43,8 @@ public class AuthorizationServiceTest {
     private final OrderExternalService orderExternalService = new OrderExternalService();
     private final HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
         Map.of("getFinalDestination", List.of(Authorization.UserType.VENDOR),
-            "getPickupDestination", List.of(Authorization.UserType.VENDOR))
+            "getPickupDestination", List.of(Authorization.UserType.VENDOR),
+            "getNextOrderForVendor", List.of(Authorization.UserType.COURIER))
     );
     private OrderRepository orderRepo;
     private VendorRepository vendorRepo;
@@ -62,7 +64,6 @@ public class AuthorizationServiceTest {
         WireMockConfig.startOrderServer();
         this.orderService = Mockito.mock(OrderService.class);
         this.userService = Mockito.mock(UserService.class);
-
         orderService = Mockito.mock(OrderService.class);
         orderRepo = mock(OrderRepository.class);
         vendorRepo = mock(VendorRepository.class);
@@ -71,13 +72,27 @@ public class AuthorizationServiceTest {
         validationMethods = new HashMap<>(
             Map.of(
                 "getFinalDestination", dbUtils::userBelongsToOrder,
-                "getPickupDestination", dbUtils::userBelongsToOrder
+                "getPickupDestination", dbUtils::userBelongsToOrder,
+                "getNextOrderForVendor", dbUtils::courierBelongsToVendor
             )
         );
         order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F));
         vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
         this.controller = new OrderController(orderService, userService, authorizationService, orderRepo, vendorRepo);
+    }
+
+    @Test
+    void getNextOrderForVendorWorks() {
+        WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/1/type")))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .withBody("courier")));
+        Mockito.when(userService.getCourierById(1L)).thenReturn(Optional.of(new Courier().id(1L).bossId(11L)));
+        Mockito.when(courierRepo.existsByIdAndBossId(1L, 11L)).thenReturn(true);
+        var res = controller.getNextOrderForVendor(11L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
     @Test
@@ -173,52 +188,62 @@ public class AuthorizationServiceTest {
         HashMap<String, BiFunction<Long, Long, Boolean>> validationMethodsExpected = new HashMap<>();
 
         // OrderController
+        permissionsExpected.put("getNextOrderForVendor", List.of(COURIER));
+        validationMethodsExpected.put("getNextOrderForVendor", dbUtils::courierBelongsToVendor);
+
+        permissionsExpected.put("getIndependentOrders", List.of(COURIER));
+        validationMethodsExpected.put("getIndependentOrders", dbUtils::courierBelongsToVendor);
+
         permissionsExpected.put("getFinalDestination", List.of(CUSTOMER, VENDOR, COURIER));
         validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("getOrder", List.of(VENDOR));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("getOrder", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("getPickupDestination", List.of(COURIER));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("getPickupDestination", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("updateOrder", List.of(CUSTOMER, VENDOR, COURIER));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("updateOrder", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("getOrderRating", List.of(CUSTOMER, VENDOR));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("getOrderRating", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("putOrderRating", List.of(CUSTOMER));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("putOrderRating", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("setDeliverTime", List.of(CUSTOMER, VENDOR, COURIER));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("setDeliverTime", dbUtils::userBelongsToOrder);
+
+        permissionsExpected.put("getETA", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getETA", dbUtils::userBelongsToOrder);
 
         // StatusController
         permissionsExpected.put("updateToAccepted", List.of(VENDOR));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("updateToAccepted", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("updateToRejected", List.of(VENDOR));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("updateToRejected", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("updateToGivenToCourier", List.of(VENDOR));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("updateToGivenToCourier", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("updateToInTransit", List.of(COURIER));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("updateToInTransit", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("updateToPreparing", List.of(VENDOR));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("updateToPreparing", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("updateToDelivered", List.of(COURIER));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("updateToDelivered", dbUtils::userBelongsToOrder);
 
         permissionsExpected.put("getStatus", List.of(CUSTOMER, VENDOR, COURIER));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::userBelongsToOrder);
+        validationMethodsExpected.put("getStatus", dbUtils::userBelongsToOrder);
 
         // UserController
         permissionsExpected.put("updateBossOfCourier", List.of(VENDOR));
-        validationMethodsExpected.put("getFinalDestination", dbUtils::courierBelongsToVendor);
+        validationMethodsExpected.put("updateBossOfCourier", dbUtils::courierBelongsToVendor);
+
         authorizationService.init();
         assertEquals(permissionsExpected, authorizationService.getPermissions());
         assertEquals(validationMethodsExpected.keySet(), authorizationService.getValidationMethods().keySet());
