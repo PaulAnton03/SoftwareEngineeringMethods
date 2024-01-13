@@ -9,10 +9,7 @@ import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendor
 import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.NavigationMock;
-import nl.tudelft.sem.template.model.Courier;
-import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.model.Vendor;
+import nl.tudelft.sem.template.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +47,7 @@ class OrderControllerTest {
 
     private AuthorizationService authorizationService;
     private NavigationMock navigationMock;
+    private OffsetDateTime eta;
 
 
     @BeforeEach
@@ -67,7 +66,9 @@ class OrderControllerTest {
         this.order1 = new Order().id(2L).status(Order.StatusEnum.PREPARING).vendorId(44L);
         Mockito.when(authorizationService.checkIfUserIsAuthorized(any(), anyString(), any())).thenReturn(Optional.empty());
         this.controller = new OrderController(orderService, userService, authorizationService, orderRepo, vendorRepo);
+
         this.navigationMock = new NavigationMock();
+        this.eta = navigationMock.getETA(1L, new Time());
     }
 
     @Test
@@ -485,14 +486,14 @@ class OrderControllerTest {
 
     @Test
     void getETA200() {
-        Mockito.when(orderService.getETA(1L)).thenReturn(Optional.of(navigationMock.getETA(1L)));
+        Mockito.when(orderService.getETA(1L)).thenReturn(Optional.of(eta));
         var res = controller.getETA(2L, 1L);
-        assertEquals(new ResponseEntity<>(navigationMock.getETA(1L), HttpStatus.OK), res);
+        assertEquals(new ResponseEntity<>(eta, HttpStatus.OK), res);
     }
 
     @Test
     void getETA403() {
-        Mockito.when(orderService.getETA(1L)).thenReturn(Optional.of(navigationMock.getETA(1L)));
+        Mockito.when(orderService.getETA(1L)).thenReturn(Optional.of(eta));
         Mockito.when(authorizationService.checkIfUserIsAuthorized(anyLong(), anyString(), any()))
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 

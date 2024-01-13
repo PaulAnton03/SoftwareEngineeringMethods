@@ -231,12 +231,24 @@ public class OrderService {
             return Optional.empty();
         }
 
-        Time time = order.get().getTimeValues();
-        if (time == null || time.getExpectedDeliveryTime() == null) {
-            return Optional.of(navigationMock.getETA(orderId));
+        Order orderObject = order.get();
+        Time time = orderObject.getTimeValues();
+
+        // if we cannot calculate ETA, return empty
+        if (time == null || time.getPrepTime() == null) {
+            return Optional.empty();
         }
 
-        return Optional.of(time.getExpectedDeliveryTime());
+        // if ETA did not exist, calculate it and persist it
+        if (time.getExpectedDeliveryTime() == null) {
+            OffsetDateTime eta = navigationMock.getETA(orderId, time);
+
+            time.setExpectedDeliveryTime(eta);
+            orderObject.setTimeValues(time);
+            orderRepo.saveAndFlush(orderObject);
+        }
+
+        return Optional.of(orderObject.getTimeValues().getExpectedDeliveryTime());
     }
 
     /**
