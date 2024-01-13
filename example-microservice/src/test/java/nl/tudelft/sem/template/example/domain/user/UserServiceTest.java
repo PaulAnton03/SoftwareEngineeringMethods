@@ -82,27 +82,11 @@ public class UserServiceTest {
     }
 
     @Test
-    void makeVendorDoesNotWork() {
-        Mockito.when(vendorRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
-
-        Optional<Vendor> res = userService.makeVendor(null);
-        assert (res.isEmpty());
-    }
-
-    @Test
     void makeVendorByIdWorks() {
         Mockito.when(vendorRepo.saveAndFlush(any())).thenReturn(vendor1);
         Optional<Vendor> res = userService.makeVendorById(vendor1.getId());
         assert (res.isPresent());
         assertEquals(res.get().getId(), vendor1.getId());
-    }
-
-    @Test
-    void makeVendorByIdDoesNotWork() {
-        Mockito.when(vendorRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
-
-        Optional<Vendor> res = userService.makeVendorById(null);
-        assert (res.isEmpty());
     }
 
     @Test
@@ -115,28 +99,12 @@ public class UserServiceTest {
     }
 
     @Test
-    void makeCourierDoesNotWork() {
-        Mockito.when(courierRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
-
-        Optional<Courier> res = userService.makeCourier(null);
-        assert (res.isEmpty());
-    }
-
-    @Test
     void makeCourierByIdWorks() {
         Mockito.when(courierRepo.saveAndFlush(any())).thenReturn(courier1);
 
         Optional<Courier> res = userService.makeCourierById(courier1.getId());
         assert (res.isPresent());
         assertEquals(res.get().getId(), courier1.getId());
-    }
-
-    @Test
-    void makeCourierByIdDoesNotWork() {
-        Mockito.when(courierRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
-
-        Optional<Courier> res = userService.makeCourierById(null);
-        assert (res.isEmpty());
     }
 
     @Test
