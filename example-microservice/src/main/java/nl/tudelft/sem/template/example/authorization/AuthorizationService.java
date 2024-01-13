@@ -114,6 +114,9 @@ public class AuthorizationService {
         permissions.put("setDeliverTime", List.of(CUSTOMER, VENDOR, COURIER));
         validationMethods.put("setDeliverTime", dbUtils::userBelongsToOrder);
 
+        permissions.put("getETA", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethods.put("getETA", dbUtils::userBelongsToOrder);
+
         // StatusController
         permissions.put("updateToAccepted", List.of(VENDOR));
         validationMethods.put("updateToAccepted", dbUtils::userBelongsToOrder);
