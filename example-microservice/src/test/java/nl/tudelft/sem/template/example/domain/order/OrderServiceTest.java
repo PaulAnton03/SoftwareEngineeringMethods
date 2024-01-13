@@ -18,10 +18,7 @@ import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import javax.swing.text.html.Option;
 
 class OrderServiceTest {
     private OrderRepository orderRepo;
@@ -37,7 +34,7 @@ class OrderServiceTest {
         this.orderRepo = mock(OrderRepository.class);
         this.vendorRepo = mock(VendorRepository.class);
         this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
-                .ratingNumber(BigDecimal.valueOf(5L));
+            .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.os = new OrderService(orderRepo, vendorRepo);
     }
@@ -134,8 +131,8 @@ class OrderServiceTest {
 
     @Test
     void updatePrepTimeWorks() {
-        Time time1 = new Time().prepTime(new String("01:30:00"));
-        Time time2 = new Time().prepTime(new String("03:30:00"));
+        Time time1 = new Time().prepTime("01:30:00");
+        Time time2 = new Time().prepTime("03:30:00");
         order1.setTimeValues(time1);
         Order order11 = new Order().id(1L).timeValues(time2);
 
@@ -152,7 +149,7 @@ class OrderServiceTest {
     void updatePrepTimeGives404NoOrder() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<String> res = os.updatePrepTime(order1.getId(), new String("03:30:00"));
+        Optional<String> res = os.updatePrepTime(order1.getId(), "03:30:00");
         assertEquals(Optional.empty(), res);
     }
 
@@ -279,7 +276,7 @@ class OrderServiceTest {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o));
         Optional<BigDecimal> res = os.getRating(o.getId());
         assertTrue(res.isPresent());
-        assertEquals(res.get(),o.getRatingNumber());
+        assertEquals(res.get(), o.getRatingNumber());
     }
 
     @Test

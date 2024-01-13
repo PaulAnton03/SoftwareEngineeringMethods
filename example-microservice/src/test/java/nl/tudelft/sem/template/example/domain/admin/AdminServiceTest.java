@@ -1,19 +1,18 @@
 package nl.tudelft.sem.template.example.domain.admin;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class AdminServiceTest {
     private VendorRepository vendorRepo;
@@ -29,7 +28,7 @@ public class AdminServiceTest {
     }
 
     @Test
-    void updateDefaultRadiusEmpty(){
+    void updateDefaultRadiusEmpty() {
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(new ArrayList<>());
 
         Optional<List<Vendor>> res = adminService.updateDefaultRadius(5D);
@@ -37,7 +36,7 @@ public class AdminServiceTest {
     }
 
     @Test
-    void updateDefaultRadiusNotEmpty(){
+    void updateDefaultRadiusNotEmpty() {
         List<Vendor> vendors = new ArrayList<>();
         vendors.add(vendor1);
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(vendors);
@@ -47,7 +46,7 @@ public class AdminServiceTest {
     }
 
     @Test
-    void getDefaultRadiusEmpty(){
+    void getDefaultRadiusEmpty() {
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(new ArrayList<>());
 
         Optional<Double> res = adminService.getDefaultRadius();
@@ -55,7 +54,7 @@ public class AdminServiceTest {
     }
 
     @Test
-    void getDefaultRadiusNotEmpty(){
+    void getDefaultRadiusNotEmpty() {
         List<Vendor> vendors = new ArrayList<>();
         vendors.add(vendor1);
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(vendors);

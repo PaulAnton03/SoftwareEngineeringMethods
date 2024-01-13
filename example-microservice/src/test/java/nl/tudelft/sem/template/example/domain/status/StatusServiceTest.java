@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.example.domain.status;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -11,7 +13,12 @@ import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
-import nl.tudelft.sem.template.model.*;
+import nl.tudelft.sem.template.model.DeliveryException;
+import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
+import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
+import nl.tudelft.sem.template.model.UpdateToGivenToCourierRequest;
+import nl.tudelft.sem.template.model.UpdateToPreparingRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -43,7 +50,7 @@ public class StatusServiceTest {
         this.order5 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED);
         this.order6 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED).timeValues(new Time());
         this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
-                .message("Test exception").isResolved(false).order(order1);
+            .message("Test exception").isResolved(false).order(order1);
         this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 
@@ -97,7 +104,7 @@ public class StatusServiceTest {
 
     @Test
     void updateStatusToGivenToCourier200() {
-        Order order33 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER).courierId(3L);;
+        Order order33 = new Order().id(1L).status(Order.StatusEnum.GIVEN_TO_COURIER).courierId(3L);
         UpdateToGivenToCourierRequest req = new UpdateToGivenToCourierRequest();
         req.courierId(3L);
 
@@ -186,7 +193,7 @@ public class StatusServiceTest {
         OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
         UpdateToDeliveredRequest req = new UpdateToDeliveredRequest().actualDeliveryTime(deliveryTime);
         Order order44 = new Order().id(order4.getId()).status(Order.StatusEnum.DELIVERED).timeValues(
-                new Time().actualDeliveryTime(deliveryTime).prepTime(order4.getTimeValues().getPrepTime()));
+            new Time().actualDeliveryTime(deliveryTime).prepTime(order4.getTimeValues().getPrepTime()));
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order4));
         Mockito.when(orderRepo.saveAndFlush(order4)).thenReturn(order44);
 
@@ -273,7 +280,7 @@ public class StatusServiceTest {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
         updateToPreparingRequest.setExpectedDeliveryTime(currentDateTime);
         Time timeValues = new Time().expectedDeliveryTime(updateToPreparingRequest.getExpectedDeliveryTime())
-                .prepTime(updateToPreparingRequest.getPrepTime());
+            .prepTime(updateToPreparingRequest.getPrepTime());
         Order order55 = new Order().id(order5.getId()).status(Order.StatusEnum.PREPARING).timeValues(timeValues);
         Mockito.when(orderRepo.saveAndFlush(order5)).thenReturn(order55);
 
@@ -294,7 +301,7 @@ public class StatusServiceTest {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
         updateToPreparingRequest.setExpectedDeliveryTime(currentDateTime);
         Time timeValues = new Time().expectedDeliveryTime(updateToPreparingRequest.getExpectedDeliveryTime())
-                .prepTime(updateToPreparingRequest.getPrepTime());
+            .prepTime(updateToPreparingRequest.getPrepTime());
         Order order55 = new Order().id(order6.getId()).status(Order.StatusEnum.PREPARING).timeValues(timeValues);
         Mockito.when(orderRepo.saveAndFlush(order6)).thenReturn(order55);
 
@@ -311,7 +318,7 @@ public class StatusServiceTest {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
         updateToPreparingRequest.setExpectedDeliveryTime(currentDateTime);
         Time timeValues = new Time().expectedDeliveryTime(updateToPreparingRequest.getExpectedDeliveryTime())
-                .prepTime(updateToPreparingRequest.getPrepTime());
+            .prepTime(updateToPreparingRequest.getPrepTime());
 
 
         Optional<Order> ret = ss.updateStatusToPreparing(order5.getId(), updateToPreparingRequest);
