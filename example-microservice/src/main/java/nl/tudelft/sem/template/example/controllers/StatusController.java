@@ -75,27 +75,6 @@ public class StatusController implements StatusApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    /**
-//     * Helper method for updateToAccepted, checks if the previous status is pending
-//     *
-//     * @param orderId the id of the order to check
-//     * @return empty if everything is fine,
-//     * NOT_FOUND if there is no previous status
-//     * BAD_REQUEST if there is a status, just not pending
-//     */
-//    private Optional<ResponseEntity<Void>> checkPrevStatusToAccept(Long orderId) {
-//        Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
-//
-//        if (currentStatus.isEmpty()) {
-//            return Optional.of(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-//        }
-//
-//        if (currentStatus.get() != Order.StatusEnum.PENDING) {
-//            return Optional.of(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
-//        }
-//        return Optional.empty();
-//    }
-
     /**
      * Handles put request for (/status/{orderId}/rejected).
      *
@@ -292,6 +271,12 @@ public class StatusController implements StatusApi {
 
         if (!orderService.orderExists(orderId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<ResponseEntity<Void>> checkValue = checkPrevStatus(orderId, Order.StatusEnum.IN_TRANSIT);
+        // if the checkValue is present, the previous status does not match
+        if (checkValue.isPresent()) {
+            return checkValue.get();
         }
 
         Optional<Order> updatedTime = statusService.updateStatusToDelivered(orderId, updateToDeliveredRequest);

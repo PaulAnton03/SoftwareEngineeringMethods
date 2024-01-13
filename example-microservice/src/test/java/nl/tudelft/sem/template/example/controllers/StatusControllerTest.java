@@ -308,6 +308,23 @@ public class StatusControllerTest {
     }
 
     @Test
+    void updateStatusToDelivered403NotInTransit() {
+        Mockito.when(statusService.getOrderStatus(11L)).thenReturn(
+            Optional.of(Order.StatusEnum.REJECTED));
+
+        OffsetDateTime time = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
+        UpdateToDeliveredRequest req =
+            new UpdateToDeliveredRequest().actualDeliveryTime(time);
+        Mockito.when(orderService.orderExists(anyLong())).thenReturn(true);
+        Mockito.when(statusService.updateStatusToDelivered(11L, req)).thenReturn(
+            Optional.of(
+                new Order().id(11L).timeValues(new Time().actualDeliveryTime(time)).status(Order.StatusEnum.DELIVERED)));
+
+        var res = controller.updateToDelivered(11L, 1L, req);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
     void updateStatusToDelivered404() {
         Mockito.when(statusService.updateStatusToDelivered(anyLong(), any()))
             .thenReturn(Optional.of(new Order().id(11L)));
@@ -321,7 +338,21 @@ public class StatusControllerTest {
     }
 
     @Test
+    void updateStatusToDelivered404NoStatus() {
+        Mockito.when(statusService.updateStatusToDelivered(anyLong(), any()))
+            .thenReturn(Optional.of(new Order().id(11L)));
+        Mockito.when(orderService.orderExists(anyLong())).thenReturn(
+            true);
+
+        UpdateToDeliveredRequest update =
+            new UpdateToDeliveredRequest().actualDeliveryTime(OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC));
+        var res = controller.updateToDelivered(11L, 1L, update);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
     void updateStatusToDelivered400() {
+        Mockito.when(statusService.getOrderStatus(any())).thenReturn(Optional.of(Order.StatusEnum.IN_TRANSIT));
         Mockito.when(statusService.updateStatusToDelivered(anyLong(), any()))
             .thenReturn(Optional.empty());
         Mockito.when(orderService.orderExists(anyLong())).thenReturn(
