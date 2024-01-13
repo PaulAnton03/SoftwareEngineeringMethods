@@ -1,35 +1,32 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.externalservices.NavigationMock;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import javax.swing.text.html.Option;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 
 class OrderServiceTest {
     private OrderRepository orderRepo;
     private VendorRepository vendorRepo;
     private Order order1;
-
     private Vendor vendor1;
-
+    private OffsetDateTime eta;
     private OrderService os;
 
     @BeforeEach
@@ -39,6 +36,8 @@ class OrderServiceTest {
         this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
                 .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
+        this.eta = OffsetDateTime.of(2000, 1, 1,
+                1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
         this.os = new OrderService(orderRepo, vendorRepo);
     }
 
@@ -134,8 +133,8 @@ class OrderServiceTest {
 
     @Test
     void updatePrepTimeWorks() {
-        Time time1 = new Time().prepTime(new String("01:30:00"));
-        Time time2 = new Time().prepTime(new String("03:30:00"));
+        Time time1 = new Time().prepTime("01:30:00");
+        Time time2 = new Time().prepTime("03:30:00");
         order1.setTimeValues(time1);
         Order order11 = new Order().id(1L).timeValues(time2);
 
@@ -152,7 +151,7 @@ class OrderServiceTest {
     void updatePrepTimeGives404NoOrder() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<String> res = os.updatePrepTime(order1.getId(), new String("03:30:00"));
+        Optional<String> res = os.updatePrepTime(order1.getId(), "03:30:00");
         assertEquals(Optional.empty(), res);
     }
 
@@ -279,7 +278,7 @@ class OrderServiceTest {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o));
         Optional<BigDecimal> res = os.getRating(o.getId());
         assertTrue(res.isPresent());
-        assertEquals(res.get(),o.getRatingNumber());
+        assertEquals(res.get(), o.getRatingNumber());
     }
 
     @Test
@@ -312,6 +311,49 @@ class OrderServiceTest {
     void updateRating404() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
         Optional<BigDecimal> res = os.updateRating(order1.getId(), BigDecimal.valueOf(10));
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getETAValid() {
+        Order order2 = new Order().timeValues(new Time().expectedDeliveryTime(eta).prepTime("03:30:00"));
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertFalse(res.isEmpty());
+        assertEquals(res.get(), eta);
+    }
+
+    @Test
+    void getETANoTime() {
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getETANoPrep() {
+        Order order2 = new Order().timeValues(new Time());
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getETANoETA() {
+        Order order2 = new Order().timeValues(new Time().prepTime("03:30:00"));
+        Mockito.when(orderRepo.saveAndFlush(any())).thenReturn(order2);
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertFalse(res.isEmpty());
+        assertEquals(res.get(), new NavigationMock().getETA(1L, new Time()));
+    }
+
+    @Test
+    void getETAEmpty() {
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.empty());
+
+        Optional<OffsetDateTime> res = os.getETA(1L);
         assertTrue(res.isEmpty());
     }
 }
