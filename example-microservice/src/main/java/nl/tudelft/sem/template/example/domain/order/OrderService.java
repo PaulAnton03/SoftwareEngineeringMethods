@@ -231,7 +231,12 @@ public class OrderService {
             return Optional.empty();
         }
 
-        return Optional.of(navigationMock.getETA(orderId));
+        Time time = order.get().getTimeValues();
+        if (time == null || time.getExpectedDeliveryTime() == null) {
+            return Optional.of(navigationMock.getETA(orderId));
+        }
+
+        return Optional.of(time.getExpectedDeliveryTime());
     }
 
     /**
