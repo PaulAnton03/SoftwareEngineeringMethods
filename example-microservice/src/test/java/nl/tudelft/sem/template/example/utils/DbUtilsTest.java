@@ -71,6 +71,12 @@ public class DbUtilsTest {
         assertTrue(dbUtils.userBelongsToOrder(1L, 11L));
     }
 
+    @Test
+    void testCourierDoesNotBelongToVendor(){
+        Mockito.when(courierRepo.existsByIdAndBossId(11L, 1L)).thenReturn(false);
+        assertFalse(dbUtils.courierBelongsToVendor(11L, 1L));
+    }
+
     @AfterEach()
     void tearDown() {
         WireMockConfig.stopOrderServer();
