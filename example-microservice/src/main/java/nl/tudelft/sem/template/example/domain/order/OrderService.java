@@ -1,9 +1,7 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.externalservices.NavigationMock;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Time;
@@ -11,17 +9,24 @@ import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepo;
     private final VendorRepository vendorRepo;
+    private final NavigationMock navigationMock;
 
 
     @Autowired
     public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo) {
         this.vendorRepo = vendorRepo;
         this.orderRepo = orderRepo;
+        this.navigationMock = new NavigationMock();
     }
 
     /**
@@ -178,7 +183,7 @@ public class OrderService {
      * updates it using the body parameter provided in the signature.
      *
      * @param orderId the id of the order
-     * @param body the new rating that the order will have
+     * @param body    the new rating that the order will have
      * @return empty optional if order DNE, optional of rating otherwise
      */
     public Optional<BigDecimal> updateRating(Long orderId, BigDecimal body) {
@@ -200,13 +205,13 @@ public class OrderService {
      * updates it using the body parameter provided in the signature.
      *
      * @param orderId the id of the order
-     * @param body the new preparation time that the order will have
+     * @param body    the new preparation time that the order will have
      * @return empty optional if the order DNE, optional of prepTime otherwise
      */
     public Optional<String> updatePrepTime(Long orderId, String body) {
         Optional<Order> order = orderRepo.findById(orderId);
 
-        if(order.isEmpty()) {
+        if (order.isEmpty()) {
             return Optional.empty();
         }
 
@@ -219,17 +224,44 @@ public class OrderService {
         return Optional.of(body);
     }
 
+    public Optional<OffsetDateTime> getETA(Long orderId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        if (order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order orderObject = order.get();
+        Time time = orderObject.getTimeValues();
+
+        // if we cannot calculate ETA, return empty
+        if (time == null || time.getPrepTime() == null) {
+            return Optional.empty();
+        }
+
+        // if ETA did not exist, calculate it and persist it
+        if (time.getExpectedDeliveryTime() == null) {
+            OffsetDateTime eta = navigationMock.getETA(orderId, time);
+
+            time.setExpectedDeliveryTime(eta);
+            orderObject.setTimeValues(time);
+            orderRepo.saveAndFlush(orderObject);
+        }
+
+        return Optional.of(orderObject.getTimeValues().getExpectedDeliveryTime());
+    }
+
     /**
      * Update the courier of the order.
      *
-     * @param orderId the id of the order
+     * @param orderId   the id of the order
      * @param courierId the new courier of the order
      * @return empty optional if either order DNE, optional of updated order otherwise
      */
     public Optional<Order> updateCourier(Long orderId, Long courierId) {
         Optional<Order> order = orderRepo.findById(orderId);
 
-        if(order.isEmpty()) {
+        if (order.isEmpty()) {
             return Optional.empty();
         }
 
