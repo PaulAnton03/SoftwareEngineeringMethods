@@ -14,8 +14,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import nl.tudelft.sem.template.example.controllers.OrderController;
+import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
@@ -25,6 +27,7 @@ import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +37,10 @@ public class AuthorizationTest {
 
     private OrderService orderService;
     private OrderController controller;
+
+    private OrderRepository orderRepository;
+
+    private VendorRepository vendorRepository;
 
     private UserExternalService userExternalService = new UserExternalService();
 
@@ -55,11 +62,13 @@ public class AuthorizationTest {
         WireMockConfig.startUserServer();
         dbUtils = Mockito.mock(DbUtils.class);
         orderService = Mockito.mock(OrderService.class);
+        orderRepository = Mockito.mock(OrderRepository.class);
+        vendorRepository = Mockito.mock(VendorRepository.class);
         validationMethods = Mockito.mock(HashMap.class);
         Mockito.when(validationMethods.get(anyString())).thenReturn((a, b) -> true);
         authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
         userService = Mockito.mock(UserService.class);
-        controller = new OrderController(orderService, userService, authorizationService);
+        controller = new OrderController(orderService, userService, authorizationService, orderRepository, vendorRepository);
     }
 
     @Test

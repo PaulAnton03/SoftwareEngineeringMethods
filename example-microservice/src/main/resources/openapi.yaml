@@ -388,7 +388,7 @@ paths:
         '403':
           description: Unsuccessful, entity does not have access rights to retrieve order distance
 
-  /order/{vendorId}:
+  /order/{vendorId}/get-next-order:
     get:
       summary: Retrieve the next order that belongs to a given vendor
       operationId: getNextOrderForVendor
