@@ -78,7 +78,7 @@ public class Authorization extends Handler {
      * @return The corresponding UserType enum value.
      * @throws IllegalArgumentException If the provided user type is invalid.
      */
-    private Authorization.UserType parseUserType(String userType) {
+    public Authorization.UserType parseUserType(String userType) {
         return switch (userType) {
             case "vendor" -> Authorization.UserType.VENDOR;
             case "courier" -> Authorization.UserType.COURIER;
