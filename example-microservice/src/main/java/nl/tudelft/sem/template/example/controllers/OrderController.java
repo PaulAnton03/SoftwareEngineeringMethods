@@ -86,6 +86,19 @@ public class OrderController implements OrderApi {
         this.setStrategy(new OrderPerVendorStrategy(orderRepository));
         Optional<List<Order>> orders = strategy.availableOrders(Optional.of(vendorId));
 
+        return getOrderResponseEntity(orders);
+    }
+
+    /**
+     * Helper method for getNextOrderForVendor,
+     * used to evaluate the appropriate response type for given available list of orders
+     *
+     * @param orders the optional list of available order gotten from service class
+     * @return OK, if there is an available order for that courier,
+     * NOT_FOUND if there were none,
+     * BAD_REQUEST if mismatches between vendor-courier and attributes
+     */
+    private ResponseEntity<Order> getOrderResponseEntity(Optional<List<Order>> orders) {
         if (orders.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -139,8 +152,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/final-destination")
     public ResponseEntity getFinalDestination(
-            @RequestParam(name = "authorization") Long authorization,
-            @PathVariable(name = "orderId") Long orderId
+        @RequestParam(name = "authorization") Long authorization,
+        @PathVariable(name = "orderId") Long orderId
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getFinalDestination", orderId);
         if (doesNotHaveAuthority(auth)) {
@@ -170,8 +183,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(
-            @PathVariable(name = "orderId") Long orderId,
-            @RequestParam(name = "authorization") Long authorization
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrder", orderId);
         if (doesNotHaveAuthority(auth)) {
@@ -258,9 +271,9 @@ public class OrderController implements OrderApi {
     @Override
     @PostMapping("/{orderId}")
     public ResponseEntity<Void> makeOrder(
-            @PathVariable(name = "orderId") Long orderId,
-            @RequestParam(name = "authorization") Long authorization,
-            @Parameter(name = "Order") @RequestBody @Valid Order order
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization,
+        @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (doesNotHaveAuthority(auth)) {
@@ -325,8 +338,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}/rating")
     public ResponseEntity getOrderRating(
-            @PathVariable(name = "orderId") Long orderId,
-            @RequestParam(name = "authorization") Long authorization
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrderRating", orderId);
         if (doesNotHaveAuthority(auth)) {
@@ -358,9 +371,9 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}/rating")
     public ResponseEntity putOrderRating(
-            @PathVariable(name = "orderId") Long orderId,
-            @RequestParam(name = "authorization") Long authorization,
-            @RequestBody @Valid BigDecimal body
+        @PathVariable(name = "orderId") Long orderId,
+        @RequestParam(name = "authorization") Long authorization,
+        @RequestBody @Valid BigDecimal body
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "putOrderRating", orderId);
         if (doesNotHaveAuthority(auth)) {
