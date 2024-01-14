@@ -32,6 +32,8 @@ class OrderServiceTest {
     private VendorRepository vendorRepo;
     private CourierRepository courierRepo;
     private Order order1;
+
+    private Order order2;
     private Vendor vendor1;
     private OffsetDateTime eta;
 
@@ -49,6 +51,8 @@ class OrderServiceTest {
                 .ratingNumber(BigDecimal.valueOf(5L)).courierId(2L);
         this.courierRepo = mock(CourierRepository.class);
         this.order1 = new Order().id(1L).vendorId(2L).courierId(21L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+                .ratingNumber(BigDecimal.valueOf(5L));
+        this.order2 = new Order().id(1L).vendorId(2L).courierId(2L).deliveryDestination(new Location().latitude(22F).longitude(33F))
                 .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.eta = OffsetDateTime.of(2000, 1, 1,
@@ -378,7 +382,7 @@ class OrderServiceTest {
     void getDistanceValid() {
         Courier courier1 = new Courier().currentLocation(new Location());
 
-        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
         Mockito.when(courierRepo.findById(2L)).thenReturn(Optional.of(courier1));
 
         Optional<Float> res = os.getDistance(1L);

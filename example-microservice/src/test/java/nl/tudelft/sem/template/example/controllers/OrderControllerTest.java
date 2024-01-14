@@ -13,7 +13,6 @@ import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.GeneralOrdersStrategy;
-import nl.tudelft.sem.template.example.domain.order.OrderStrategy.NextOrderStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
@@ -44,8 +43,6 @@ class OrderControllerTest {
 
     private Order order1;
 
-    private NextOrderStrategy strategy;
-
     private OrderPerVendorStrategy perVendorStrategy;
 
     private GeneralOrdersStrategy generalStrategy;
@@ -64,7 +61,6 @@ class OrderControllerTest {
         this.orderRepo = Mockito.mock(OrderRepository.class);
         this.vendorRepo = Mockito.mock(VendorRepository.class);
 
-        this.strategy = Mockito.mock(NextOrderStrategy.class);
         this.generalStrategy = Mockito.mock(GeneralOrdersStrategy.class);
         this.perVendorStrategy = Mockito.mock(OrderPerVendorStrategy.class);
 
