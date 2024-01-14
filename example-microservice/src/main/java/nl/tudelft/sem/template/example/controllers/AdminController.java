@@ -1,5 +1,13 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import nl.tudelft.sem.template.api.AdminApi;
+import nl.tudelft.sem.template.example.authorization.AuthorizationService;
+import nl.tudelft.sem.template.example.domain.admin.AdminService;
+import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Vendor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
 
 @RestController
 @RequestMapping("/admin")
@@ -199,5 +209,34 @@ public class AdminController implements AdminApi {
         return res.map(aDouble -> new ResponseEntity<>(aDouble, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
+    }
+
+    /**
+     * GET /admin/orders/status/delivered : Retrieve the orders that have been delivered
+     * Return the delivered orders
+     *
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @return Successful response, delivered orders received by admin (status code 200)
+     * or Unsuccessful, delivered orders cannot be retrieved because of a bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve delivered orders (status code 403)
+     * or Unsuccessful, no delivered orders were found (status code 404)
+     */
+    @Override
+    @GetMapping("/orders/status/delivered")
+    public ResponseEntity getDeliveredOrders(
+            @RequestParam(name = "authorization") Long authorization
+    ) {
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if(doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<List<Order>> res = adminService.getDelivered();
+
+        if(res.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity(res, HttpStatus.OK);
     }
 }

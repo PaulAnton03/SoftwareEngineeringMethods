@@ -55,6 +55,21 @@ public class AdminService {
     }
 
     /**
+     * Get all delivered orders 
+     * 
+     * @return an optional list of all delivered orders
+     */
+    public Optional<List<Order>> getDelivered() {
+        List<Order> orders = orderRepo.findByStatus(Order.StatusEnum.DELIVERED);
+
+        if(orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(orders);
+    }
+
+    /**
      * Get the exception of an order
      *
      * @param orderId id of the order

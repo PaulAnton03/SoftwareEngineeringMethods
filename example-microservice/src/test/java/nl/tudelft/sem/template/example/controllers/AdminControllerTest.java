@@ -96,6 +96,25 @@ class AdminControllerTest {
     }
 
     @Test
+    void getDeliveredOrdersWorks200() {
+        List orders = List.of(new Order().id(1L).status(Order.StatusEnum.DELIVERED),
+                new Order().id(2L).status(Order.StatusEnum.DELIVERED),
+                new Order().id(3L).status(Order.StatusEnum.DELIVERED));
+        Mockito.when(adminService.getDelivered()).thenReturn(Optional.of(orders));
+
+        var res = controller.getDeliveredOrders(1L);
+        assertEquals(new ResponseEntity<>(Optional.of(orders), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getDeliveredOrders404() {
+        Mockito.when(adminService.getDelivered()).thenReturn(Optional.empty());
+
+        var res = controller.getDeliveredOrders(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
     void getException200() {
         Mockito.when(adminService.getExceptionByOrder(anyLong())).thenReturn(Optional.of(exception1));
         var res = controller.getExceptionForOrder(1L, 5L);
@@ -107,6 +126,15 @@ class AdminControllerTest {
         Mockito.when(adminService.getExceptionByOrder(anyLong())).thenReturn(Optional.empty());
         var res = controller.getExceptionForOrder(1L, 5L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getDeliveredOrders403() {
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getDeliveredOrders(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
     @Test
@@ -160,6 +188,5 @@ class AdminControllerTest {
         var res = controller.updateException(1L, 3L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
-
 
 }
