@@ -21,9 +21,12 @@ import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 public class AdminServiceTest {
+
+    private Vendor vendor1;
 
     private AdminService adminService;
 
@@ -34,8 +37,6 @@ public class AdminServiceTest {
     private DeliveryException exception2;
     private Order order1;
 
-    private Vendor vendor1;
-
     private VendorRepository vendorRepo;
 
     private OrderRepository orderRepo;
@@ -45,12 +46,12 @@ public class AdminServiceTest {
 
     @BeforeEach
     void setUp() {
+        this.vendor1 = new Vendor().radius(1D).id(2L).location(new Location().latitude(22F).longitude(33F));
         this.order1 = new Order().status(Order.StatusEnum.DELIVERED).id(2L);
         this.exception1 = new DeliveryException().id(2L)
             .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
             .isResolved(false)
             .order(order1);
-        this.vendor1 = new Vendor().radius(1D).id(2L).location(new Location().latitude(22F).longitude(33F));
         this.exception2 = new DeliveryException().id(2L)
             .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
             .isResolved(false)
@@ -215,5 +216,24 @@ public class AdminServiceTest {
 
         Optional<Double> res = adminService.getDefaultRadius();
         assertEquals(res.get(), 1D);
+    }
+
+    @Test
+    void getDeliveredWorks() {
+        List<Order> orders = List.of(new Order().id(1L).status(Order.StatusEnum.DELIVERED),
+                new Order().id(2L).status(Order.StatusEnum.DELIVERED));
+        Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED)).thenReturn(orders);
+
+        Optional<List<Order>> res = adminService.getDelivered();
+        assertEquals(orders, res.get());
+    }
+
+    @Test
+    void getDeliveredDoesNotWork() {
+        Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED))
+                .thenReturn(new ArrayList<>());
+
+        Optional<List<Order>> res = adminService.getDelivered();
+        assertEquals(Optional.empty(), res);
     }
 }
