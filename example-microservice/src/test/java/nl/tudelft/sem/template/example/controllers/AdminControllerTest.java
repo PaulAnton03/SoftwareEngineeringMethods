@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.example.controllers;
 
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.admin.AdminService;
+import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,34 @@ class AdminControllerTest {
         Mockito.when(adminService.getDefaultRadius()).thenReturn(Optional.empty());
         var res = controller.getDefaultRadius(1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getDeliveredOrdersWorks200() {
+        List orders = List.of(new Order().id(1L).status(Order.StatusEnum.DELIVERED),
+                new Order().id(2L).status(Order.StatusEnum.DELIVERED),
+                new Order().id(3L).status(Order.StatusEnum.DELIVERED));
+        Mockito.when(adminService.getDelivered()).thenReturn(Optional.of(orders));
+
+        var res = controller.getDeliveredOrders(1L);
+        assertEquals(new ResponseEntity<>(Optional.of(orders), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getDeliveredOrders404() {
+        Mockito.when(adminService.getDelivered()).thenReturn(Optional.empty());
+
+        var res = controller.getDeliveredOrders(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getDeliveredOrders403() {
+        Mockito.when(authorizationService.authorizeAdminOnly(1L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getDeliveredOrders(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
 }
