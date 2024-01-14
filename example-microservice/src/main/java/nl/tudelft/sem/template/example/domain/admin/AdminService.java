@@ -1,16 +1,20 @@
 package nl.tudelft.sem.template.example.domain.admin;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.Duration;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
 
 @Service
 public class AdminService {
@@ -179,5 +183,44 @@ public class AdminService {
             return false;
         }
         return exceptionRepo.existsById(exception.getId());
+    }
+
+    /**
+     * Get all courier efficiencies
+     * The way the method is designed, the couriers that had no orders delivered will
+     * not have an efficiency rating.
+     * As for the efficiency rating it is based on the difference between the expected time
+     * of delivery and the actual time of delivery, thus penalizing a late delivery and
+     * rewarding an early one
+     *
+     * @return map of couriers and their efficiencies
+     */
+    public Optional<Map<Long, Double>> getCouriersEfficiencies() {
+        List<Order> orders = orderRepo.findByStatus(Order.StatusEnum.DELIVERED);
+
+        if(orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Set<Long> couriers = orders.stream()
+                .map(Order::getCourierId)
+                .collect(Collectors.toSet());
+
+        Map<Long, Double> res = new HashMap<>();
+
+        for(Long courier : couriers) {
+            List<Order> courierOrders = orderRepo.findByCourierIdAndStatus(courier, Order.StatusEnum.DELIVERED);
+
+            double value = 0.0;
+
+            for(Order o : courierOrders) {
+                value += Duration.between(o.getTimeValues().getActualDeliveryTime(),
+                        o.getTimeValues().getExpectedDeliveryTime()).getSeconds();
+            }
+
+            res.put(courier, value);
+        }
+
+        return Optional.of(res);
     }
 }

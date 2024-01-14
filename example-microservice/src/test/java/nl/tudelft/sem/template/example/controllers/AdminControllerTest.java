@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.admin.AdminService;
@@ -169,6 +170,34 @@ class AdminControllerTest {
         Mockito.when(adminService.updateException(any(), anyLong())).thenReturn(Optional.empty());
         var res = controller.updateException(1L, 3L, exception1);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
+    void getCourierEfficienciesWorks200() {
+        Mockito.when(adminService.getCouriersEfficiencies()).thenReturn(
+                Optional.of(Map.of(22L, 60.0D, 23L, 120.0D)));
+
+        var res = controller.getCourierEfficiencies(1L);
+        assertEquals(new ResponseEntity<>(Optional.of(
+                Map.of(22L, 60.0D, 23L, 120.0D)), HttpStatus.OK), res);
+    }
+
+    @Test
+    void getCourierEfficienciesWorks404() {
+        Mockito.when(adminService.getCouriersEfficiencies()).thenReturn(
+                Optional.empty());
+
+        var res = controller.getCourierEfficiencies(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getCourierEfficienciesWorks403() {
+        Mockito.when(authorizationService.authorizeAdminOnly(anyLong())).thenReturn(
+                Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getCourierEfficiencies(1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 
 }
