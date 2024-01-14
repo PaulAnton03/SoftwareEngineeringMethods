@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.example.authorization;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import javax.annotation.PostConstruct;
@@ -116,6 +115,9 @@ public class AuthorizationService {
 
         permissions.put("getETA", List.of(CUSTOMER, VENDOR, COURIER));
         validationMethods.put("getETA", dbUtils::userBelongsToOrder);
+
+        permissions.put("getOrderDistance", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethods.put("getOrderDistance", dbUtils::userBelongsToOrder);
 
         // StatusController
         permissions.put("updateToAccepted", List.of(VENDOR));

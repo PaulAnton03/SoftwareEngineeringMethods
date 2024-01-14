@@ -218,6 +218,9 @@ public class AuthorizationServiceTest {
         permissionsExpected.put("getETA", List.of(CUSTOMER, VENDOR, COURIER));
         validationMethodsExpected.put("getETA", dbUtils::userBelongsToOrder);
 
+        permissionsExpected.put("getOrderDistance", List.of(CUSTOMER, VENDOR, COURIER));
+        validationMethodsExpected.put("getOrderDistance", dbUtils::userBelongsToOrder);
+
         // StatusController
         permissionsExpected.put("updateToAccepted", List.of(VENDOR));
         validationMethodsExpected.put("updateToAccepted", dbUtils::userBelongsToOrder);

@@ -27,7 +27,7 @@ public class DbUtilsTest {
 
     private CourierRepository courierRepo;
 
-    private OrderExternalService orderExternalService = new OrderExternalService();
+    private final OrderExternalService orderExternalService = new OrderExternalService();
 
     @BeforeEach
     void setUp() {
@@ -63,8 +63,9 @@ public class DbUtilsTest {
 
         assertFalse(dbUtils.userBelongsToOrder(1L, 11L));
     }
+
     @Test
-    void testCourierBelongsToOrder(){
+    void testCourierBelongsToOrder() {
         Mockito.when(orderRepo.existsByIdAndCourierId(11L, 1L)).thenReturn(true);
         Mockito.when(orderRepo.existsByIdAndVendorId(11L, 1L)).thenReturn(false);
         Mockito.when(courierRepo.existsByIdAndBossId(11L, 1L)).thenReturn(false);
@@ -72,7 +73,7 @@ public class DbUtilsTest {
     }
 
     @Test
-    void testCourierDoesNotBelongToVendor(){
+    void testCourierDoesNotBelongToVendor() {
         Mockito.when(courierRepo.existsByIdAndBossId(11L, 1L)).thenReturn(false);
         assertFalse(dbUtils.courierBelongsToVendor(11L, 1L));
     }
