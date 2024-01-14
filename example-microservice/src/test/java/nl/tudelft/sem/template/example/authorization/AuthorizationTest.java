@@ -21,13 +21,11 @@ import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
-import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,24 +33,16 @@ import org.springframework.http.ResponseEntity;
 
 public class AuthorizationTest {
 
-    private OrderService orderService;
-    private OrderController controller;
-
-    private OrderRepository orderRepository;
-
-    private VendorRepository vendorRepository;
-
-    private UserExternalService userExternalService = new UserExternalService();
-
-    private AuthorizationService authorizationService;
-
-    private UserService userService;
-
-
-    private HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
+    private final UserExternalService userExternalService = new UserExternalService();
+    private final HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
         Map.of("getFinalDestination", List.of(Authorization.UserType.CUSTOMER, Authorization.UserType.COURIER))
     );
-
+    private OrderService orderService;
+    private OrderController controller;
+    private OrderRepository orderRepository;
+    private VendorRepository vendorRepository;
+    private AuthorizationService authorizationService;
+    private UserService userService;
     private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
 
     private DbUtils dbUtils;
@@ -72,7 +62,7 @@ public class AuthorizationTest {
     }
 
     @Test
-    void userExternalServiceReturnsInvalidUserType(){
+    void userExternalServiceReturnsInvalidUserType() {
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -85,7 +75,7 @@ public class AuthorizationTest {
     }
 
     @Test
-    void authorizeAdminOnlyWorks(){
+    void authorizeAdminOnlyWorks() {
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -99,7 +89,7 @@ public class AuthorizationTest {
     }
 
     @Test
-    void authorizeAdminOnlyForbidden(){
+    void authorizeAdminOnlyForbidden() {
         WireMockConfig.userMicroservice.stubFor(WireMock.get(urlPathMatching(("/user/11/type")))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -110,12 +100,11 @@ public class AuthorizationTest {
     }
 
     @Test
-    void authorizeAdminOnlyServerCrash(){
+    void authorizeAdminOnlyServerCrash() {
         WireMockConfig.stopUserServer();
         var res = controller.getOrders(11L);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res.getStatusCode());
     }
-
 
 
     @Test

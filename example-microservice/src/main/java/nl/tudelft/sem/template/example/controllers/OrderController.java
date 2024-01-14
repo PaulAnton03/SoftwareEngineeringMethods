@@ -86,6 +86,19 @@ public class OrderController implements OrderApi {
         this.setStrategy(new OrderPerVendorStrategy(orderRepository));
         Optional<List<Order>> orders = strategy.availableOrders(Optional.of(vendorId));
 
+        return getOrderResponseEntity(orders);
+    }
+
+    /**
+     * Helper method for getNextOrderForVendor,
+     * used to evaluate the appropriate response type for given available list of orders
+     *
+     * @param orders the optional list of available order gotten from service class
+     * @return OK, if there is an available order for that courier,
+     * NOT_FOUND if there were none,
+     * BAD_REQUEST if mismatches between vendor-courier and attributes
+     */
+    private ResponseEntity<Order> getOrderResponseEntity(Optional<List<Order>> orders) {
         if (orders.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

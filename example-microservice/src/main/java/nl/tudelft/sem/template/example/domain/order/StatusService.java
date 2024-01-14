@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class StatusService {
 
-    private DeliveryExceptionRepository exceptionRepo;
-    private OrderRepository orderRepo;
+    private final DeliveryExceptionRepository exceptionRepo;
+    private final OrderRepository orderRepo;
 
 
     public StatusService(OrderRepository orderRepo, DeliveryExceptionRepository exceptionRepo) {
@@ -140,34 +140,24 @@ public class StatusService {
      * @param orderId                  the id of the object to be updated
      * @param updateToDeliveredRequest object thst has the actual delivery time
      * @return the updated version optional of order, empty if order was not found or the actual delivery time
-     *          was already set, also if required fields were missing or if the order was already delivered
+     * was already set, also if required fields were missing or if the order was already delivered
      */
     public Optional<Order> updateStatusToDelivered(Long orderId, UpdateToDeliveredRequest updateToDeliveredRequest) {
         Optional<Order> ret = orderRepo.findById(orderId);
-
-        if (ret.isEmpty()) {
-            // order doesn't exist :(
-            return Optional.empty();
-        }
-
+        // we now the order exists as it is checked in the controller
         Order order = ret.get();
-        Order.StatusEnum currentStatus = order.getStatus();
         Time timeValues = order.getTimeValues();
 
-        // Something is wrong if the previous status is not in-transit, if there is no timeValues,
+        // Something is wrong if there is no timeValues,
         // if there is no time to set to, and if there is already an actual delivery time
-        if (currentStatus != Order.StatusEnum.IN_TRANSIT || timeValues == null
-            || updateToDeliveredRequest.getActualDeliveryTime() == null
-                || timeValues.getActualDeliveryTime() != null) {
+        if (timeValues == null || updateToDeliveredRequest.getActualDeliveryTime() == null
+            || timeValues.getActualDeliveryTime() != null) {
             return Optional.empty();
         }
 
         // set the timeValues of the order object
         OffsetDateTime deliveredTime = updateToDeliveredRequest.getActualDeliveryTime();
-        Time newTimeValues = new Time().prepTime(timeValues.getPrepTime())
-                                                .expectedDeliveryTime(timeValues.getExpectedDeliveryTime())
-                                                .orderTime(timeValues.getOrderTime())
-                                                .actualDeliveryTime(deliveredTime);
+        Time newTimeValues = timeValues.actualDeliveryTime(deliveredTime);
 
         order.setStatus(Order.StatusEnum.DELIVERED);
         order.setTimeValues(newTimeValues);
