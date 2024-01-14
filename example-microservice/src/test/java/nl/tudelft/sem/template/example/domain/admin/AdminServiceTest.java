@@ -169,6 +169,13 @@ public class AdminServiceTest {
     }
 
     @Test
+    void doesExceptionExistDoesNotExist() {
+        when(exceptionRepo.existsById(anyLong())).thenReturn(false);
+        var res = adminService.doesExceptionExist(exception1);
+        assertFalse(res);
+    }
+
+    @Test
     void doesExceptionExistNullInput() {
         when(exceptionRepo.existsByOrder(any())).thenReturn(true);
         var res = adminService.doesExceptionExist(null);
@@ -194,10 +201,14 @@ public class AdminServiceTest {
     void updateDefaultRadiusNotEmpty() {
         List<Vendor> vendors = new ArrayList<>();
         vendors.add(vendor1);
+        List<Vendor> vendors2 = new ArrayList<>();
+        Vendor vendor2 = new Vendor().radius(5D).id(2L).location(new Location().latitude(22F).longitude(33F));
+        vendors2.add(vendor2);
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(vendors);
 
         Optional<List<Vendor>> res = adminService.updateDefaultRadius(5D);
-        assertEquals(res.get(), vendors);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), vendors2);
     }
 
     @Test
