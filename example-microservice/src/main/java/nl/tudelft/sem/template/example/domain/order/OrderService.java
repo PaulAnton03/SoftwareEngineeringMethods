@@ -1,11 +1,9 @@
 package nl.tudelft.sem.template.example.domain.order;
 
+import nl.tudelft.sem.template.example.domain.user.CourierRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.NavigationMock;
-import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.model.Time;
-import nl.tudelft.sem.template.model.Vendor;
+import nl.tudelft.sem.template.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +17,15 @@ public class OrderService {
 
     private final OrderRepository orderRepo;
     private final VendorRepository vendorRepo;
+    private final CourierRepository courierRepo;
     private final NavigationMock navigationMock;
 
 
     @Autowired
-    public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo) {
+    public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo, CourierRepository courierRepo) {
         this.vendorRepo = vendorRepo;
         this.orderRepo = orderRepo;
+        this.courierRepo = courierRepo;
         this.navigationMock = new NavigationMock();
     }
 
@@ -249,6 +249,28 @@ public class OrderService {
         }
 
         return Optional.of(orderObject.getTimeValues().getExpectedDeliveryTime());
+    }
+
+    public Optional<Float> getDistance(Long orderId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        // does order have a delivery destination and a courier id?
+        if (order.isEmpty() || order.get().getDeliveryDestination() == null || order.get().getCourierId() == null) {
+            return Optional.empty();
+        }
+
+        Long courierId = order.get().getCourierId();
+        Optional<Courier> courier = courierRepo.findById(courierId);
+
+        // id there a courier with a location?
+        if (courier.isEmpty() || courier.get().getCurrentLocation() == null) {
+            return Optional.empty();
+        }
+
+        Location courierLocation = courier.get().getCurrentLocation();
+        Location deliveryLocation = order.get().getDeliveryDestination();
+
+        return Optional.of(navigationMock.getDistance(courierLocation, deliveryLocation));
     }
 
     /**

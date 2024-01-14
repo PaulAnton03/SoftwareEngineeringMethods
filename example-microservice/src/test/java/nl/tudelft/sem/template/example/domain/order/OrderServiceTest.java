@@ -1,11 +1,9 @@
 package nl.tudelft.sem.template.example.domain.order;
 
+import nl.tudelft.sem.template.example.domain.user.CourierRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.NavigationMock;
-import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.model.Time;
-import nl.tudelft.sem.template.model.Vendor;
+import nl.tudelft.sem.template.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,6 +22,7 @@ import static org.mockito.Mockito.mock;
 class OrderServiceTest {
     private OrderRepository orderRepo;
     private VendorRepository vendorRepo;
+    private CourierRepository courierRepo;
     private Order order1;
     private Vendor vendor1;
     private OffsetDateTime eta;
@@ -33,12 +32,14 @@ class OrderServiceTest {
     void setUp() {
         this.orderRepo = mock(OrderRepository.class);
         this.vendorRepo = mock(VendorRepository.class);
+        this.courierRepo = mock(CourierRepository.class);
+
         this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
-                .ratingNumber(BigDecimal.valueOf(5L));
+                .ratingNumber(BigDecimal.valueOf(5L)).courierId(2L);
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.eta = OffsetDateTime.of(2000, 1, 1,
                 1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
-        this.os = new OrderService(orderRepo, vendorRepo);
+        this.os = new OrderService(orderRepo, vendorRepo, courierRepo);
     }
 
     @Test
@@ -356,4 +357,59 @@ class OrderServiceTest {
         Optional<OffsetDateTime> res = os.getETA(1L);
         assertTrue(res.isEmpty());
     }
+
+    @Test
+    void getDistanceValid() {
+        Courier courier1 = new Courier().currentLocation(new Location());
+
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Mockito.when(courierRepo.findById(2L)).thenReturn(Optional.of(courier1));
+
+        Optional<Float> res = os.getDistance(1L);
+        Float expected = new NavigationMock().getDistance(new Location(), new Location());
+        assertFalse(res.isEmpty());
+        assertEquals(res, Optional.of(expected));
+    }
+
+    @Test
+    void getDistanceEmptyOrder() {
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.empty());
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceNoDeliveryDestination() {
+        Order order2 = new Order();
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceNoCourierId() {
+        Order order2 = new Order().deliveryDestination(new Location());
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceEmptyCourier() {
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Mockito.when(courierRepo.findById(2L)).thenReturn(Optional.empty());
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceNoCourierLocation() {
+        Courier courier1 = new Courier();
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Mockito.when(courierRepo.findById(2L)).thenReturn(Optional.of(courier1));
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+
 }

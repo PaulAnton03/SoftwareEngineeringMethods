@@ -495,5 +495,29 @@ class OrderControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
 
+    @Test
+    void getDistance200() {
+        Mockito.when(orderService.getDistance(1L)).thenReturn(Optional.of(5.0F));
+        var res = controller.getOrderDistance(1L, 2L);
+        assertEquals(new ResponseEntity<>(5.0F, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getDistance403() {
+        Mockito.when(orderService.getDistance(1L)).thenReturn(Optional.of(5.0F));
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(anyLong(), anyString(), any()))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getOrderDistance(1L, 2L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getDistance404() {
+        Mockito.when(orderService.getDistance(1L)).thenReturn(Optional.empty());
+        var res = controller.getOrderDistance(1L, 2L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
 
 }
