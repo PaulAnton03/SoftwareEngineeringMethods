@@ -1,10 +1,12 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
+import nl.tudelft.sem.template.example.domain.user.CourierRepository;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.externalservices.NavigationMock;
+import nl.tudelft.sem.template.model.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -20,15 +22,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import javax.swing.text.html.Option;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 
 class OrderServiceTest {
     private OrderRepository orderRepo;
     private VendorRepository vendorRepo;
     private CourierRepository courierRepo;
     private Order order1;
-
     private Vendor vendor1;
+    private OffsetDateTime eta;
 
     private Courier courier1;
 
@@ -39,9 +44,16 @@ class OrderServiceTest {
         this.orderRepo = mock(OrderRepository.class);
         this.vendorRepo = mock(VendorRepository.class);
         this.courierRepo = mock(CourierRepository.class);
+
+        this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+                .ratingNumber(BigDecimal.valueOf(5L)).courierId(2L);
+        this.courierRepo = mock(CourierRepository.class);
         this.order1 = new Order().id(1L).vendorId(2L).courierId(21L).deliveryDestination(new Location().latitude(11F).longitude(22F))
                 .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
+        this.eta = OffsetDateTime.of(2000, 1, 1,
+                1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
+        this.os = new OrderService(orderRepo, vendorRepo, courierRepo);
         this.courier1 = new Courier().id(21L).currentLocation(new Location().latitude(11F).longitude(16F));
         this.os = new OrderService(orderRepo, vendorRepo, courierRepo);
     }
@@ -138,8 +150,8 @@ class OrderServiceTest {
 
     @Test
     void updatePrepTimeWorks() {
-        Time time1 = new Time().prepTime(new String("01:30:00"));
-        Time time2 = new Time().prepTime(new String("03:30:00"));
+        Time time1 = new Time().prepTime("01:30:00");
+        Time time2 = new Time().prepTime("03:30:00");
         order1.setTimeValues(time1);
         Order order11 = new Order().id(1L).timeValues(time2);
 
@@ -156,7 +168,7 @@ class OrderServiceTest {
     void updatePrepTimeGives404NoOrder() {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<String> res = os.updatePrepTime(order1.getId(), new String("03:30:00"));
+        Optional<String> res = os.updatePrepTime(order1.getId(), "03:30:00");
         assertEquals(Optional.empty(), res);
     }
 
@@ -283,7 +295,7 @@ class OrderServiceTest {
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(o));
         Optional<BigDecimal> res = os.getRating(o.getId());
         assertTrue(res.isPresent());
-        assertEquals(res.get(),o.getRatingNumber());
+        assertEquals(res.get(), o.getRatingNumber());
     }
 
     @Test
@@ -318,6 +330,104 @@ class OrderServiceTest {
         Optional<BigDecimal> res = os.updateRating(order1.getId(), BigDecimal.valueOf(10));
         assertTrue(res.isEmpty());
     }
+
+    @Test
+    void getETAValid() {
+        Order order2 = new Order().timeValues(new Time().expectedDeliveryTime(eta).prepTime("03:30:00"));
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertFalse(res.isEmpty());
+        assertEquals(res.get(), eta);
+    }
+
+    @Test
+    void getETANoTime() {
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getETANoPrep() {
+        Order order2 = new Order().timeValues(new Time());
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getETANoETA() {
+        Order order2 = new Order().timeValues(new Time().prepTime("03:30:00"));
+        Mockito.when(orderRepo.saveAndFlush(any())).thenReturn(order2);
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertFalse(res.isEmpty());
+        assertEquals(res.get(), new NavigationMock().getETA(1L, new Time()));
+    }
+
+    @Test
+    void getETAEmpty() {
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.empty());
+
+        Optional<OffsetDateTime> res = os.getETA(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceValid() {
+        Courier courier1 = new Courier().currentLocation(new Location());
+
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Mockito.when(courierRepo.findById(2L)).thenReturn(Optional.of(courier1));
+
+        Optional<Float> res = os.getDistance(1L);
+        Float expected = new NavigationMock().getDistance(new Location(), new Location());
+        assertFalse(res.isEmpty());
+        assertEquals(res, Optional.of(expected));
+    }
+
+    @Test
+    void getDistanceEmptyOrder() {
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.empty());
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceNoDeliveryDestination() {
+        Order order2 = new Order();
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceNoCourierId() {
+        Order order2 = new Order().deliveryDestination(new Location());
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceEmptyCourier() {
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Mockito.when(courierRepo.findById(2L)).thenReturn(Optional.empty());
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getDistanceNoCourierLocation() {
+        Courier courier1 = new Courier();
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Mockito.when(courierRepo.findById(2L)).thenReturn(Optional.of(courier1));
+        Optional<Float> res = os.getDistance(1L);
+        assertTrue(res.isEmpty());
+    }
+
+
 
     @Test
     void getOrderLocationNoVendor() {
