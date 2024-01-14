@@ -7,11 +7,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.admin.AdminService;
 import nl.tudelft.sem.template.model.DeliveryException;
