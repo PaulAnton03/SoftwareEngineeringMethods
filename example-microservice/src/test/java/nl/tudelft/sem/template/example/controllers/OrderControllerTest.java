@@ -13,7 +13,6 @@ import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.GeneralOrdersStrategy;
-import nl.tudelft.sem.template.example.domain.order.OrderStrategy.NextOrderStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.example.domain.user.UserService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
@@ -44,8 +43,6 @@ class OrderControllerTest {
 
     private Order order1;
 
-    private NextOrderStrategy strategy;
-
     private OrderPerVendorStrategy perVendorStrategy;
 
     private GeneralOrdersStrategy generalStrategy;
@@ -64,7 +61,6 @@ class OrderControllerTest {
         this.orderRepo = Mockito.mock(OrderRepository.class);
         this.vendorRepo = Mockito.mock(VendorRepository.class);
 
-        this.strategy = Mockito.mock(NextOrderStrategy.class);
         this.generalStrategy = Mockito.mock(GeneralOrdersStrategy.class);
         this.perVendorStrategy = Mockito.mock(OrderPerVendorStrategy.class);
 
@@ -474,6 +470,92 @@ class OrderControllerTest {
         var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
 
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), ret);
+    }
+
+    @Test
+    void getOrderLocation404(){
+       Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.empty());
+
+       var res = controller.getOrderLocation(0L, 1L);
+       assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getOrderLocation200(){
+        Order order = new Order().id(2L);
+        Location loc = new Location().latitude(1F).longitude(1F);
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderService.getOrderLocation(order)).thenReturn(Optional.of(loc));
+        var res = controller.getOrderLocation(2L, 1L);
+        assertEquals(new ResponseEntity<>(loc, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getOrderLocation400(){
+        Order order = new Order().id(2L);
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderService.getOrderLocation(order)).thenReturn(Optional.empty());
+        var res = controller.getOrderLocation(2L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
+    void updateLocation404(){
+        Location newLocation = new Location().longitude(23F).latitude(32F);
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.empty());
+
+        var res = controller.updateLocation(0L, 1L, newLocation);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void updateLocation400(){
+        Order order = new Order().id(2L);
+        Location newLocation = new Location().longitude(23F).latitude(32F);
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderService.updateLocation(order, newLocation)).thenReturn(Optional.empty());
+
+        var res = controller.updateLocation(0L, 1L, newLocation);
+        assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
+    }
+
+    @Test
+    void updateLocation200(){
+        Order order = new Order().id(2L);
+        Location newLocation = new Location().longitude(23F).latitude(32F);
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderService.updateLocation(order, newLocation)).thenReturn(Optional.of(newLocation));
+
+        var res = controller.updateLocation(0L, 1L, newLocation);
+        assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
+    }
+
+    @Test
+    void getOrderLocation403() {
+        Order order = new Order().id(2L);
+        Location newLocation = new Location().longitude(23F).latitude(32F);
+
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(11L, "getOrderLocation", 2L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderService.getOrderLocation(order)).thenReturn(Optional.of(newLocation));
+
+        var ret = controller.getOrderLocation(2L, 11L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), ret);
+    }
+
+    @Test
+    void updateLocation403() {
+        Order order = new Order().id(2L);
+        Location newLocation = new Location().longitude(23F).latitude(32F);
+
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(11L, "updateLocation", 2L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderService.updateLocation(order, newLocation)).thenReturn(Optional.of(newLocation));
+
+        var ret = controller.updateLocation(2L, 11L, newLocation);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), ret);
     }
 
     @Test
