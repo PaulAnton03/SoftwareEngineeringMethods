@@ -37,8 +37,6 @@ public class AdminServiceTest {
     private DeliveryException exception2;
     private Order order1;
 
-    private Vendor vendor1;
-
     private VendorRepository vendorRepo;
 
     private OrderRepository orderRepo;
@@ -54,7 +52,6 @@ public class AdminServiceTest {
             .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
             .isResolved(false)
             .order(order1);
-        this.vendor1 = new Vendor().radius(1D).id(2L).location(new Location().latitude(22F).longitude(33F));
         this.exception2 = new DeliveryException().id(2L)
             .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
             .isResolved(false)
