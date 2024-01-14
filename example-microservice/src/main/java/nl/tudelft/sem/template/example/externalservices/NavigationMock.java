@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.externalservices;
 
+import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Time;
 
 import java.time.OffsetDateTime;
@@ -15,5 +16,11 @@ public class NavigationMock {
 
         return OffsetDateTime.of(2024, 1, 9,
                 11, 45, 0, 0, ZoneOffset.ofTotalSeconds(0));
+    }
+
+    public Float getDistance(Location courier, Location order){
+        // this is a mock, so it does not actually calculate anything
+
+        return 3.0F;
     }
 }

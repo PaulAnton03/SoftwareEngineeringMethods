@@ -501,4 +501,26 @@ public class OrderController implements OrderApi {
 
         return new ResponseEntity<>(eta.get(), HttpStatus.OK);
     }
+
+    @Override
+    @GetMapping("/{orderId}/distance")
+    public ResponseEntity<Float> getOrderDistance(
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(value = "authorization", required = true) Long authorization
+    ) {
+        var auth =
+                authorizationService.checkIfUserIsAuthorized(authorization, "getOrderDistance", orderId);
+        if (doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<Float> distance = orderService.getDistance(orderId);
+        if (distance.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(distance.get(), HttpStatus.OK);
+    }
+
+
 }
