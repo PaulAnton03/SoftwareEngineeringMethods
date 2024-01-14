@@ -1,5 +1,17 @@
 package nl.tudelft.sem.template.example.domain.order;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.NavigationMock;
 import nl.tudelft.sem.template.model.Location;
@@ -9,17 +21,6 @@ import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
 
 class OrderServiceTest {
     private OrderRepository orderRepo;
@@ -37,7 +38,7 @@ class OrderServiceTest {
             .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.eta = OffsetDateTime.of(2000, 1, 1,
-                1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
+            1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
         this.os = new OrderService(orderRepo, vendorRepo);
     }
 
