@@ -243,16 +243,16 @@ public class OrderService {
         return Optional.of(orderRepo.saveAndFlush(o));
     }
 
-    public Optional<Location> getOrderLocation(Order o){
-        Order.StatusEnum status = o.getStatus();
+    public Optional<Location> getOrderLocation(Order order){
+        Order.StatusEnum status = order.getStatus();
 
-        Optional<Vendor> v = vendorRepo.findById(o.getVendorId());
+        Optional<Vendor> v = vendorRepo.findById(order.getVendorId());
         if(v.isEmpty()) {
             return Optional.empty();
         }
         Location vLocation = v.get().getLocation();
 
-        Optional<Courier> c = courierRepo.findById(o.getCourierId());
+        Optional<Courier> c = courierRepo.findById(order.getCourierId());
         Location cLocation = null;
         if(c.isPresent()){
             cLocation = c.get().getCurrentLocation();
@@ -268,7 +268,7 @@ public class OrderService {
                 return Optional.of(cLocation);
             }
             case DELIVERED -> {
-                return Optional.of(o.getDeliveryDestination());
+                return Optional.of(order.getDeliveryDestination());
             }
             default -> {
                 return Optional.empty();
@@ -287,8 +287,8 @@ public class OrderService {
         switch(status){
             case GIVEN_TO_COURIER, IN_TRANSIT -> {
                 courier.setCurrentLocation(location);
-                Courier res = courierRepo.saveAndFlush(courier);
-                return Optional.of(res.getCurrentLocation());
+                courierRepo.saveAndFlush(courier);
+                return Optional.of(courier.getCurrentLocation());
             }
             default -> {
                 return Optional.empty();

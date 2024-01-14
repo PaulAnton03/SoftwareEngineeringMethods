@@ -410,4 +410,32 @@ class OrderControllerTest {
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
+    @Test
+    void getOrderLocation403() {
+        Order order = new Order().id(2L);
+        Location newLocation = new Location().longitude(23F).latitude(32F);
+
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(11L, "getOrderLocation", 2L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderService.getOrderLocation(order)).thenReturn(Optional.of(newLocation));
+
+        var ret = controller.getOrderLocation(2L, 11L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), ret);
+    }
+
+    @Test
+    void updateLocation403() {
+        Order order = new Order().id(2L);
+        Location newLocation = new Location().longitude(23F).latitude(32F);
+
+        Mockito.when(authorizationService.checkIfUserIsAuthorized(11L, "updateLocation", 2L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+        Mockito.when(orderService.getOrderById(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderService.updateLocation(order, newLocation)).thenReturn(Optional.of(newLocation));
+
+        var ret = controller.updateLocation(2L, 11L, newLocation);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), ret);
+    }
+
 }
