@@ -35,7 +35,7 @@ public class UserServiceTest {
     @Test
     void updateBossIdOfCourier200() {
         Courier courier11 = new Courier().id(100L).bossId(6L)
-                .currentLocation(new Location().latitude(0F).longitude(0F));
+            .currentLocation(new Location().latitude(0F).longitude(0F));
 
         Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
         Mockito.lenient().when(courierRepo.saveAndFlush(courier1)).thenReturn(courier11);
@@ -165,6 +165,42 @@ public class UserServiceTest {
         Mockito.when(courierRepo.existsById(1L)).thenReturn(false);
         boolean res = userService.existsCourier(1L);
         assertFalse(res);
+    }
+
+    @Test
+    void getRadiusOfVendorWorks() {
+        vendor1.radius(3.0);
+        Mockito.when(vendorRepo.findById(vendor1.getId())).thenReturn(Optional.of(vendor1));
+
+        var res = userService.getRadiusOfVendor(vendor1.getId());
+        assertEquals(Optional.of(3.0), res);
+    }
+
+    @Test
+    void getRadiusOfVendorFails() {
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+        var res = userService.getRadiusOfVendor(vendor1.getId());
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void updateRadiusOfVendorWorks200() {
+        vendor1.radius(3.0);
+        Vendor vendor11 = new Vendor().id(2L).radius(5.0);
+        Mockito.when(vendorRepo.findById(vendor1.getId())).thenReturn(Optional.of(vendor1));
+        Mockito.lenient().when(vendorRepo.saveAndFlush(vendor1)).thenReturn(vendor11);
+
+        var res = userService.updateRadiusOfVendor(vendor1.getId(), 5.0);
+        assertEquals(Optional.of(vendor11.getRadius()), res);
+    }
+
+    @Test
+    void updateRadiusOfVendorFails404() {
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+        var res = userService.updateRadiusOfVendor(vendor1.getId(), 5.0);
+        assertEquals(Optional.empty(), res);
     }
 
     @Test

@@ -12,8 +12,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import nl.tudelft.sem.template.example.controllers.OrderController;
+import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import nl.tudelft.sem.template.example.wiremock.WireMockConfig;
@@ -30,6 +32,10 @@ public class ValidationTest {
 
     private OrderService orderService;
     private OrderController controller;
+
+    private OrderRepository orderRepository;
+
+    private VendorRepository vendorRepository;
 
     private UserExternalService userExternalService = new UserExternalService();
 
@@ -61,7 +67,9 @@ public class ValidationTest {
         );
         authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
         userService = Mockito.mock(UserService.class);
-        controller = new OrderController(orderService, userService, authorizationService);
+        orderRepository = Mockito.mock(OrderRepository.class);
+        vendorRepository = Mockito.mock(VendorRepository.class);
+        controller = new OrderController(orderService, userService, authorizationService, orderRepository, vendorRepository);
     }
 
     @Test
@@ -82,6 +90,14 @@ public class ValidationTest {
         var res = controller.getFinalDestination(11L, 1L);
         assertEquals(ResponseEntity.status(403).body("User with id " + 11 + " does not have access rights"), res);
     }
+
+    @Test
+    void getFinalDestinationNoMapping() {
+        validationMethods.remove("getFinalDestination");
+        var res = controller.getFinalDestination(11L, 1L);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res.getStatusCode());
+    }
+
 
     @AfterEach()
     void tearDown() {

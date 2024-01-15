@@ -1,27 +1,32 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import nl.tudelft.sem.template.example.domain.user.CourierRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.model.Time;
-import nl.tudelft.sem.template.model.Vendor;
+import nl.tudelft.sem.template.example.externalservices.NavigationMock;
+import nl.tudelft.sem.template.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepo;
     private final VendorRepository vendorRepo;
+    private final NavigationMock navigationMock;
+    private final CourierRepository courierRepo;
 
 
     @Autowired
-    public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo) {
+    public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo, CourierRepository courierRepo) {
         this.vendorRepo = vendorRepo;
         this.orderRepo = orderRepo;
+        this.courierRepo = courierRepo;
+        this.navigationMock = new NavigationMock();
     }
 
     /**
@@ -178,7 +183,7 @@ public class OrderService {
      * updates it using the body parameter provided in the signature.
      *
      * @param orderId the id of the order
-     * @param body the new rating that the order will have
+     * @param body    the new rating that the order will have
      * @return empty optional if order DNE, optional of rating otherwise
      */
     public Optional<BigDecimal> updateRating(Long orderId, BigDecimal body) {
@@ -200,13 +205,13 @@ public class OrderService {
      * updates it using the body parameter provided in the signature.
      *
      * @param orderId the id of the order
-     * @param body the new preparation time that the order will have
+     * @param body    the new preparation time that the order will have
      * @return empty optional if the order DNE, optional of prepTime otherwise
      */
     public Optional<String> updatePrepTime(Long orderId, String body) {
         Optional<Order> order = orderRepo.findById(orderId);
 
-        if(order.isEmpty()) {
+        if (order.isEmpty()) {
             return Optional.empty();
         }
 
@@ -219,17 +224,66 @@ public class OrderService {
         return Optional.of(body);
     }
 
+    public Optional<OffsetDateTime> getETA(Long orderId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        if (order.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Order orderObject = order.get();
+        Time time = orderObject.getTimeValues();
+
+        // if we cannot calculate ETA, return empty
+        if (time == null || time.getPrepTime() == null) {
+            return Optional.empty();
+        }
+
+        // if ETA did not exist, calculate it and persist it
+        if (time.getExpectedDeliveryTime() == null) {
+            OffsetDateTime eta = navigationMock.getETA(orderId, time);
+
+            time.setExpectedDeliveryTime(eta);
+            orderObject.setTimeValues(time);
+            orderRepo.saveAndFlush(orderObject);
+        }
+
+        return Optional.of(orderObject.getTimeValues().getExpectedDeliveryTime());
+    }
+
+    public Optional<Float> getDistance(Long orderId) {
+        Optional<Order> order = orderRepo.findById(orderId);
+
+        // does order have a delivery destination and a courier id?
+        if (order.isEmpty() || order.get().getDeliveryDestination() == null || order.get().getCourierId() == null) {
+            return Optional.empty();
+        }
+
+        Long courierId = order.get().getCourierId();
+        Optional<Courier> courier = courierRepo.findById(courierId);
+
+        // id there a courier with a location?
+        if (courier.isEmpty() || courier.get().getCurrentLocation() == null) {
+            return Optional.empty();
+        }
+
+        Location courierLocation = courier.get().getCurrentLocation();
+        Location deliveryLocation = order.get().getDeliveryDestination();
+
+        return Optional.of(navigationMock.getDistance(courierLocation, deliveryLocation));
+    }
+
     /**
      * Update the courier of the order.
      *
-     * @param orderId the id of the order
+     * @param orderId   the id of the order
      * @param courierId the new courier of the order
      * @return empty optional if either order DNE, optional of updated order otherwise
      */
     public Optional<Order> updateCourier(Long orderId, Long courierId) {
         Optional<Order> order = orderRepo.findById(orderId);
 
-        if(order.isEmpty()) {
+        if (order.isEmpty()) {
             return Optional.empty();
         }
 
@@ -237,5 +291,58 @@ public class OrderService {
         o.setCourierId(courierId);
 
         return Optional.of(orderRepo.saveAndFlush(o));
+    }
+
+    public Optional<Location> getOrderLocation(Order order){
+        Order.StatusEnum status = order.getStatus();
+
+        Optional<Vendor> v = vendorRepo.findById(order.getVendorId());
+        if(v.isEmpty()) {
+            return Optional.empty();
+        }
+        Location vLocation = v.get().getLocation();
+
+        Optional<Courier> c = courierRepo.findById(order.getCourierId());
+        Location cLocation = null;
+        if(c.isPresent()){
+            cLocation = c.get().getCurrentLocation();
+        }
+        switch(status){
+            case ACCEPTED, PREPARING -> {
+                return Optional.of(vLocation);
+            }
+            case GIVEN_TO_COURIER, IN_TRANSIT -> {
+                if(cLocation == null){
+                    return Optional.empty();
+                }
+                return Optional.of(cLocation);
+            }
+            case DELIVERED -> {
+                return Optional.of(order.getDeliveryDestination());
+            }
+            default -> {
+                return Optional.empty();
+            }
+        }
+    }
+
+    public Optional<Location> updateLocation(Order order, Location location){
+        Order.StatusEnum status = order.getStatus();
+
+        Optional<Courier> c = courierRepo.findById(order.getCourierId());
+        if(c.isEmpty()){
+            return Optional.empty();
+        }
+        Courier courier = c.get();
+        switch(status){
+            case GIVEN_TO_COURIER, IN_TRANSIT -> {
+                courier.setCurrentLocation(location);
+                courierRepo.saveAndFlush(courier);
+                return Optional.of(courier.getCurrentLocation());
+            }
+            default -> {
+                return Optional.empty();
+            }
+        }
     }
 }
