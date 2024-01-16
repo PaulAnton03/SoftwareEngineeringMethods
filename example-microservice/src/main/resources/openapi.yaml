@@ -95,7 +95,7 @@ paths:
   /order/{orderId}/preparation-time:
     put:
       summary: Set the preparation time of an order
-      operationId: setDeliverTime
+      operationId: setPreparationTime
       tags:
         - Order
       description: update the preparation time of the order
@@ -1024,10 +1024,10 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
+                type: object
+                additionalProperties:
                   type: number
-                  format: Long
+                  format: double
                   description: the number represents a percentage of a particular driver's efficiency
         '400':
           description: Unsuccessful, driver efficiencies cannot be retrieved because of a bad request
