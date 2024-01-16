@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.example.authorization;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -74,18 +76,27 @@ public class Authorization extends Handler {
     /**
      * Parses the string representation of a user type into the corresponding UserType enum value.
      *
-     * @param userType The string representation of the user type.
+     * @param userTypeJson The string representation of the user type.
      * @return The corresponding UserType enum value.
      * @throws IllegalArgumentException If the provided user type is invalid.
      */
-    public Authorization.UserType parseUserType(String userType) {
-        return switch (userType) {
-            case "vendor" -> Authorization.UserType.VENDOR;
-            case "courier" -> Authorization.UserType.COURIER;
-            case "admin" -> Authorization.UserType.ADMIN;
-            case "customer" -> Authorization.UserType.CUSTOMER;
-            default -> throw new IllegalArgumentException("Invalid user type: " + userType);
-        };
+    public Authorization.UserType parseUserType(String userTypeJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(userTypeJson);
+
+            String userType = jsonNode.get("type").asText();
+
+            return switch (userType) {
+                case "vendor" -> Authorization.UserType.VENDOR;
+                case "courier" -> Authorization.UserType.COURIER;
+                case "admin" -> Authorization.UserType.ADMIN;
+                case "customer" -> Authorization.UserType.CUSTOMER;
+                default -> throw new IllegalArgumentException("Invalid user type: " + userType);
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error parsing user type", e);
+        }
     }
 
     public enum UserType {
