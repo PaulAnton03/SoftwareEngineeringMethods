@@ -60,8 +60,8 @@ public class VendorService {
         if (vendor.isEmpty()) {
             return Optional.empty();
         }
-
-        return Optional.of(vendor.get().getRadius());
+        Vendor v = vendor.get();
+        return Optional.of(v.getRadius());
     }
 
     /**
@@ -76,11 +76,11 @@ public class VendorService {
         if (vendor.isEmpty()) {
             return Optional.empty();
         }
+        Vendor v = vendor.get();
+        v.setRadius(body);
 
-        vendor.get().setRadius(body);
-
-        Vendor saved = vendorRepo.saveAndFlush(vendor.get());
-        return Optional.of(saved.getRadius());
+        vendorRepo.saveAndFlush(vendor.get());
+        return Optional.of(v.getRadius());
     }
 
     /**
