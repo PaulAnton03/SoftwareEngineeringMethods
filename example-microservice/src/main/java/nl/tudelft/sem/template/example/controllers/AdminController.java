@@ -44,7 +44,7 @@ public class AdminController implements AdminApi {
     @Override
     @PutMapping("/exceptions/{orderId}")
     public ResponseEntity<Void> updateException(@PathVariable("orderId") Long orderId,
-                                                @RequestParam(value = "authorization", required = true) Long authorization,
+                                                @RequestParam(value = "authorization") Long authorization,
                                                 @RequestBody(required = false) DeliveryException deliveryException) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
@@ -76,7 +76,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/exceptions")
     public ResponseEntity<List<DeliveryException>> getExceptions(
-            @RequestParam(value = "authorization", required = true) Long authorization) {
+            @RequestParam(value = "authorization") Long authorization) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
             return auth.get();
@@ -94,7 +94,7 @@ public class AdminController implements AdminApi {
     @Override
     @PostMapping("/exceptions/{orderId}")
     public ResponseEntity<Void> makeException(@PathVariable("orderId") Long orderId,
-                                              @RequestParam(value = "authorization", required = true) Long authorization,
+                                              @RequestParam(value = "authorization") Long authorization,
                                               @RequestBody(required = false) DeliveryException deliveryException) {
 
         var auth = authorizationService.authorizeAdminOnly(authorization);
@@ -126,7 +126,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/exceptions/{orderId}")
     public ResponseEntity<DeliveryException> getExceptionForOrder(@PathVariable("orderId") Long orderId,
-                                                                  @RequestParam(value = "authorization", required = true)
+                                                                  @RequestParam(value = "authorization")
                                                                   Long authorization) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
