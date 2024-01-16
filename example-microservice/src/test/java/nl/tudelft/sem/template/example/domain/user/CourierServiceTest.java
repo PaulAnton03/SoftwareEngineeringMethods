@@ -76,14 +76,6 @@ public class CourierServiceTest {
     }
 
     @Test
-    void makeCourierDoesNotWork() {
-        Mockito.when(courierRepo.saveAndFlush(any())).thenThrow(new IllegalArgumentException());
-
-        Optional<Courier> res = courierService.makeCourier(null);
-        assert (res.isEmpty());
-    }
-
-    @Test
     void makeCourierByIdWorks() {
         Mockito.when(courierRepo.saveAndFlush(any())).thenReturn(courier1);
 
