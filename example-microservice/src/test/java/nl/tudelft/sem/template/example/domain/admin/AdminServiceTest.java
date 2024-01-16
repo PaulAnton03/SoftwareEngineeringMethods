@@ -8,21 +8,20 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.*;
+
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.model.DeliveryException;
-import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.model.Vendor;
+import nl.tudelft.sem.template.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import wiremock.org.apache.hc.core5.util.TimeValue;
 
 public class AdminServiceTest {
 
@@ -246,5 +245,49 @@ public class AdminServiceTest {
 
         Optional<List<Order>> res = adminService.getDelivered();
         assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void getAllDeliveryTimesWorks() {
+        OffsetDateTime orderTime = OffsetDateTime.parse("2024-01-16T10:00:00+00:00");
+        OffsetDateTime actualDeliveryTime = OffsetDateTime.parse("2024-01-16T12:30:05+00:00");
+        Time timeValues = new Time().actualDeliveryTime(actualDeliveryTime).orderTime(orderTime);
+        Order timeOrder = new Order().id(5L).timeValues(timeValues);
+        Mockito.when(orderRepo.findAll()).thenReturn(new ArrayList<>(Collections.singletonList(timeOrder)));
+
+        var res = adminService.getAllDeliveryTimes();
+        List<String> expected = List.of("2 Hours, 30 Minutes, 5 Seconds");
+
+        assertTrue(res.isPresent());
+        assertEquals(expected, res.get());
+
+    }
+
+    @Test
+    void getAllDeliveryTimesEmpty() {
+        Mockito.when(orderRepo.findAll()).thenReturn(new ArrayList<>());
+
+        var res = adminService.getAllDeliveryTimes();
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getAllRatingsWorks() {
+        Order order = new Order().id(5L).ratingNumber(new BigDecimal("4.5"));
+        Mockito.when(orderRepo.findAll()).thenReturn(new ArrayList<>(Collections.singletonList(order)));
+
+        var res = adminService.getAllRatings();
+        List<BigDecimal> expected = List.of(new BigDecimal("4.5"));
+
+        assertTrue(res.isPresent());
+        assertEquals(expected, res.get());
+    }
+
+    @Test
+    void getAllRatingsEmpty() {
+        Mockito.when(orderRepo.findAll()).thenReturn(new ArrayList<>());
+
+        var res = adminService.getAllRatings();
+        assertTrue(res.isEmpty());
     }
 }

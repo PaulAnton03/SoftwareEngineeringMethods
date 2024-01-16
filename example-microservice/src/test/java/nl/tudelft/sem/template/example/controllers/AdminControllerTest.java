@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
@@ -222,6 +224,64 @@ class AdminControllerTest {
                 .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getExceptionForOrder(1L, 1L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getAllRatings200() {
+        List<BigDecimal> ratings = Arrays.asList(
+                new BigDecimal("4.5"),
+                new BigDecimal("3.2"),
+                new BigDecimal("5.0"),
+                new BigDecimal("2.8"),
+                new BigDecimal("4.0")
+        );
+        Mockito.when(adminService.getAllRatings()).thenReturn(Optional.of(ratings));
+        var res = controller.getAllRatings(0L);
+        assertEquals(new ResponseEntity<>(ratings, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getAllRatings404() {
+        Mockito.when(adminService.getAllRatings()).thenReturn(Optional.empty());
+
+        var res = controller.getAllRatings(0L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getAllOrders403() {
+        Mockito.when(authorizationService.authorizeAdminOnly(0L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getAllRatings(0L);
+        assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
+    }
+
+    @Test
+    void getAllDeliveryTimes200() {
+        List<String> strings = Arrays.asList("4.5", "3.2", "5.0", "2.8", "4.0");
+
+        Mockito.when(adminService.getAllDeliveryTimes()).thenReturn(Optional.of(strings));
+
+        var res = controller.getAllDeliveryTimes(0L);
+        assertEquals(new ResponseEntity<>(strings, HttpStatus.OK), res);
+    }
+
+    @Test
+    void getAllDeliveryTimes404() {
+        Mockito.when(adminService.getAllDeliveryTimes()).thenReturn(Optional.empty());
+
+        var res = controller.getAllDeliveryTimes(0L);
+        assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
+    }
+
+    @Test
+    void getAllDeliveryTimes403() {
+        Mockito.when(authorizationService.authorizeAdminOnly(0L))
+                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+
+        var res = controller.getAllDeliveryTimes(0L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
     }
 }
