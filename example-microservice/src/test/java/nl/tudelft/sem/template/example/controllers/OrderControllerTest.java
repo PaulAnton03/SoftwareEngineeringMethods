@@ -447,7 +447,7 @@ class OrderControllerTest {
         Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
             .thenReturn(Optional.empty());
         Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.of("03:30:00"));
-        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+        var ret = controller.setPreparationTime(1L, 11L, "03:30:00");
 
         assertEquals(new ResponseEntity<>(HttpStatus.OK), ret);
     }
@@ -457,7 +457,7 @@ class OrderControllerTest {
         Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
         Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.of("03:30:00"));
-        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+        var ret = controller.setPreparationTime(1L, 11L, "03:30:00");
 
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), ret);
     }
@@ -467,7 +467,7 @@ class OrderControllerTest {
         Mockito.when(authorizationService.checkIfUserIsAuthorized(1L, "setDeliverTime", 11L))
             .thenReturn(Optional.empty());
         Mockito.when(orderService.updatePrepTime(11L, "03:30:00")).thenReturn(Optional.empty());
-        var ret = controller.setDeliverTime(1L, 11L, "03:30:00");
+        var ret = controller.setPreparationTime(1L, 11L, "03:30:00");
 
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), ret);
     }
