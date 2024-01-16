@@ -212,13 +212,16 @@ public class AdminService {
             List<Order> courierOrders = orderRepo.findByCourierIdAndStatus(courier, Order.StatusEnum.DELIVERED);
 
             double value = 0.0;
+            int size = courierOrders.size();
 
             for(Order o : courierOrders) {
                 value += Duration.between(o.getTimeValues().getActualDeliveryTime(),
                         o.getTimeValues().getExpectedDeliveryTime()).getSeconds();
             }
 
-            res.put(courier, value);
+            double result = value/size;
+
+            res.put(courier, result);
         }
 
         return Optional.of(res);
