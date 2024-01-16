@@ -106,18 +106,4 @@ public class CourierServiceTest {
         assertFalse(res);
     }
 
-    @Test
-    void getCourierSuccess() {
-        Mockito.when(courierRepo.findById(1L)).thenReturn(Optional.of(courier1));
-        Optional<Courier> res = courierService.getCourier(1L);
-        assertFalse(res.isEmpty());
-        assertEquals(res.get().getId(), courier1.getId());
-    }
-
-    @Test
-    void getCourierEmpty() {
-        Mockito.when(courierRepo.findById(1L)).thenReturn(Optional.empty());
-        Optional<Courier> res = courierService.getCourier(1L);
-        assertTrue(res.isEmpty());
-    }
 }

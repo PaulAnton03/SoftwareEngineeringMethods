@@ -25,7 +25,7 @@ public class CourierService {
      * @param bossId    the new bossId of the courier
      * @return the optional of updated courier object, empty if the courier was not found
      */
-    public Optional<Long> updateBossIdOfCourier(Long courierId, Long bossId) throws IllegalArgumentException{
+    public Optional<Long> updateBossIdOfCourier(Long courierId, Long bossId) {
         Optional<Courier> courier = courierRepo.findById(courierId);
 
         if (courier.isEmpty()) {
@@ -35,21 +35,8 @@ public class CourierService {
         Courier c = courier.get();
         c.setBossId(bossId);
 
-        try {
-            Courier saved = courierRepo.saveAndFlush(c);
-            return Optional.of(saved.getBossId());
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Gets courier by id
-     * @param courierId id of courier to get
-     * @return Optional of Courier
-     */
-    public Optional<Courier> getCourier(Long courierId) {
-        return courierRepo.findById(courierId);
+        Courier saved = courierRepo.saveAndFlush(c);
+        return Optional.of(saved.getBossId());
     }
 
     /**
@@ -68,13 +55,9 @@ public class CourierService {
      * @param courier the courier to add
      * @return an optional of the added courier (or empty optional)
      */
-    public Optional<Courier> makeCourier(Courier courier) throws IllegalArgumentException{
-        try {
-            Courier saved = courierRepo.saveAndFlush(courier);
-            return Optional.of(saved);
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
+    public Optional<Courier> makeCourier(Courier courier) {
+        Courier saved = courierRepo.saveAndFlush(courier);
+        return Optional.of(saved);
     }
 
     /**
@@ -83,14 +66,10 @@ public class CourierService {
      * @param courierId the id to create a courier with
      * @return an optional of the added courier (or empty optional)
      */
-    public Optional<Courier> makeCourierById(Long courierId) throws IllegalArgumentException{
+    public Optional<Courier> makeCourierById(Long courierId) {
         Courier courier = new Courier().id(courierId);
-        try {
-            Courier saved = courierRepo.saveAndFlush(courier);
-            return Optional.of(saved);
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
+        Courier saved = courierRepo.saveAndFlush(courier);
+        return Optional.of(saved);
     }
 
     /**

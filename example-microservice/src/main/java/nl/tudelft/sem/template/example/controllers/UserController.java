@@ -59,7 +59,7 @@ public class UserController implements UserApi {
             return auth.get();
         }
 
-        Optional<Courier> courier = courierService.getCourier(courierId);
+        Optional<Courier> courier = courierService.getCourierById(courierId);
         if (courier.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

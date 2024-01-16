@@ -225,7 +225,7 @@ public class UserControllerTest {
         Courier courier = new Courier().id(1L);
         Optional<Courier> proper = Optional.of(courier);
 
-        Mockito.when(courierService.getCourier(1L)).thenReturn(proper);
+        Mockito.when(courierService.getCourierById(1L)).thenReturn(proper);
         var res = controller.getCourier(1L, 2L);
         assertEquals(new ResponseEntity<>(courier, HttpStatus.OK), res);
     }
@@ -298,7 +298,7 @@ public class UserControllerTest {
 
     @Test
     void getCourier404() {
-        Mockito.when(courierService.getCourier(1L)).thenReturn(Optional.empty());
+        Mockito.when(courierService.getCourierById(1L)).thenReturn(Optional.empty());
         var res = controller.getCourier(1L, 2L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }

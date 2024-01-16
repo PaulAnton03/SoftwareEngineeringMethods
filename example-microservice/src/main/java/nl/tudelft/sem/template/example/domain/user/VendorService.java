@@ -22,13 +22,9 @@ public class VendorService {
      * @param vendor the vendor to add
      * @return an optional of the added vendor (or empty optional)
      */
-    public Optional<Vendor> makeVendor(Vendor vendor) throws IllegalArgumentException {
-        try {
-            Vendor saved = vendorRepo.saveAndFlush(vendor);
-            return Optional.of(saved);
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
+    public Optional<Vendor> makeVendor(Vendor vendor) {
+        Vendor saved = vendorRepo.saveAndFlush(vendor);
+        return Optional.of(saved);
     }
 
     /**
@@ -37,14 +33,10 @@ public class VendorService {
      * @param vendorId the id to create a vendor with
      * @return an optional of the added vendor (or empty optional)
      */
-    public Optional<Vendor> makeVendorById(Long vendorId) throws IllegalArgumentException {
+    public Optional<Vendor> makeVendorById(Long vendorId) {
         Vendor vendor = new Vendor().id(vendorId);
-        try {
-            Vendor saved = vendorRepo.saveAndFlush(vendor);
-            return Optional.of(saved);
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
+        Vendor saved = vendorRepo.saveAndFlush(vendor);
+        return Optional.of(saved);
     }
 
     /**
@@ -78,7 +70,7 @@ public class VendorService {
      * @param body the new radius
      * @return Optional of Double - new radius
      */
-    public Optional<Double> updateRadiusOfVendor(Long id, Double body) throws IllegalArgumentException{
+    public Optional<Double> updateRadiusOfVendor(Long id, Double body) {
         Optional<Vendor> vendor = vendorRepo.findById(id);
 
         if (vendor.isEmpty()) {
@@ -87,12 +79,8 @@ public class VendorService {
 
         vendor.get().setRadius(body);
 
-        try {
-            Vendor saved = vendorRepo.saveAndFlush(vendor.get());
-            return Optional.of(saved.getRadius());
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
+        Vendor saved = vendorRepo.saveAndFlush(vendor.get());
+        return Optional.of(saved.getRadius());
     }
 
     /**
