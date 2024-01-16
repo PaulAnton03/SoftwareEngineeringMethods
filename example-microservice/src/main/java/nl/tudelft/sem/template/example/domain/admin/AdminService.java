@@ -1,20 +1,22 @@
 package nl.tudelft.sem.template.example.domain.admin;
 
+import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import java.util.*;
 
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
 
 @Service
 public class AdminService {
@@ -225,5 +227,34 @@ public class AdminService {
         }
 
         return Optional.of(res);
+    }
+
+    public Optional<List<String>> getAllDeliveryTimes(){
+        List<Order> orders = orderRepo.findAll();
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<String> collect = orders.stream()
+                .map(order -> Duration.between(order.getTimeValues().getOrderTime(),
+                        order.getTimeValues().getActualDeliveryTime()))
+                .map(order -> String.format("%d Hours, %d Minutes, %d Seconds",
+                        order.toHours(), order.minusHours(order.toHours()).toMinutes(),
+                        order.minusMinutes(order.minusHours(order.toHours()).toMinutes() + 60 * order.toHours())
+                                .toSeconds()))
+                .collect(Collectors.toList());
+        return Optional.of(collect);
+    }
+
+    public Optional<List<BigDecimal>> getAllRatings(){
+        List<Order> orders = orderRepo.findAll();
+
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<BigDecimal> collect = orders.stream()
+                .map(Order::getRatingNumber).collect(Collectors.toList());
+        return Optional.of(collect);
     }
 }

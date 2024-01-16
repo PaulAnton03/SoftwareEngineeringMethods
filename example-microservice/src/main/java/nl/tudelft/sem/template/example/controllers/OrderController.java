@@ -10,7 +10,7 @@ import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.GeneralOrdersStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.NextOrderStrategy;
 import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
-import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.CourierService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Location;
@@ -37,17 +37,17 @@ public class OrderController implements OrderApi {
     private final AuthorizationService authorizationService;
     private final OrderRepository orderRepository;
     private final VendorRepository vendorRepository;
-    private final UserService userService;
+    private final CourierService courierService;
     @Getter
     @Setter
     private NextOrderStrategy strategy;
 
     @Autowired
-    public OrderController(OrderService orderService, UserService userService,
+    public OrderController(OrderService orderService, CourierService courierService,
                            AuthorizationService authorizationService, OrderRepository orderRepository,
                            VendorRepository vendorRepository) {
         this.orderService = orderService;
-        this.userService = userService;
+        this.courierService = courierService;
         this.authorizationService = authorizationService;
         this.orderRepository = orderRepository;
         this.vendorRepository = vendorRepository;
@@ -71,7 +71,7 @@ public class OrderController implements OrderApi {
             @PathVariable("vendorId") Long vendorId,
             @RequestParam(value = "authorization", required = true) Long authorization) {
 
-        Optional<Courier> courier = userService.getCourierById(authorization);
+        Optional<Courier> courier = courierService.getCourierById(authorization);
 
         // extra check outside of authorization added to be able to get the vendor id
         if (courier.isEmpty()) {
@@ -422,7 +422,7 @@ public class OrderController implements OrderApi {
             return auth.get();
         }
 
-        Optional<Courier> c = userService.getCourierById(courierId);
+        Optional<Courier> c = courierService.getCourierById(courierId);
         if (c.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

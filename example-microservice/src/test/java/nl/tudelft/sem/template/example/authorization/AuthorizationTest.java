@@ -16,7 +16,7 @@ import java.util.function.BiFunction;
 import nl.tudelft.sem.template.example.controllers.OrderController;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
-import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.CourierService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
@@ -42,7 +42,7 @@ public class AuthorizationTest {
     private OrderRepository orderRepository;
     private VendorRepository vendorRepository;
     private AuthorizationService authorizationService;
-    private UserService userService;
+    private CourierService courierService;
     private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
 
     private DbUtils dbUtils;
@@ -57,8 +57,8 @@ public class AuthorizationTest {
         validationMethods = Mockito.mock(HashMap.class);
         Mockito.when(validationMethods.get(anyString())).thenReturn((a, b) -> true);
         authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
-        userService = Mockito.mock(UserService.class);
-        controller = new OrderController(orderService, userService, authorizationService, orderRepository, vendorRepository);
+        courierService = Mockito.mock(CourierService.class);
+        controller = new OrderController(orderService, courierService, authorizationService, orderRepository, vendorRepository);
     }
 
     @Test

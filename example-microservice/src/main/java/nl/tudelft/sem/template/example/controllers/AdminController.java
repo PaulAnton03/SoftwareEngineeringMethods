@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -268,5 +269,57 @@ public class AdminController implements AdminApi {
         }
 
         return new ResponseEntity(res, HttpStatus.OK);
+    }
+
+    /**
+     * GET /admin/analytics/delivery-times : Retrieve a list of all delivery times
+     * Return delivery times of all of the orders. The difference in time between ETA and actual time arrival.
+     *
+     * @param authorization the userId to check if they have the rights to make this request, only admin is allowed. (required)
+     * @return Successful response, delivery times received (status code 200)
+     * or Unsuccessful, delivery times cannot be retrieved because of a bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve delivery times (status code 403)
+     * or Unsuccessful, delivery times were not found (status code 404)
+     */
+    @Override
+    @GetMapping("/analytics/delivery-times")
+    public ResponseEntity<List<String>> getAllDeliveryTimes(
+            @RequestParam(name = "authorization") Long authorization) {
+
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if(doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<List<String>> deliveryTimes = adminService.getAllDeliveryTimes();
+
+        return deliveryTimes.map(strings -> new ResponseEntity<>(strings, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    /**
+     * GET /admin/analytics/all-ratings : Retrieve a list of all ratings
+     * Return rating of all the orders.
+     *
+     * @param authorization the userId to check if they have the rights to make this request, only admin is allowed. (required)
+     * @return Successful response, ratings received (status code 200)
+     * or Unsuccessful, ratings cannot be retrieved because of a bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve ratings (status code 403)
+     * or Unsuccessful, ratings were not found (status code 404)
+     */
+    @Override
+    @GetMapping("/analytics/all-ratings")
+    public ResponseEntity<List<BigDecimal>> getAllRatings(
+            @RequestParam(name = "authorization") Long authorization) {
+
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if(doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<List<BigDecimal>> ratingsList = adminService.getAllRatings();
+
+        return ratingsList.map(ratings -> new ResponseEntity<>(ratings, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
