@@ -193,10 +193,10 @@ class AdminControllerTest {
     @Test
     void getCourierEfficienciesWorks200() {
         Mockito.when(adminService.getCouriersEfficiencies()).thenReturn(
-                Optional.of(Map.of(22L, 60.0D, 23L, 120.0D)));
+                Optional.of(Map.of("22", 60.0D, "23", 120.0D)));
 
         var res = controller.getCourierEfficiencies(1L);
-        assertEquals(new ResponseEntity<>(Map.of(22L, 60.0D, 23L, 120.0D), HttpStatus.OK), res);
+        assertEquals(new ResponseEntity<>(Map.of("22", 60.0D, "23", 120.0D), HttpStatus.OK), res);
     }
 
     @Test

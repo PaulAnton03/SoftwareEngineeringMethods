@@ -237,7 +237,7 @@ public class AdminController implements AdminApi {
      */
     @Override
     @GetMapping("/analytics/courier-efficiency")
-    public ResponseEntity getCourierEfficiencies(
+    public ResponseEntity<Map<String, Double>> getCourierEfficiencies(
             @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
@@ -245,13 +245,11 @@ public class AdminController implements AdminApi {
             return auth.get();
         }
 
-        Optional<Map<Long, Double>> res = adminService.getCouriersEfficiencies();
+        Optional<Map<String, Double>> res = adminService.getCouriersEfficiencies();
 
-        if (res.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return res.map(stringDoubleMap -> new ResponseEntity<>(stringDoubleMap, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
-        return new ResponseEntity<>(res.get(), HttpStatus.OK);
     }
 
     /**
