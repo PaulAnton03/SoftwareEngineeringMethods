@@ -33,11 +33,11 @@ public class Authorization extends Handler {
     @Override
     public Optional<ResponseEntity> check(Long userId, String methodName, Long other) {
         Authorization.UserType actualUserType = getUserType(userId);
-        if (actualUserType == Authorization.UserType.NAN) {
-            return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
-        }
         if (Objects.equals(userId, ADMIN_ID)) {
             return Optional.empty();
+        }
+        if (actualUserType == Authorization.UserType.NAN) {
+            return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
         }
         if (!permissions.get(methodName).contains(actualUserType)) {
             return Optional.of(ResponseEntity.status(403).body("User with id " + userId + " does not have access rights"));
