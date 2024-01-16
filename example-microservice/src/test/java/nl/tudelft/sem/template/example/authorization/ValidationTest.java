@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 import nl.tudelft.sem.template.example.controllers.OrderController;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
-import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.CourierService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
@@ -39,7 +39,7 @@ public class ValidationTest {
 
     private UserExternalService userExternalService = new UserExternalService();
 
-    private UserService userService;
+    private CourierService courierService;
 
     private AuthorizationService authorizationService;
     private DbUtils dbUtils;
@@ -66,10 +66,10 @@ public class ValidationTest {
             )
         );
         authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
-        userService = Mockito.mock(UserService.class);
+        courierService = Mockito.mock(CourierService.class);
         orderRepository = Mockito.mock(OrderRepository.class);
         vendorRepository = Mockito.mock(VendorRepository.class);
-        controller = new OrderController(orderService, userService, authorizationService, orderRepository, vendorRepository);
+        controller = new OrderController(orderService, courierService, authorizationService, orderRepository, vendorRepository);
     }
 
     @Test
