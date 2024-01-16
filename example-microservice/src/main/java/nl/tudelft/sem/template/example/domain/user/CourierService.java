@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.domain.user;
 
 import nl.tudelft.sem.template.model.Courier;
+import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class CourierService {
      * @param bossId    the new bossId of the courier
      * @return the optional of updated courier object, empty if the courier was not found
      */
-    public Optional<Long> updateBossIdOfCourier(Long courierId, Long bossId) {
+    public Optional<Long> updateBossIdOfCourier(Long courierId, Long bossId) throws IllegalArgumentException{
         Optional<Courier> courier = courierRepo.findById(courierId);
 
         if (courier.isEmpty()) {
@@ -34,7 +35,12 @@ public class CourierService {
         Courier c = courier.get();
         c.setBossId(bossId);
 
-        return Optional.of(courierRepo.saveAndFlush(c).getBossId());
+        try {
+            Courier saved = courierRepo.saveAndFlush(c);
+            return Optional.of(saved.getBossId());
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -62,9 +68,13 @@ public class CourierService {
      * @param courier the courier to add
      * @return an optional of the added courier (or empty optional)
      */
-    public Optional<Courier> makeCourier(Courier courier) {
-        Courier saved = courierRepo.saveAndFlush(courier);
-        return Optional.of(saved);
+    public Optional<Courier> makeCourier(Courier courier) throws IllegalArgumentException{
+        try {
+            Courier saved = courierRepo.saveAndFlush(courier);
+            return Optional.of(saved);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -73,11 +83,15 @@ public class CourierService {
      * @param courierId the id to create a courier with
      * @return an optional of the added courier (or empty optional)
      */
-    public Optional<Courier> makeCourierById(Long courierId) {
-            Courier courier = new Courier().id(courierId);
+    public Optional<Courier> makeCourierById(Long courierId) throws IllegalArgumentException{
+        Courier courier = new Courier().id(courierId);
+        try {
             Courier saved = courierRepo.saveAndFlush(courier);
             return Optional.of(saved);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
         }
+    }
 
     /**
      * Check if id of courier exists

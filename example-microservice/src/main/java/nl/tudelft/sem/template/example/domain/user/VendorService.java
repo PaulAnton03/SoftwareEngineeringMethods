@@ -22,9 +22,13 @@ public class VendorService {
      * @param vendor the vendor to add
      * @return an optional of the added vendor (or empty optional)
      */
-    public Optional<Vendor> makeVendor(Vendor vendor) {
-        Vendor saved = vendorRepo.saveAndFlush(vendor);
-        return Optional.of(saved);
+    public Optional<Vendor> makeVendor(Vendor vendor) throws IllegalArgumentException {
+        try {
+            Vendor saved = vendorRepo.saveAndFlush(vendor);
+            return Optional.of(saved);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -33,10 +37,14 @@ public class VendorService {
      * @param vendorId the id to create a vendor with
      * @return an optional of the added vendor (or empty optional)
      */
-    public Optional<Vendor> makeVendorById(Long vendorId) {
+    public Optional<Vendor> makeVendorById(Long vendorId) throws IllegalArgumentException {
         Vendor vendor = new Vendor().id(vendorId);
-        Vendor saved = vendorRepo.saveAndFlush(vendor);
-        return Optional.of(saved);
+        try {
+            Vendor saved = vendorRepo.saveAndFlush(vendor);
+            return Optional.of(saved);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -70,7 +78,7 @@ public class VendorService {
      * @param body the new radius
      * @return Optional of Double - new radius
      */
-    public Optional<Double> updateRadiusOfVendor(Long id, Double body) {
+    public Optional<Double> updateRadiusOfVendor(Long id, Double body) throws IllegalArgumentException{
         Optional<Vendor> vendor = vendorRepo.findById(id);
 
         if (vendor.isEmpty()) {
@@ -79,7 +87,12 @@ public class VendorService {
 
         vendor.get().setRadius(body);
 
-        return Optional.of(vendorRepo.saveAndFlush(vendor.get()).getRadius());
+        try {
+            Vendor saved = vendorRepo.saveAndFlush(vendor.get());
+            return Optional.of(saved.getRadius());
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     /**
