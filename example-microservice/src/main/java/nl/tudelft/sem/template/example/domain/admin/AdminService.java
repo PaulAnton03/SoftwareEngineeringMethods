@@ -1,8 +1,12 @@
 package nl.tudelft.sem.template.example.domain.admin;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
@@ -179,5 +183,34 @@ public class AdminService {
             return false;
         }
         return exceptionRepo.existsById(exception.getId());
+    }
+
+    public Optional<List<String>> getAllDeliveryTimes(){
+        List<Order> orders = orderRepo.findAll();
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<String> collect = orders.stream()
+                .map(order -> Duration.between(order.getTimeValues().getOrderTime(),
+                        order.getTimeValues().getActualDeliveryTime()))
+                .map(order -> String.format("%d Hours, %d Minutes, %d Seconds",
+                        order.toHours(), order.minusHours(order.toHours()).toMinutes(),
+                        order.minusMinutes(order.minusHours(order.toHours()).toMinutes() + 60 * order.toHours())
+                                .toSeconds()))
+                .collect(Collectors.toList());
+        return Optional.of(collect);
+    }
+
+    public Optional<List<BigDecimal>> getAllRatings(){
+        List<Order> orders = orderRepo.findAll();
+
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<BigDecimal> collect = orders.stream()
+                .map(Order::getRatingNumber).collect(Collectors.toList());
+        return Optional.of(collect);
     }
 }
