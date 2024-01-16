@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import nl.tudelft.sem.template.api.AdminApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
@@ -233,6 +234,35 @@ public class AdminController implements AdminApi {
         }
 
         Optional<List<Order>> res = adminService.getDelivered();
+
+        if(res.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity(res, HttpStatus.OK);
+    }
+
+    /**
+     * GET /admin/analytics/courier-efficiency : Retrieve the efficiencies of all couriers
+     * Return the couriers efficiencies
+     *
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @return Successful response, courier efficiencies received by admin (status code 200)
+     * or Unsuccessful, courier efficiencies cannot be retrieved because of a bad request (status code 400)
+     * or Unsuccessful, entity does not have access rights to retrieve courier efficiencies (status code 403)
+     * or Unsuccessful, no courier efficiencies were found (status code 404)
+     */
+    @Override
+    @GetMapping("/analytics/courier-efficiency")
+    public ResponseEntity getCourierEfficiencies(
+            @RequestParam(name = "authorization") Long authorization
+    ) {
+        var auth = authorizationService.authorizeAdminOnly(authorization);
+        if(doesNotHaveAuthority(auth)) {
+            return auth.get();
+        }
+
+        Optional<Map<Long, Double>> res = adminService.getCouriersEfficiencies();
 
         if(res.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

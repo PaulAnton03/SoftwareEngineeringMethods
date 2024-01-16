@@ -16,4 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     boolean existsByIdAndCourierId(Long orderId, Long courierId);
 
+    List<Order> findByCourierIdAndStatus(Long courierId, Order.StatusEnum status);
+
 }

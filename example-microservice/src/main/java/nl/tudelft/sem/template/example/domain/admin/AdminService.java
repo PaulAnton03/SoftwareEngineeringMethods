@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import java.util.*;
+
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
@@ -183,6 +185,48 @@ public class AdminService {
             return false;
         }
         return exceptionRepo.existsById(exception.getId());
+    }
+
+    /**
+     * Get all courier efficiencies
+     * The way the method is designed, the couriers that had no orders delivered will
+     * not have an efficiency rating.
+     * As for the efficiency rating it is based on the difference between the expected time
+     * of delivery and the actual time of delivery, thus penalizing a late delivery and
+     * rewarding an early one
+     *
+     * @return map of couriers and their efficiencies
+     */
+    public Optional<Map<Long, Double>> getCouriersEfficiencies() {
+        List<Order> orders = orderRepo.findByStatus(Order.StatusEnum.DELIVERED);
+
+        if(orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Set<Long> couriers = orders.stream()
+                .map(Order::getCourierId)
+                .collect(Collectors.toSet());
+
+        Map<Long, Double> res = new HashMap<>();
+
+        for(Long courier : couriers) {
+            List<Order> courierOrders = orderRepo.findByCourierIdAndStatus(courier, Order.StatusEnum.DELIVERED);
+
+            double value = 0.0;
+            int size = courierOrders.size();
+
+            for(Order o : courierOrders) {
+                value += Duration.between(o.getTimeValues().getActualDeliveryTime(),
+                        o.getTimeValues().getExpectedDeliveryTime()).getSeconds();
+            }
+
+            double result = value/size;
+
+            res.put(courier, result);
+        }
+
+        return Optional.of(res);
     }
 
     public Optional<List<String>> getAllDeliveryTimes(){
