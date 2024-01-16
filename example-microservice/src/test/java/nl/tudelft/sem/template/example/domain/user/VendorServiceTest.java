@@ -92,4 +92,12 @@ public class VendorServiceTest {
         var res = vendorService.updateRadiusOfVendor(vendor1.getId(), 5.0);
         assertEquals(Optional.empty(), res);
     }
+
+    @Test
+    void getVendorWorks() {
+        Mockito.when(vendorRepo.findById(2L)).thenReturn(Optional.ofNullable(vendor1));
+        var res = vendorService.getVendor(2L);
+        assertTrue(res.isPresent());
+        assertEquals(vendor1, res.get());
+    }
 }

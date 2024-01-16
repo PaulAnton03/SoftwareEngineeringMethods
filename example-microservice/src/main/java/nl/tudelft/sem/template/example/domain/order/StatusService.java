@@ -161,8 +161,8 @@ public class StatusService {
 
         order.setStatus(Order.StatusEnum.DELIVERED);
         order.setTimeValues(newTimeValues);
-
-        return Optional.of(orderRepo.saveAndFlush(order));
+        orderRepo.saveAndFlush(order);
+        return Optional.of(order);
     }
 
     /**
