@@ -2,9 +2,11 @@ package nl.tudelft.sem.template.example.domain.user;
 
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class VendorService {
 
     private final VendorRepository vendorRepo;

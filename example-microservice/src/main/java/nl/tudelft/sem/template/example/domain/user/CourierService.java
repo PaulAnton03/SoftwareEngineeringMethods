@@ -2,9 +2,11 @@ package nl.tudelft.sem.template.example.domain.user;
 
 import nl.tudelft.sem.template.model.Courier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class CourierService {
 
     private final CourierRepository courierRepo;
@@ -61,12 +63,8 @@ public class CourierService {
      * @return an optional of the added courier (or empty optional)
      */
     public Optional<Courier> makeCourier(Courier courier) {
-        try {
-            Courier saved = courierRepo.saveAndFlush(courier);
-            return Optional.of(saved);
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
+        Courier saved = courierRepo.saveAndFlush(courier);
+        return Optional.of(saved);
     }
 
     /**

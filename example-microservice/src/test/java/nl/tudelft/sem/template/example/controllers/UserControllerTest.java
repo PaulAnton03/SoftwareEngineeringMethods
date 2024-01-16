@@ -6,7 +6,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
-import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.CourierService;
+import nl.tudelft.sem.template.example.domain.user.VendorService;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,20 +19,22 @@ import org.springframework.http.ResponseEntity;
 
 public class UserControllerTest {
 
-    private UserService userService;
+    private VendorService vendorService;
+    private CourierService courierService;
     private AuthorizationService authorizationService;
     private UserController controller;
 
     @BeforeEach
     void setUp() {
-        this.userService = Mockito.mock(UserService.class);
+        this.vendorService = Mockito.mock(VendorService.class);
+        this.courierService = Mockito.mock(CourierService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
-        this.controller = new UserController(userService, authorizationService);
+        this.controller = new UserController(vendorService, courierService, authorizationService);
     }
 
     @Test
     void updateBossOfCourier200() {
-        Mockito.when(userService.updateBossIdOfCourier(100L, 6L)).thenReturn(
+        Mockito.when(courierService.updateBossIdOfCourier(100L, 6L)).thenReturn(
             Optional.of(6L));
 
         var res = controller.updateBossOfCourier(100L, 6L, 1L);
@@ -40,7 +43,7 @@ public class UserControllerTest {
 
     @Test
     void updateBossOfCourier404() {
-        Mockito.when(userService.updateBossIdOfCourier(100L, 6L)).thenReturn(
+        Mockito.when(courierService.updateBossIdOfCourier(100L, 6L)).thenReturn(
             Optional.empty());
 
         var res = controller.updateBossOfCourier(100L, 6L, 1L);
@@ -68,7 +71,7 @@ public class UserControllerTest {
         Vendor vendor = new Vendor().id(1L);
         Optional<Vendor> proper = Optional.of(vendor);
 
-        Mockito.when(userService.makeVendorById(anyLong())).thenReturn(proper);
+        Mockito.when(vendorService.makeVendorById(anyLong())).thenReturn(proper);
 
         var res = controller.makeVendorById(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
@@ -76,7 +79,7 @@ public class UserControllerTest {
 
     @Test
     void makeVendorById400() {
-        Mockito.when(userService.existsVendor(anyLong())).thenReturn(true);
+        Mockito.when(vendorService.existsVendor(anyLong())).thenReturn(true);
 
         var res = controller.makeVendorById(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
@@ -92,7 +95,7 @@ public class UserControllerTest {
 
     @Test
     void makeVendorById404() {
-        Mockito.when(userService.makeVendorById(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(vendorService.makeVendorById(anyLong())).thenReturn(Optional.empty());
 
         var res = controller.makeVendorById(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
@@ -103,14 +106,14 @@ public class UserControllerTest {
         Vendor vendor = new Vendor().id(1L);
         Optional<Vendor> proper = Optional.of(vendor);
 
-        Mockito.when(userService.makeVendor(any())).thenReturn(proper);
+        Mockito.when(vendorService.makeVendor(any())).thenReturn(proper);
         var res = controller.makeVendor(2L, vendor);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
     @Test
     void makeVendor400() {
-        Mockito.when(userService.existsVendor(anyLong())).thenReturn(true);
+        Mockito.when(vendorService.existsVendor(anyLong())).thenReturn(true);
 
         var res = controller.makeVendor(2L, new Vendor().id(3L));
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
@@ -126,7 +129,7 @@ public class UserControllerTest {
 
     @Test
     void makeVendor404() {
-        Mockito.when(userService.makeVendor(any())).thenReturn(Optional.empty());
+        Mockito.when(vendorService.makeVendor(any())).thenReturn(Optional.empty());
         var res = controller.makeVendor(2L, new Vendor().id(1L));
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
@@ -136,7 +139,7 @@ public class UserControllerTest {
         Courier courier = new Courier().id(1L);
         Optional<Courier> proper = Optional.of(courier);
 
-        Mockito.when(userService.makeCourierById(anyLong())).thenReturn(proper);
+        Mockito.when(courierService.makeCourierById(anyLong())).thenReturn(proper);
 
         var res = controller.makeCourierById(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
@@ -144,7 +147,7 @@ public class UserControllerTest {
 
     @Test
     void makeCourierById400() {
-        Mockito.when(userService.existsCourier(anyLong())).thenReturn(true);
+        Mockito.when(courierService.existsCourier(anyLong())).thenReturn(true);
         var res = controller.makeCourierById(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
     }
@@ -159,7 +162,7 @@ public class UserControllerTest {
 
     @Test
     void makeCourierById404() {
-        Mockito.when(userService.makeCourierById(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(courierService.makeCourierById(anyLong())).thenReturn(Optional.empty());
 
         var res = controller.makeCourierById(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
@@ -170,14 +173,14 @@ public class UserControllerTest {
         Courier courier = new Courier().id(1L);
         Optional<Courier> proper = Optional.of(courier);
 
-        Mockito.when(userService.makeCourier(any())).thenReturn(proper);
+        Mockito.when(courierService.makeCourier(any())).thenReturn(proper);
         var res = controller.makeCourier(2L, courier);
         assertEquals(new ResponseEntity<>(HttpStatus.OK), res);
     }
 
     @Test
     void makeCourier400() {
-        Mockito.when(userService.existsCourier(anyLong())).thenReturn(true);
+        Mockito.when(courierService.existsCourier(anyLong())).thenReturn(true);
 
         var res = controller.makeCourier(2L, new Courier().id(3L));
         assertEquals(new ResponseEntity<>(HttpStatus.BAD_REQUEST), res);
@@ -193,7 +196,7 @@ public class UserControllerTest {
 
     @Test
     void makeCourier404() {
-        Mockito.when(userService.makeCourier(any())).thenReturn(Optional.empty());
+        Mockito.when(courierService.makeCourier(any())).thenReturn(Optional.empty());
         var res = controller.makeCourier(2L, new Courier().id(1L));
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }
@@ -201,7 +204,7 @@ public class UserControllerTest {
     @Test
     void getSpecificRadiusWorks200() {
         Vendor vendor = new Vendor().id(1L).radius(3.0);
-        Mockito.when(userService.getRadiusOfVendor(vendor.getId()))
+        Mockito.when(vendorService.getRadiusOfVendor(vendor.getId()))
             .thenReturn(Optional.of(vendor.getRadius()));
 
         var res = controller.getSpecificRadius(1L);
@@ -222,7 +225,7 @@ public class UserControllerTest {
         Courier courier = new Courier().id(1L);
         Optional<Courier> proper = Optional.of(courier);
 
-        Mockito.when(userService.getCourier(1L)).thenReturn(proper);
+        Mockito.when(courierService.getCourier(1L)).thenReturn(proper);
         var res = controller.getCourier(1L, 2L);
         assertEquals(new ResponseEntity<>(courier, HttpStatus.OK), res);
     }
@@ -239,7 +242,7 @@ public class UserControllerTest {
     void getSpecificRadius404() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
             .thenReturn(Optional.empty());
-        Mockito.when(userService.getRadiusOfVendor(anyLong()))
+        Mockito.when(vendorService.getRadiusOfVendor(anyLong()))
             .thenReturn(Optional.empty());
 
         var res = controller.getSpecificRadius(1L);
@@ -251,8 +254,8 @@ public class UserControllerTest {
         Vendor vendor = new Vendor().id(1L).radius(3.0);
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
             .thenReturn(Optional.empty());
-        Mockito.when(userService.getVendor(vendor.getId())).thenReturn(Optional.of(vendor));
-        Mockito.when(userService.updateRadiusOfVendor(vendor.getId(), 5.0))
+        Mockito.when(vendorService.getVendor(vendor.getId())).thenReturn(Optional.of(vendor));
+        Mockito.when(vendorService.updateRadiusOfVendor(vendor.getId(), 5.0))
             .thenReturn(Optional.of(5.0));
 
         var res = controller.updateSpecificRadius(1L, 5.0);
@@ -264,8 +267,8 @@ public class UserControllerTest {
         Vendor vendor = new Vendor().id(1L).radius(3.0);
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
             .thenReturn(Optional.empty());
-        Mockito.when(userService.getVendor(vendor.getId())).thenReturn(Optional.of(vendor));
-        Mockito.when(userService.updateRadiusOfVendor(vendor.getId(), 5.0))
+        Mockito.when(vendorService.getVendor(vendor.getId())).thenReturn(Optional.of(vendor));
+        Mockito.when(vendorService.updateRadiusOfVendor(vendor.getId(), 5.0))
             .thenReturn(Optional.empty());
 
         var res = controller.updateSpecificRadius(1L, 5.0);
@@ -277,7 +280,7 @@ public class UserControllerTest {
         Vendor vendor = new Vendor().id(1L).radius(3.0);
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
             .thenReturn(Optional.empty());
-        Mockito.when(userService.getVendor(vendor.getId())).thenReturn(Optional.empty());
+        Mockito.when(vendorService.getVendor(vendor.getId())).thenReturn(Optional.empty());
 
         var res = controller.updateSpecificRadius(1L, 5.0);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
@@ -295,7 +298,7 @@ public class UserControllerTest {
 
     @Test
     void getCourier404() {
-        Mockito.when(userService.getCourier(1L)).thenReturn(Optional.empty());
+        Mockito.when(courierService.getCourier(1L)).thenReturn(Optional.empty());
         var res = controller.getCourier(1L, 2L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }

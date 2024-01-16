@@ -6,7 +6,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 import nl.tudelft.sem.template.api.UserApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
-import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.CourierService;
+import nl.tudelft.sem.template.example.domain.user.VendorService;
 import nl.tudelft.sem.template.model.Courier;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.http.HttpStatus;
@@ -25,12 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController implements UserApi {
 
-    public UserService userService;
+    public VendorService vendorService;
+    public CourierService courierService;
 
     public AuthorizationService authorizationService;
 
-    public UserController(UserService userService, AuthorizationService authorizationService) {
-        this.userService = userService;
+    public UserController(VendorService vendorService, CourierService courierService, AuthorizationService authorizationService) {
+        this.vendorService = vendorService;
+        this.courierService = courierService;
         this.authorizationService = authorizationService;
     }
 
@@ -56,7 +59,7 @@ public class UserController implements UserApi {
             return auth.get();
         }
 
-        Optional<Courier> courier = userService.getCourier(courierId);
+        Optional<Courier> courier = courierService.getCourier(courierId);
         if (courier.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -85,7 +88,7 @@ public class UserController implements UserApi {
             return auth.get();
         }
 
-        Optional<Double> ratingReceived = userService.getRadiusOfVendor(authorization);
+        Optional<Double> ratingReceived = vendorService.getRadiusOfVendor(authorization);
 
         if (ratingReceived.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -114,11 +117,11 @@ public class UserController implements UserApi {
             return auth.get();
         }
 
-        if (userService.existsCourier(courier.getId())) {
+        if (courierService.existsCourier(courier.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Courier> saved = userService.makeCourier(courier);
+        Optional<Courier> saved = courierService.makeCourier(courier);
 
         if (saved.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -147,11 +150,11 @@ public class UserController implements UserApi {
             return auth.get();
         }
 
-        if (userService.existsCourier(courierId)) {
+        if (courierService.existsCourier(courierId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Courier> saved = userService.makeCourierById(courierId);
+        Optional<Courier> saved = courierService.makeCourierById(courierId);
 
         if (saved.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -184,7 +187,7 @@ public class UserController implements UserApi {
             return auth.get();
         }
 
-        Optional<Long> newBossId = userService.updateBossIdOfCourier(courierId, bossId);
+        Optional<Long> newBossId = courierService.updateBossIdOfCourier(courierId, bossId);
 
         if (newBossId.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -216,13 +219,13 @@ public class UserController implements UserApi {
             return auth.get();
         }
 
-        Optional<Vendor> vendor = userService.getVendor(authorization);
+        Optional<Vendor> vendor = vendorService.getVendor(authorization);
 
         if (vendor.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Optional<Double> newRadius = userService.updateRadiusOfVendor(authorization, body);
+        Optional<Double> newRadius = vendorService.updateRadiusOfVendor(authorization, body);
 
         if (newRadius.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -250,11 +253,11 @@ public class UserController implements UserApi {
             return auth.get();
         }
 
-        if (userService.existsVendor(vendor.getId())) {
+        if (vendorService.existsVendor(vendor.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Vendor> saved = userService.makeVendor(vendor);
+        Optional<Vendor> saved = vendorService.makeVendor(vendor);
 
         if (saved.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -282,11 +285,11 @@ public class UserController implements UserApi {
         }
 
 
-        if (userService.existsVendor(vendorId)) {
+        if (vendorService.existsVendor(vendorId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Vendor> saved = userService.makeVendorById(vendorId);
+        Optional<Vendor> saved = vendorService.makeVendorById(vendorId);
 
         if (saved.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
