@@ -14,6 +14,14 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
+import nl.tudelft.sem.template.example.domain.user.CourierRepository;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.model.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -24,8 +32,13 @@ class OrderServiceTest {
     private VendorRepository vendorRepo;
     private CourierRepository courierRepo;
     private Order order1;
+
+    private Order order2;
     private Vendor vendor1;
     private OffsetDateTime eta;
+
+    private Courier courier1;
+
     private OrderService os;
 
     @BeforeEach
@@ -36,9 +49,16 @@ class OrderServiceTest {
 
         this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
                 .ratingNumber(BigDecimal.valueOf(5L)).courierId(2L);
+        this.courierRepo = mock(CourierRepository.class);
+        this.order1 = new Order().id(1L).vendorId(2L).courierId(21L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+                .ratingNumber(BigDecimal.valueOf(5L));
+        this.order2 = new Order().id(1L).vendorId(2L).courierId(2L).deliveryDestination(new Location().latitude(22F).longitude(33F))
+                .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.eta = OffsetDateTime.of(2000, 1, 1,
                 1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
+        this.os = new OrderService(orderRepo, vendorRepo, courierRepo);
+        this.courier1 = new Courier().id(21L).currentLocation(new Location().latitude(11F).longitude(16F));
         this.os = new OrderService(orderRepo, vendorRepo, courierRepo);
     }
 
@@ -362,7 +382,7 @@ class OrderServiceTest {
     void getDistanceValid() {
         Courier courier1 = new Courier().currentLocation(new Location());
 
-        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
+        Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
         Mockito.when(courierRepo.findById(2L)).thenReturn(Optional.of(courier1));
 
         Optional<Float> res = os.getDistance(1L);
@@ -411,5 +431,135 @@ class OrderServiceTest {
         assertTrue(res.isEmpty());
     }
 
+
+
+    @Test
+    void getOrderLocationNoVendor() {
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getOrderLocationACCEPTED() {
+        order1.setStatus(Order.StatusEnum.ACCEPTED);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), new Location().latitude(22F).longitude(33F));
+    }
+
+    @Test
+    void getOrderLocationPREPARING() {
+        order1.setStatus(Order.StatusEnum.PREPARING);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), new Location().latitude(22F).longitude(33F));
+    }
+
+    @Test
+    void getOrderLocationDELIVERED() {
+        Location finalLocation = new Location().latitude(11F).longitude(22F);
+        order1.setStatus(Order.StatusEnum.DELIVERED);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), finalLocation);
+    }
+
+    @Test
+    void getOrderLocationGIVENTOCOURIER() {
+        order1.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+        Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), new Location().latitude(11F).longitude(16F));
+    }
+
+    @Test
+    void getOrderLocationINTRANSIT() {
+        order1.setStatus(Order.StatusEnum.IN_TRANSIT);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+        Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), new Location().latitude(11F).longitude(16F));
+    }
+
+    @Test
+    void getOrderLocationCourierButNoCourier() {
+        order1.setStatus(Order.StatusEnum.IN_TRANSIT);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+        Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getOrderLocationREJECTED() {
+        order1.setStatus(Order.StatusEnum.REJECTED);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getOrderLocationPENDING() {
+        order1.setStatus(Order.StatusEnum.PENDING);
+        Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
+
+        Optional<Location> res = os.getOrderLocation(order1);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void updateLocationNoCourier(){
+        Location newLocation = new Location().latitude(32F).longitude(23F);
+        Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+        Optional<Location> res = os.updateLocation(order1, newLocation);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void updateLocationGIVENTOCOURIER(){
+        order1.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
+        Location newLocation = new Location().latitude(32F).longitude(23F);
+        Courier c2 = new Courier().currentLocation(newLocation);
+
+        Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
+        Mockito.when(courierRepo.saveAndFlush(courier1)).thenReturn(c2);
+
+        Optional<Location> res = os.updateLocation(order1, newLocation);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), newLocation);
+    }
+
+    @Test
+    void updateLocationINTRANSIT(){
+        order1.setStatus(Order.StatusEnum.IN_TRANSIT);
+        Location newLocation = new Location().latitude(32F).longitude(23F);
+        Courier c2 = new Courier().currentLocation(newLocation);
+
+        Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
+        Mockito.when(courierRepo.saveAndFlush(courier1)).thenReturn(c2);
+
+        Optional<Location> res = os.updateLocation(order1, newLocation);
+        assertTrue(res.isPresent());
+        assertEquals(res.get(), newLocation);
+    }
+
+    @Test
+    void updateLocationOTHERSTATUS(){
+        order1.setStatus(Order.StatusEnum.PENDING);
+        Location newLocation = new Location().latitude(32F).longitude(23F);
+
+        Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
+
+        Optional<Location> res = os.updateLocation(order1, newLocation);
+        assertTrue(res.isEmpty());
+    }
 
 }

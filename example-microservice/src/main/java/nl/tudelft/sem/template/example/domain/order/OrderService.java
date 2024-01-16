@@ -17,8 +17,8 @@ public class OrderService {
 
     private final OrderRepository orderRepo;
     private final VendorRepository vendorRepo;
-    private final CourierRepository courierRepo;
     private final NavigationMock navigationMock;
+    private final CourierRepository courierRepo;
 
 
     @Autowired
@@ -291,5 +291,58 @@ public class OrderService {
         o.setCourierId(courierId);
 
         return Optional.of(orderRepo.saveAndFlush(o));
+    }
+
+    public Optional<Location> getOrderLocation(Order order){
+        Order.StatusEnum status = order.getStatus();
+
+        Optional<Vendor> v = vendorRepo.findById(order.getVendorId());
+        if(v.isEmpty()) {
+            return Optional.empty();
+        }
+        Location vLocation = v.get().getLocation();
+
+        Optional<Courier> c = courierRepo.findById(order.getCourierId());
+        Location cLocation = null;
+        if(c.isPresent()){
+            cLocation = c.get().getCurrentLocation();
+        }
+        switch(status){
+            case ACCEPTED, PREPARING -> {
+                return Optional.of(vLocation);
+            }
+            case GIVEN_TO_COURIER, IN_TRANSIT -> {
+                if(cLocation == null){
+                    return Optional.empty();
+                }
+                return Optional.of(cLocation);
+            }
+            case DELIVERED -> {
+                return Optional.of(order.getDeliveryDestination());
+            }
+            default -> {
+                return Optional.empty();
+            }
+        }
+    }
+
+    public Optional<Location> updateLocation(Order order, Location location){
+        Order.StatusEnum status = order.getStatus();
+
+        Optional<Courier> c = courierRepo.findById(order.getCourierId());
+        if(c.isEmpty()){
+            return Optional.empty();
+        }
+        Courier courier = c.get();
+        switch(status){
+            case GIVEN_TO_COURIER, IN_TRANSIT -> {
+                courier.setCurrentLocation(location);
+                courierRepo.saveAndFlush(courier);
+                return Optional.of(courier.getCurrentLocation());
+            }
+            default -> {
+                return Optional.empty();
+            }
+        }
     }
 }

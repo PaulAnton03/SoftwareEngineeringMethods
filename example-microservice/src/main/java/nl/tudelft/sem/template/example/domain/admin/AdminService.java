@@ -106,7 +106,7 @@ public class AdminService {
         Optional<DeliveryException> empty = validateException(deliveryException, orderId);
         // the order is not valid
         if (empty.isEmpty()) {
-            return empty;
+            return Optional.empty();
         }
 
         // can not add an exception if that order already has an exception
@@ -152,7 +152,7 @@ public class AdminService {
         Optional<DeliveryException> empty = validateException(deliveryException, orderId);
         // the order is not valid
         if (empty.isEmpty()) {
-            return empty;
+            return Optional.empty();
         }
         return Optional.of(exceptionRepo.saveAndFlush(deliveryException));
     }
