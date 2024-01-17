@@ -14,14 +14,6 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
-import nl.tudelft.sem.template.example.domain.user.CourierRepository;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.model.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -432,7 +424,6 @@ class OrderServiceTest {
     }
 
 
-
     @Test
     void getOrderLocationNoVendor() {
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.empty());
@@ -515,7 +506,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateLocationNoCourier(){
+    void updateLocationNoCourier() {
         Location newLocation = new Location().latitude(32F).longitude(23F);
         Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -524,7 +515,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateLocationGIVENTOCOURIER(){
+    void updateLocationGIVENTOCOURIER() {
         order1.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
         Location newLocation = new Location().latitude(32F).longitude(23F);
         Courier c2 = new Courier().currentLocation(newLocation);
@@ -538,7 +529,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateLocationINTRANSIT(){
+    void updateLocationINTRANSIT() {
         order1.setStatus(Order.StatusEnum.IN_TRANSIT);
         Location newLocation = new Location().latitude(32F).longitude(23F);
         Courier c2 = new Courier().currentLocation(newLocation);
@@ -552,7 +543,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateLocationOTHERSTATUS(){
+    void updateLocationOTHERSTATUS() {
         order1.setStatus(Order.StatusEnum.PENDING);
         Location newLocation = new Location().latitude(32F).longitude(23F);
 
