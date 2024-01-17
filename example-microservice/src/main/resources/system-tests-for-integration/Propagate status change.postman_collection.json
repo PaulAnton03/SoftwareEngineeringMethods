@@ -1,0 +1,257 @@
+{
+	"info": {
+		"_postman_id": "451485cd-8f92-4691-a383-0851f8a71b19",
+		"name": "Propagate status change",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26292672",
+		"_collection_link": "https://lunar-sunset-249803.postman.co/workspace/My-Workspace~b6c7bd7c-01f4-4b51-80db-cd34b4d4107d/collection/26292672-451485cd-8f92-4691-a383-0851f8a71b19?action=share&source=collection_link&creator=26292672"
+	},
+	"item": [
+		{
+			"name": "add the customer to users",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"James\",\n  \"email\": \"john@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4269/customer/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4269",
+					"path": [
+						"customer",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get type",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4269/user/1/type",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4269",
+					"path": [
+						"user",
+						"1",
+						"type"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add the vendor to users",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Jumbo\",\n  \"radius\": 1000,\n  \"openingHours\": {\n    \"opening\": \"07:30.00Z\",\n    \"closing\": \"22:00.00Z\"\n  },\n  \"location\": {\n    \"latitude\": 51.925298,\n    \"longitude\": 4.754099\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4269/vendor/request_account",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4269",
+					"path": [
+						"vendor",
+						"request_account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "make vendor in delivery",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "make the dishes in orders",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "userId",
+						"value": "2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"allergens\": [\n    \"nuts\",\n    \"apples\",\n    \"gluten\",\n    \"lactose\"\n  ],\n  \"description\": \"Homemade apple pie with delicious nuts and whipping cream.\",\n  \"ingredients\": [\n    \"nuts\",\n    \"apples\",\n    \"pie\",\n    \"whipping cream\"\n  ],\n  \"name\": \"Apple Pie\",\n  \"picture\": \"data:image/octet-stream;base64,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\",\n  \"price\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/dish/2/77",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"dish",
+						"2",
+						"77"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "make the order in orders",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"customerId\": 1,\n  \"vendorId\": 2,\n  \"dishes\": [\n    77\n  ],\n  \"dishRequirements\": [\n    \"no nuts\"\n  ],\n  \"deliveryDestination\": {\n    \"latitude\": 51.925298,\n    \"longitude\": 4.754099\n  },\n  \"price\": 25.5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "make order in delivery",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"status\": \"pending\",\n  \"id\": 1,\n  \"courierId\": 88,\n  \"vendorId\": 2,\n  \"deliveryDestination\": {\n    \"latitude\": 23.92488,\n    \"longitude\": 74.7099\n  },\n  \"timeValues\": {\n    \"prepTime\": \"01:30:00\",\n    \"expectedDeliveryTime\": \"2024-01-16T19:15:36.287Z\",\n    \"actualDeliveryTime\": \"2024-01-16T19:15:36.287Z\",\n    \"orderTime\": \"2024-01-16T19:15:36.287Z\"\n  },\n  \"ratingNumber\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/order/1?authorization=9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"order",
+						"1"
+					],
+					"query": [
+						{
+							"key": "authorization",
+							"value": "9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "change status in delivery",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/status/1/accepted?authorization=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"status",
+						"1",
+						"accepted"
+					],
+					"query": [
+						{
+							"key": "authorization",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "see if status changed in order",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "2",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/order/1/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"order",
+						"1",
+						"status"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

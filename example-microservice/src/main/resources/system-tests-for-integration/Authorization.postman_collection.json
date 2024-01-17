@@ -1,0 +1,1565 @@
+{
+	"info": {
+		"_postman_id": "36d017a9-872e-4ba8-a36c-6c3683da4d37",
+		"name": "Authorization",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26292672",
+		"_collection_link": "https://lunar-sunset-249803.postman.co/workspace/My-Workspace~b6c7bd7c-01f4-4b51-80db-cd34b4d4107d/collection/32374782-36d017a9-872e-4ba8-a36c-6c3683da4d37?action=share&source=collection_link&creator=26292672"
+	},
+	"item": [
+		{
+			"name": "AuthorizationLinksWorks",
+			"item": [
+				{
+					"name": "add an order given the order id Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"pending\",\n  \"id\": 1,\n  \"courierId\": 2,\n  \"vendorId\": 1,\n  \"deliveryDestination\": {\n    \"latitude\": 23.92488,\n    \"longitude\": 74.7099\n  },\n  \"timeValues\": {\n    \"prepTime\": \"01:30:00\",\n    \"expectedDeliveryTime\": \"2024-01-16T19:04:29.189Z\",\n    \"actualDeliveryTime\": \"2024-01-16T19:04:29.189Z\",\n    \"orderTime\": \"2024-01-16T19:04:29.189Z\"\n  },\n  \"ratingNumber\": 0\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/:orderId?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								":orderId"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "1",
+									"description": "(Required) id of the order to add"
+								}
+							]
+						},
+						"description": "add the order corresponding to the id"
+					},
+					"response": [
+						{
+							"name": "Successful response, order added",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"pending\",\n  \"id\": \"<long>\",\n  \"courierId\": \"<long>\",\n  \"vendorId\": \"<long>\",\n  \"deliveryDestination\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  },\n  \"timeValues\": {\n    \"prepTime\": \"<time>\",\n    \"expectedDeliveryTime\": \"<dateTime>\",\n    \"actualDeliveryTime\": \"<dateTime>\",\n    \"orderTime\": \"<dateTime>\"\n  },\n  \"ratingNumber\": \"<number>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, order cannot be added because of bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"pending\",\n  \"id\": \"<long>\",\n  \"courierId\": \"<long>\",\n  \"vendorId\": \"<long>\",\n  \"deliveryDestination\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  },\n  \"timeValues\": {\n    \"prepTime\": \"<time>\",\n    \"expectedDeliveryTime\": \"<dateTime>\",\n    \"actualDeliveryTime\": \"<dateTime>\",\n    \"orderTime\": \"<dateTime>\"\n  },\n  \"ratingNumber\": \"<number>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, entity does not have access rights to add order",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"pending\",\n  \"id\": \"<long>\",\n  \"courierId\": \"<long>\",\n  \"vendorId\": \"<long>\",\n  \"deliveryDestination\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  },\n  \"timeValues\": {\n    \"prepTime\": \"<time>\",\n    \"expectedDeliveryTime\": \"<dateTime>\",\n    \"actualDeliveryTime\": \"<dateTime>\",\n    \"orderTime\": \"<dateTime>\"\n  },\n  \"ratingNumber\": \"<number>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, no order was found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"pending\",\n  \"id\": \"<long>\",\n  \"courierId\": \"<long>\",\n  \"vendorId\": \"<long>\",\n  \"deliveryDestination\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  },\n  \"timeValues\": {\n    \"prepTime\": \"<time>\",\n    \"expectedDeliveryTime\": \"<dateTime>\",\n    \"actualDeliveryTime\": \"<dateTime>\",\n    \"orderTime\": \"<dateTime>\"\n  },\n  \"ratingNumber\": \"<number>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Request vendor account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jumbo\",\n  \"radius\": 1000,\n  \"openingHours\": {\n    \"opening\": \"07:30.00Z\",\n    \"closing\": \"22:00.00Z\"\n  },\n  \"location\": {\n    \"latitude\": 51.925298,\n    \"longitude\": 4.754099\n  }\n}\n",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4269/vendor/request_account",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4269",
+							"path": [
+								"vendor",
+								"request_account"
+							]
+						},
+						"description": "Request vendor account - menu items - opening hours - location"
+					},
+					"response": [
+						{
+							"name": "Successful operation",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"<string>\",\n  \"radius\": \"<float>\",\n  \"openingHours\": {\n    \"opening\": \"<string>\",\n    \"closing\": \"<string>\"\n  },\n  \"location\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vendor/request_account",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vendor",
+										"request_account"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<long>\",\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"email\": \"<string>\",\n  \"name\": \"<string>\",\n  \"verified\": \"<boolean>\",\n  \"radius\": \"<float>\",\n  \"openingHours\": {\n    \"opening\": \"<string>\",\n    \"closing\": \"<string>\"\n  },\n  \"location\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  }\n}"
+						},
+						{
+							"name": "Invalid arguments",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"<string>\",\n  \"radius\": \"<float>\",\n  \"openingHours\": {\n    \"opening\": \"<string>\",\n    \"closing\": \"<string>\"\n  },\n  \"location\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vendor/request_account",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vendor",
+										"request_account"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Add a vendor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"hasCouriers\": true,\n  \"radius\": 0,\n  \"location\": {\n    \"latitude\": 23.92488,\n    \"longitude\": 74.7099\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/vendor/add-whole?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"vendor",
+								"add-whole"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add a vendor to the database. One needs to provide the whole object. To be used by admin."
+					},
+					"response": [
+						{
+							"name": "Successful response, vendor added",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<long>\",\n  \"hasCouriers\": \"<boolean>\",\n  \"radius\": \"<double>\",\n  \"location\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/vendor/add-whole?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"vendor",
+										"add-whole"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, vendor cannot be added because of a bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<long>\",\n  \"hasCouriers\": \"<boolean>\",\n  \"radius\": \"<double>\",\n  \"location\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/vendor/add-whole?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"vendor",
+										"add-whole"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, entity does not have access rights to add vendor",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<long>\",\n  \"hasCouriers\": \"<boolean>\",\n  \"radius\": \"<double>\",\n  \"location\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/vendor/add-whole?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"vendor",
+										"add-whole"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, no vendor was found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<long>\",\n  \"hasCouriers\": \"<boolean>\",\n  \"radius\": \"<double>\",\n  \"location\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/vendor/add-whole?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"vendor",
+										"add-whole"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Request courier account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"James\",\n  \"email\": \"john@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4269/courier/request_account",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4269",
+							"path": [
+								"courier",
+								"request_account"
+							]
+						},
+						"description": "Request courier account"
+					},
+					"response": [
+						{
+							"name": "Successful operation",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"email\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/courier/request_account",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"courier",
+										"request_account"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<long>\",\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"email\": \"<string>\",\n  \"verified\": \"<boolean>\",\n  \"rating\": 0,\n  \"total_ratings\": 0\n}"
+						},
+						{
+							"name": "Invalid arguments",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"email\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/courier/request_account",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"courier",
+										"request_account"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Add a courier",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 2,\n  \"currentLocation\": {\n    \"latitude\": 23.92488,\n    \"longitude\": 74.7099\n  },\n  \"bossId\": 1\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/courier/add-whole?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"courier",
+								"add-whole"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add a courier to the database. One needs to provide the whole object. To be used by admin."
+					},
+					"response": [
+						{
+							"name": "Successful response, courier added",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<long>\",\n  \"currentLocation\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  },\n  \"bossId\": \"<long>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/courier/add-whole?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"courier",
+										"add-whole"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, courier cannot be added because of a bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<long>\",\n  \"currentLocation\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  },\n  \"bossId\": \"<long>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/courier/add-whole?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"courier",
+										"add-whole"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, entity does not have access rights to add courier",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<long>\",\n  \"currentLocation\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  },\n  \"bossId\": \"<long>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/courier/add-whole?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"courier",
+										"add-whole"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, no courier was found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<long>\",\n  \"currentLocation\": {\n    \"latitude\": \"<float>\",\n    \"longitude\": \"<float>\"\n  },\n  \"bossId\": \"<long>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/courier/add-whole?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"courier",
+										"add-whole"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Retrieve vendor location of the order",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/:orderId/pickup-destination?authorization=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								":orderId",
+								"pickup-destination"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "2",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "1",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Return the vendor location of the specified order"
+					},
+					"response": [
+						{
+							"name": "Successful response, vendor location of the order received",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"latitude\": \"<float>\",\n  \"longitude\": \"<float>\"\n}"
+						},
+						{
+							"name": "Unsuccessful, vendor location of the order cannot be retrieved because of a bad request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, entity does not have access rights to retrieve vendor location",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, vendor location for the order not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Retrieve vendor location of the order Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/:orderId/pickup-destination?authorization=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								":orderId",
+								"pickup-destination"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "1",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "1",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Return the vendor location of the specified order"
+					},
+					"response": [
+						{
+							"name": "Successful response, vendor location of the order received",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"latitude\": \"<float>\",\n  \"longitude\": \"<float>\"\n}"
+						},
+						{
+							"name": "Unsuccessful, vendor location of the order cannot be retrieved because of a bad request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, entity does not have access rights to retrieve vendor location",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, vendor location for the order not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Retrieve vendor location of the order Copy 2",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/:orderId/pickup-destination?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								":orderId",
+								"pickup-destination"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "1",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Return the vendor location of the specified order"
+					},
+					"response": [
+						{
+							"name": "Successful response, vendor location of the order received",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"latitude\": \"<float>\",\n  \"longitude\": \"<float>\"\n}"
+						},
+						{
+							"name": "Unsuccessful, vendor location of the order cannot be retrieved because of a bad request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, entity does not have access rights to retrieve vendor location",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Unsuccessful, vendor location for the order not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/order/:orderId/pickup-destination?authorization=<long>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"order",
+										":orderId",
+										"pickup-destination"
+									],
+									"query": [
+										{
+											"key": "authorization",
+											"value": "<long>",
+											"description": "(Required) The userId to check if they have the rights to make this request"
+										}
+									],
+									"variable": [
+										{
+											"key": "orderId"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		}
+	]
+}
