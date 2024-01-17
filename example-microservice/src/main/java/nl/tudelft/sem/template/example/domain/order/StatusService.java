@@ -115,6 +115,13 @@ public class StatusService {
         return Optional.of(orderRepo.saveAndFlush(order));
     }
 
+    /**
+     * updates the status to preparing
+     *
+     * @param orderId id of the order
+     * @param req request
+     * @return the updated order
+     */
     public Optional<Order> updateStatusToPreparing(Long orderId, UpdateToPreparingRequest req) {
         Optional<Order> o = orderRepo.findById(orderId);
 
@@ -145,6 +152,9 @@ public class StatusService {
     public Optional<Order> updateStatusToDelivered(Long orderId, UpdateToDeliveredRequest updateToDeliveredRequest) {
         Optional<Order> ret = orderRepo.findById(orderId);
         // we now the order exists as it is checked in the controller
+        if (ret.isEmpty()){
+            return Optional.empty();
+        }
         Order order = ret.get();
         Time timeValues = order.getTimeValues();
 
