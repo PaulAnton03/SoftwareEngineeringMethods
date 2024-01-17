@@ -67,6 +67,9 @@ public class Authorization extends Handler {
      */
     private Authorization.UserType getUserType(Long userId) {
         try {
+            if(Objects.equals(userId, ADMIN_ID)){
+                return UserType.ADMIN;
+            }
             return parseUserType(userExternalService.getUserTypeFromService(userId));
         } catch (Exception e) {
             return Authorization.UserType.NAN;

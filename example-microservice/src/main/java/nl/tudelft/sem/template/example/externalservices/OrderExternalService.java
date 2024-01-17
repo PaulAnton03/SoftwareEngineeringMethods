@@ -1,6 +1,18 @@
 package nl.tudelft.sem.template.example.externalservices;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Map;
+import nl.tudelft.sem.template.model.Order;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -35,6 +47,30 @@ public class OrderExternalService {
             new org.springframework.http.HttpEntity<>(headers),
             String.class
         );
+    }
+
+
+    /**
+     * Propagates the status change of an order in the orders microservice
+     *
+     * @param userId  The ID of the user that made the status change.
+     * @param orderId The ID of the order.
+     */
+    public void updateOrderStatus(Long orderId, Long userId, Order.StatusEnum newStatus) {
+        String getOrderServiceEndpoint = orderServerBaseUrl + "/order/" + orderId + "/status";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("userId", String.valueOf(userId));
+        headers.set("Content-Type", "application/json");
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String requestJson = objectMapper.writeValueAsString(Map.of("status", newStatus.getValue()));
+            HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
+            restTemplate
+                .exchange(getOrderServiceEndpoint, HttpMethod.PUT, requestEntity, String.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

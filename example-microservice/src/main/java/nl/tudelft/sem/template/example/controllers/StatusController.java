@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.api.StatusApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
+import nl.tudelft.sem.template.example.externalservices.OrderExternalService;
 import nl.tudelft.sem.template.model.DeliveryException;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
@@ -31,11 +32,14 @@ public class StatusController implements StatusApi {
     public StatusService statusService;
     public OrderService orderService;
 
+    public OrderExternalService orderExternalService;
+
     public StatusController(StatusService statusService, OrderService orderService,
-                            AuthorizationService authorizationService) {
+                            AuthorizationService authorizationService, OrderExternalService orderExternalService) {
         this.statusService = statusService;
         this.orderService = orderService;
         this.authorizationService = authorizationService;
+        this.orderExternalService = orderExternalService;
     }
 
     /**
@@ -60,6 +64,8 @@ public class StatusController implements StatusApi {
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
+
+        updateStatusOnOrdersMicroservice(orderId, authorization, Order.StatusEnum.ACCEPTED);
 
         Optional<ResponseEntity<Void>> checkPrev = checkPrevStatus(orderId, Order.StatusEnum.PENDING);
         // if present, then the previous status was not right and we cannot accept order
@@ -93,6 +99,8 @@ public class StatusController implements StatusApi {
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
+
+        updateStatusOnOrdersMicroservice(orderId, authorization, Order.StatusEnum.REJECTED);
 
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
 
@@ -141,6 +149,8 @@ public class StatusController implements StatusApi {
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
+
+        updateStatusOnOrdersMicroservice(orderId, authorization, Order.StatusEnum.GIVEN_TO_COURIER);
 
         Optional<ResponseEntity<Void>> checkValue = checkPrevStatus(orderId, Order.StatusEnum.PREPARING);
         // if the checkValue is present, the previous status does not match
@@ -203,6 +213,8 @@ public class StatusController implements StatusApi {
             return auth.get();
         }
 
+        updateStatusOnOrdersMicroservice(orderId, authorization, Order.StatusEnum.IN_TRANSIT);
+
         Optional<ResponseEntity<Void>> checkValue = checkPrevStatus(orderId, Order.StatusEnum.GIVEN_TO_COURIER);
         // if the checkValue is present, the previous status does not match
         if (checkValue.isPresent()) {
@@ -229,6 +241,8 @@ public class StatusController implements StatusApi {
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
+
+        updateStatusOnOrdersMicroservice(orderId, authorization, Order.StatusEnum.PREPARING);
 
         Optional<ResponseEntity<Void>> checkValue = checkPrevStatus(orderId, Order.StatusEnum.ACCEPTED);
         // if the checkValue is present, the previous status does not match
@@ -268,6 +282,8 @@ public class StatusController implements StatusApi {
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
+
+        updateStatusOnOrdersMicroservice(orderId, authorization, Order.StatusEnum.DELIVERED);
 
         if (!orderService.orderExists(orderId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -318,6 +334,10 @@ public class StatusController implements StatusApi {
         return currentStatus.map(statusEnum -> new ResponseEntity<>(statusEnum.toString(), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
+    }
+
+    public void updateStatusOnOrdersMicroservice(Long orderId, Long authorization, Order.StatusEnum newStatus) {
+        orderExternalService.updateOrderStatus(orderId, authorization, newStatus);
     }
 
 

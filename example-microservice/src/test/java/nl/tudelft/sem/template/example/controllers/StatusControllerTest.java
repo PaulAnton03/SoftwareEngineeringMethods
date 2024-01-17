@@ -10,6 +10,7 @@ import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.order.StatusService;
+import nl.tudelft.sem.template.example.externalservices.OrderExternalService;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Time;
 import nl.tudelft.sem.template.model.UpdateToDeliveredRequest;
@@ -29,13 +30,15 @@ public class StatusControllerTest {
     private OrderService orderService;
     private StatusController controller;
 
+    private OrderExternalService orderExternalService;
+
 
     @BeforeEach
     void setUp() {
         this.statusService = Mockito.mock(StatusService.class);
         this.authorizationService = Mockito.mock(AuthorizationService.class);
         this.orderService = Mockito.mock(OrderService.class);
-        this.controller = new StatusController(statusService, orderService, authorizationService);
+        this.controller = new StatusController(statusService, orderService, authorizationService, orderExternalService);
     }
 
     @Test
