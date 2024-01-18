@@ -22,7 +22,7 @@ public class DbUtils {
      * @param orderRepo            The order repository.
      * @param vendorRepo           The vendor repository.
      * @param courierRepo          The courier repository.
-     * @param orderExternalService
+     * @param orderExternalService The External Service for order
      */
     @Autowired
     public DbUtils(OrderRepository orderRepo, VendorRepository vendorRepo, CourierRepository courierRepo,

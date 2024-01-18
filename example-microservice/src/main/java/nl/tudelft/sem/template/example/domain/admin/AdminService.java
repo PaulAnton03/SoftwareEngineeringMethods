@@ -1,8 +1,14 @@
 package nl.tudelft.sem.template.example.domain.admin;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import java.util.*;
+
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
@@ -28,7 +34,12 @@ public class AdminService {
         this.vendorRepo = vendorRepo;
     }
 
-
+    /**
+     * updates the Default Radius
+     *
+     * @param body new Radius
+     * @return changed list of Vendors
+     */
     public Optional<List<Vendor>> updateDefaultRadius(Double body) {
 
         List<Vendor> vendors = vendorRepo.findVendorsByHasCouriers(false);
@@ -44,6 +55,11 @@ public class AdminService {
         return Optional.of(vendors);
     }
 
+    /**
+     * gets the default radius
+     *
+     * @return the default Radius
+     */
     public Optional<Double> getDefaultRadius(){
         List<Vendor> vendors = vendorRepo.findVendorsByHasCouriers(false);
 
@@ -179,5 +195,89 @@ public class AdminService {
             return false;
         }
         return exceptionRepo.existsById(exception.getId());
+    }
+
+    /**
+     * Get all courier efficiencies
+     * The way the method is designed, the couriers that had no orders delivered will
+     * not have an efficiency rating.
+     * As for the efficiency rating it is based on the difference between the expected time
+     * of delivery and the actual time of delivery, thus penalizing a late delivery and
+     * rewarding an early one
+     *
+     * @return map of couriers and their efficiencies
+     */
+    public Optional<Map<String, Double>> getCouriersEfficiencies() {
+        List<Order> orders = orderRepo.findByStatus(Order.StatusEnum.DELIVERED);
+
+        if(orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Set<Long> couriers = orders.stream()
+                .map(Order::getCourierId)
+                .collect(Collectors.toSet());
+
+        Map<String, Double> res = new HashMap<>();
+
+        for(Long courier : couriers) {
+            List<Order> courierOrders = orderRepo.findByCourierIdAndStatus(courier, Order.StatusEnum.DELIVERED);
+
+            double value = 0.0;
+            int size = courierOrders.size();
+
+            for(Order o : courierOrders) {
+                value += Duration.between(o.getTimeValues().getActualDeliveryTime(),
+                        o.getTimeValues().getExpectedDeliveryTime()).getSeconds();
+            }
+
+            double result = value/size;
+
+            res.put(courier.toString(), result);
+        }
+
+        return Optional.of(res);
+    }
+
+    /**
+     * gets all the Delivery Times
+     *
+     * @return Optional list of delivery Times
+     */
+    public Optional<List<String>> getAllDeliveryTimes(){
+        List<Order> orders = orderRepo.findAll();
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<String> collect = orders.stream()
+                .filter(order -> order.getTimeValues() != null)
+                .filter(order -> order.getTimeValues().getOrderTime() != null
+                        && order.getTimeValues().getActualDeliveryTime() != null)
+                .map(order -> Duration.between(order.getTimeValues().getOrderTime(),
+                        order.getTimeValues().getActualDeliveryTime()))
+                .map(order -> String.format("%d Hours, %d Minutes, %d Seconds",
+                        order.toHours(), order.minusHours(order.toHours()).toMinutes(),
+                        order.minusMinutes(order.minusHours(order.toHours()).toMinutes() + 60 * order.toHours())
+                                .toSeconds()))
+                .collect(Collectors.toList());
+        return Optional.of(collect);
+    }
+
+    /**
+     * gets all the ratings
+     *
+     * @return Optional List of Ratings
+     */
+    public Optional<List<BigDecimal>> getAllRatings(){
+        List<Order> orders = orderRepo.findAll();
+
+        if (orders.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<BigDecimal> collect = orders.stream()
+                .map(Order::getRatingNumber).collect(Collectors.toList());
+        return Optional.of(collect);
     }
 }

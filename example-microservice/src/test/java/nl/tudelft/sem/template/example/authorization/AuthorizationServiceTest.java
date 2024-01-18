@@ -19,7 +19,7 @@ import nl.tudelft.sem.template.example.controllers.OrderController;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
 import nl.tudelft.sem.template.example.domain.user.CourierRepository;
-import nl.tudelft.sem.template.example.domain.user.UserService;
+import nl.tudelft.sem.template.example.domain.user.CourierService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.OrderExternalService;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
@@ -50,7 +50,7 @@ public class AuthorizationServiceTest {
     private VendorRepository vendorRepo;
     private CourierRepository courierRepo;
     private OrderService orderService;
-    private UserService userService;
+    private CourierService courierService;
     private OrderController controller;
     private AuthorizationService authorizationService;
     private Order order1;
@@ -63,7 +63,7 @@ public class AuthorizationServiceTest {
         WireMockConfig.startUserServer();
         WireMockConfig.startOrderServer();
         this.orderService = Mockito.mock(OrderService.class);
-        this.userService = Mockito.mock(UserService.class);
+        this.courierService = Mockito.mock(CourierService.class);
         orderService = Mockito.mock(OrderService.class);
         orderRepo = mock(OrderRepository.class);
         vendorRepo = mock(VendorRepository.class);
@@ -79,7 +79,7 @@ public class AuthorizationServiceTest {
         order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F));
         vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
-        this.controller = new OrderController(orderService, userService, authorizationService, orderRepo, vendorRepo);
+        this.controller = new OrderController(orderService, courierService, authorizationService, orderRepo, vendorRepo);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class AuthorizationServiceTest {
                 .withStatus(200)
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .withBody("courier")));
-        Mockito.when(userService.getCourierById(1L)).thenReturn(Optional.of(new Courier().id(1L).bossId(11L)));
+        Mockito.when(courierService.getCourierById(1L)).thenReturn(Optional.of(new Courier().id(1L).bossId(11L)));
         Mockito.when(courierRepo.existsByIdAndBossId(1L, 11L)).thenReturn(true);
         var res = controller.getNextOrderForVendor(11L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);

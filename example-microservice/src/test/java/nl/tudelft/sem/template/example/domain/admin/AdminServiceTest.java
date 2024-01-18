@@ -8,20 +8,20 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import nl.tudelft.sem.template.example.authorization.AuthorizationService;
+import java.math.BigDecimal;
+import java.util.*;
+
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.model.DeliveryException;
-import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Order;
-import nl.tudelft.sem.template.model.Vendor;
+import nl.tudelft.sem.template.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 public class AdminServiceTest {
@@ -29,9 +29,6 @@ public class AdminServiceTest {
     private Vendor vendor1;
 
     private AdminService adminService;
-
-    private AuthorizationService authorizationService;
-
     private DeliveryException exception1;
 
     private DeliveryException exception2;
@@ -60,7 +57,6 @@ public class AdminServiceTest {
         this.orderRepo = Mockito.mock(OrderRepository.class);
         this.exceptionRepo = Mockito.mock(DeliveryExceptionRepository.class);
         this.adminService = new AdminService(vendorRepo, orderRepo, exceptionRepo);
-        this.authorizationService = Mockito.mock(AuthorizationService.class);
     }
 
     @Test
@@ -226,6 +222,7 @@ public class AdminServiceTest {
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(vendors);
 
         Optional<Double> res = adminService.getDefaultRadius();
+        assertTrue(res.isPresent());
         assertEquals(res.get(), 1D);
     }
 
@@ -236,6 +233,7 @@ public class AdminServiceTest {
         Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED)).thenReturn(orders);
 
         Optional<List<Order>> res = adminService.getDelivered();
+        assertTrue(res.isPresent());
         assertEquals(orders, res.get());
     }
 
@@ -246,5 +244,72 @@ public class AdminServiceTest {
 
         Optional<List<Order>> res = adminService.getDelivered();
         assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void getCouriersEfficienciesWorks() {
+        Time time1 = new Time().actualDeliveryTime(OffsetDateTime.parse("2024-01-14T12:30:00+05:00"))
+                .expectedDeliveryTime(OffsetDateTime.parse("2024-01-14T12:31:00+05:00"));
+        Order order1 = new Order().id(1L).courierId(22L).timeValues(time1).status(Order.StatusEnum.DELIVERED);
+        Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED))
+                .thenReturn(List.of(order1));
+        Mockito.when(orderRepo.findByCourierIdAndStatus(22L, Order.StatusEnum.DELIVERED))
+                .thenReturn(List.of(order1));
+
+        var res = adminService.getCouriersEfficiencies();
+        assertEquals(Optional.of(Map.of("22", 60D)), res);
+    }
+
+    @Test
+    void getCouriersEfficienciesDoesNotWork() {
+        Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED))
+                .thenReturn(new ArrayList<>());
+
+        var res = adminService.getCouriersEfficiencies();
+        assertEquals(Optional.empty(), res);
+    }
+
+    @Test
+    void getAllDeliveryTimesWorks() {
+        OffsetDateTime orderTime = OffsetDateTime.parse("2024-01-16T10:00:00+00:00");
+        OffsetDateTime actualDeliveryTime = OffsetDateTime.parse("2024-01-16T12:30:05+00:00");
+        Time timeValues = new Time().actualDeliveryTime(actualDeliveryTime).orderTime(orderTime);
+        Order timeOrder = new Order().id(5L).timeValues(timeValues);
+        Mockito.when(orderRepo.findAll()).thenReturn(new ArrayList<>(Collections.singletonList(timeOrder)));
+
+        var res = adminService.getAllDeliveryTimes();
+        List<String> expected = List.of("2 Hours, 30 Minutes, 5 Seconds");
+
+        assertTrue(res.isPresent());
+        assertEquals(expected, res.get());
+
+    }
+
+    @Test
+    void getAllDeliveryTimesEmpty() {
+        Mockito.when(orderRepo.findAll()).thenReturn(new ArrayList<>());
+
+        var res = adminService.getAllDeliveryTimes();
+        assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getAllRatingsWorks() {
+        Order order = new Order().id(5L).ratingNumber(new BigDecimal("4.5"));
+        Mockito.when(orderRepo.findAll()).thenReturn(new ArrayList<>(Collections.singletonList(order)));
+
+        var res = adminService.getAllRatings();
+        List<BigDecimal> expected = List.of(new BigDecimal("4.5"));
+
+        assertTrue(res.isPresent());
+        assertEquals(expected, res.get());
+    }
+
+    @Test
+    void getAllRatingsEmpty() {
+        Mockito.when(orderRepo.findAll()).thenReturn(new ArrayList<>());
+
+        var res = adminService.getAllRatings();
+        assertTrue(res.isEmpty());
     }
 }

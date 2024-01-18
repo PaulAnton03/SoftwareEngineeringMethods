@@ -27,6 +27,7 @@ public class Authorization extends Handler {
      */
     @Override
     public Optional<ResponseEntity> check(Long userId, String methodName, Long other) {
+
         Authorization.UserType actualUserType = getUserType(userId);
         if (actualUserType == Authorization.UserType.NAN) {
             return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
@@ -47,6 +48,7 @@ public class Authorization extends Handler {
      * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
      */
     public Optional<ResponseEntity> authorizeAdminOnly(Long userId) {
+
         Authorization.UserType actualUserType = getUserType(userId);
         if (actualUserType == Authorization.UserType.NAN) {
             return Optional.of(ResponseEntity.status(500).body("Error while retrieving user type"));
