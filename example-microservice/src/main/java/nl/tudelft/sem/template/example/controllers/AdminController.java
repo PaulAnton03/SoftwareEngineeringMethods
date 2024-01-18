@@ -155,14 +155,16 @@ public class AdminController implements AdminApi {
     }
 
     /**
-     * PUT /admin/vendor/radius : Update the default radius for vendors that don&#39;t have their own couriers (independent vendors)
+     * PUT /admin/vendor/radius : Update the default radius for vendors that don&#39;t have their own couriers
+     * (independent vendors)
      * Update the default radius of all independent vendors. To be used by admin.
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param body          Radius in meters to be set as a new value (required)
      * @return Successful response, default radius of vendors with independent couriers updated (status code 200)
      *         or Unsuccessful, default radius cannot be updated because of a bad request (status code 400)
-     *         or Unsuccessful, entity does not have access rights to update radius. Only admins have this right. (status code 403)
+     *         or Unsuccessful, entity does not have access rights to update radius. Only admins have this right.
+     *         (status code 403)
      *         or Unsuccessful, no default radius was found (status code 404)
      */
     @Override
@@ -206,7 +208,7 @@ public class AdminController implements AdminApi {
 
         Optional<Double> res = adminService.getDefaultRadius();
 
-        return res.map(aDouble -> new ResponseEntity<>(aDouble, HttpStatus.OK))
+        return res.map(dub -> new ResponseEntity<>(dub, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
@@ -270,7 +272,8 @@ public class AdminController implements AdminApi {
      * GET /admin/analytics/delivery-times : Retrieve a list of all delivery times.
      * Return delivery times of all of the orders. The difference in time between ETA and actual time arrival.
      *
-     * @param authorization the userId to check if they have the rights to make this request, only admin is allowed. (required)
+     * @param authorization the userId to check if they have the rights to make this request, only admin is allowed.
+     *                     (required)
      * @return Successful response, delivery times received (status code 200)
      *         or Unsuccessful, delivery times cannot be retrieved because of a bad request (status code 400)
      *         or Unsuccessful, entity does not have access rights to retrieve delivery times (status code 403)
@@ -296,7 +299,8 @@ public class AdminController implements AdminApi {
      * GET /admin/analytics/all-ratings : Retrieve a list of all ratings.
      * Return rating of all the orders.
      *
-     * @param authorization the userId to check if they have the rights to make this request, only admin is allowed. (required)
+     * @param authorization the userId to check if they have the rights to make this request, only admin is allowed.
+     *                     (required)
      * @return Successful response, ratings received (status code 200)
      *         or Unsuccessful, ratings cannot be retrieved because of a bad request (status code 400)
      *         or Unsuccessful, entity does not have access rights to retrieve ratings (status code 403)
