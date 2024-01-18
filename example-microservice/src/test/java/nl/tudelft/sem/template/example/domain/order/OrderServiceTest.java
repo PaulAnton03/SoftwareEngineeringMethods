@@ -1,23 +1,28 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import nl.tudelft.sem.template.example.domain.user.CourierRepository;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.example.externalservices.NavigationMock;
-import nl.tudelft.sem.template.model.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
+import nl.tudelft.sem.template.example.domain.user.CourierRepository;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.externalservices.NavigationMock;
+import nl.tudelft.sem.template.model.Courier;
+import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
+import nl.tudelft.sem.template.model.Vendor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class OrderServiceTest {
     private OrderRepository orderRepo;
@@ -40,15 +45,17 @@ class OrderServiceTest {
         this.courierRepo = mock(CourierRepository.class);
 
         this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
-                .ratingNumber(BigDecimal.valueOf(5L)).courierId(2L);
+            .ratingNumber(BigDecimal.valueOf(5L)).courierId(2L);
         this.courierRepo = mock(CourierRepository.class);
-        this.order1 = new Order().id(1L).vendorId(2L).courierId(21L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+        this.order1 =
+            new Order().id(1L).vendorId(2L).courierId(21L).deliveryDestination(new Location().latitude(11F).longitude(22F))
                 .ratingNumber(BigDecimal.valueOf(5L));
-        this.order2 = new Order().id(1L).vendorId(2L).courierId(2L).deliveryDestination(new Location().latitude(22F).longitude(33F))
+        this.order2 =
+            new Order().id(1L).vendorId(2L).courierId(2L).deliveryDestination(new Location().latitude(22F).longitude(33F))
                 .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.eta = OffsetDateTime.of(2000, 1, 1,
-                1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
+            1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
         this.os = new OrderService(orderRepo, vendorRepo, courierRepo);
         this.courier1 = new Courier().id(21L).currentLocation(new Location().latitude(11F).longitude(16F));
         this.os = new OrderService(orderRepo, vendorRepo, courierRepo);

@@ -8,18 +8,21 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.math.BigDecimal;
-import java.util.*;
-
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.model.*;
+import nl.tudelft.sem.template.model.DeliveryException;
+import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
+import nl.tudelft.sem.template.model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -229,7 +232,7 @@ public class AdminServiceTest {
     @Test
     void getDeliveredWorks() {
         List<Order> orders = List.of(new Order().id(1L).status(Order.StatusEnum.DELIVERED),
-                new Order().id(2L).status(Order.StatusEnum.DELIVERED));
+            new Order().id(2L).status(Order.StatusEnum.DELIVERED));
         Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED)).thenReturn(orders);
 
         Optional<List<Order>> res = adminService.getDelivered();
@@ -240,7 +243,7 @@ public class AdminServiceTest {
     @Test
     void getDeliveredDoesNotWork() {
         Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED))
-                .thenReturn(new ArrayList<>());
+            .thenReturn(new ArrayList<>());
 
         Optional<List<Order>> res = adminService.getDelivered();
         assertEquals(Optional.empty(), res);
@@ -249,12 +252,12 @@ public class AdminServiceTest {
     @Test
     void getCouriersEfficienciesWorks() {
         Time time1 = new Time().actualDeliveryTime(OffsetDateTime.parse("2024-01-14T12:30:00+05:00"))
-                .expectedDeliveryTime(OffsetDateTime.parse("2024-01-14T12:31:00+05:00"));
+            .expectedDeliveryTime(OffsetDateTime.parse("2024-01-14T12:31:00+05:00"));
         Order order1 = new Order().id(1L).courierId(22L).timeValues(time1).status(Order.StatusEnum.DELIVERED);
         Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED))
-                .thenReturn(List.of(order1));
+            .thenReturn(List.of(order1));
         Mockito.when(orderRepo.findByCourierIdAndStatus(22L, Order.StatusEnum.DELIVERED))
-                .thenReturn(List.of(order1));
+            .thenReturn(List.of(order1));
 
         var res = adminService.getCouriersEfficiencies();
         assertEquals(Optional.of(Map.of("22", 60D)), res);
@@ -263,7 +266,7 @@ public class AdminServiceTest {
     @Test
     void getCouriersEfficienciesDoesNotWork() {
         Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED))
-                .thenReturn(new ArrayList<>());
+            .thenReturn(new ArrayList<>());
 
         var res = adminService.getCouriersEfficiencies();
         assertEquals(Optional.empty(), res);

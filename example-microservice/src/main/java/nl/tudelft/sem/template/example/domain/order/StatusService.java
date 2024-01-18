@@ -119,7 +119,7 @@ public class StatusService {
      * updates the status to preparing
      *
      * @param orderId id of the order
-     * @param req request
+     * @param req     request
      * @return the updated order
      */
     public Optional<Order> updateStatusToPreparing(Long orderId, UpdateToPreparingRequest req) {
@@ -152,7 +152,7 @@ public class StatusService {
     public Optional<Order> updateStatusToDelivered(Long orderId, UpdateToDeliveredRequest updateToDeliveredRequest) {
         Optional<Order> ret = orderRepo.findById(orderId);
         // we now the order exists as it is checked in the controller
-        if (ret.isEmpty()){
+        if (ret.isEmpty()) {
             return Optional.empty();
         }
         Order order = ret.get();

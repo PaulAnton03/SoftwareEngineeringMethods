@@ -39,26 +39,21 @@ public class AuthorizationTest {
     );
     private OrderService orderService;
     private OrderController controller;
-    private OrderRepository orderRepository;
-    private VendorRepository vendorRepository;
-    private AuthorizationService authorizationService;
-    private CourierService courierService;
-    private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
-
-    private DbUtils dbUtils;
 
     @BeforeEach
     void setUp() {
         WireMockConfig.startUserServer();
-        dbUtils = Mockito.mock(DbUtils.class);
+        DbUtils dbUtils = Mockito.mock(DbUtils.class);
         orderService = Mockito.mock(OrderService.class);
-        orderRepository = Mockito.mock(OrderRepository.class);
-        vendorRepository = Mockito.mock(VendorRepository.class);
-        validationMethods = Mockito.mock(HashMap.class);
+        OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
+        VendorRepository vendorRepository = Mockito.mock(VendorRepository.class);
+        HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods = Mockito.mock(HashMap.class);
         Mockito.when(validationMethods.get(anyString())).thenReturn((a, b) -> true);
-        authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
-        courierService = Mockito.mock(CourierService.class);
-        controller = new OrderController(orderService, courierService, authorizationService, orderRepository, vendorRepository);
+        AuthorizationService authorizationService =
+            new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
+        CourierService courierService = Mockito.mock(CourierService.class);
+        controller =
+            new OrderController(orderService, courierService, authorizationService, orderRepository, vendorRepository);
     }
 
     @Test

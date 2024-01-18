@@ -31,7 +31,8 @@ public class UserController implements UserApi {
 
     public AuthorizationService authorizationService;
 
-    public UserController(VendorService vendorService, CourierService courierService, AuthorizationService authorizationService) {
+    public UserController(VendorService vendorService, CourierService courierService,
+                          AuthorizationService authorizationService) {
         this.vendorService = vendorService;
         this.courierService = courierService;
         this.authorizationService = authorizationService;
@@ -61,7 +62,7 @@ public class UserController implements UserApi {
 
         Optional<Courier> courier = courierService.getCourierById(courierId);
         return courier.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -88,7 +89,7 @@ public class UserController implements UserApi {
         Optional<Double> ratingReceived = vendorService.getRadiusOfVendor(authorization);
 
         return ratingReceived.map(aDouble -> new ResponseEntity<>(aDouble, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**

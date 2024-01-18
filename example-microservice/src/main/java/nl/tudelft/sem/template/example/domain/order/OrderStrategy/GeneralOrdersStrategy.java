@@ -13,7 +13,8 @@ public class GeneralOrdersStrategy implements NextOrderStrategy {
     /**
      * This strategy is only applied to independent couriers that do not work for a specific vendor.
      * They get to choose from a list of possible available orders. These orders are from vendors that
-     * do not have any couriers on their own and the orders are being prepared.
+     * do not have any courie¬
+     * rs on their own and the orders are being prepared.
      */
 
     private final OrderRepository orderRepository;

@@ -44,7 +44,7 @@ public class Authorization extends Handler {
     /**
      * Authorizes a user based on the provided user ID.
      *
-     * @param userId     The ID of the user to be authorized.
+     * @param userId The ID of the user to be authorized.
      * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
      */
     public Optional<ResponseEntity> authorizeAdminOnly(Long userId) {

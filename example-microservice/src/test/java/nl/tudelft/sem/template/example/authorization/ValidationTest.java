@@ -33,19 +33,12 @@ public class ValidationTest {
     private OrderService orderService;
     private OrderController controller;
 
-    private OrderRepository orderRepository;
+    private final UserExternalService userExternalService = new UserExternalService();
 
-    private VendorRepository vendorRepository;
-
-    private UserExternalService userExternalService = new UserExternalService();
-
-    private CourierService courierService;
-
-    private AuthorizationService authorizationService;
     private DbUtils dbUtils;
     private HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
 
-    private HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
+    private final HashMap<String, List<Authorization.UserType>> permissions = new HashMap<>(
         Map.of("getFinalDestination", List.of(Authorization.UserType.CUSTOMER))
     );
 
@@ -65,11 +58,13 @@ public class ValidationTest {
                 "getPickupDestination", dbUtils::userBelongsToOrder
             )
         );
-        authorizationService = new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
-        courierService = Mockito.mock(CourierService.class);
-        orderRepository = Mockito.mock(OrderRepository.class);
-        vendorRepository = Mockito.mock(VendorRepository.class);
-        controller = new OrderController(orderService, courierService, authorizationService, orderRepository, vendorRepository);
+        AuthorizationService authorizationService =
+            new AuthorizationService(dbUtils, userExternalService, permissions, validationMethods);
+        CourierService courierService = Mockito.mock(CourierService.class);
+        OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
+        VendorRepository vendorRepository = Mockito.mock(VendorRepository.class);
+        controller =
+            new OrderController(orderService, courierService, authorizationService, orderRepository, vendorRepository);
     }
 
     @Test

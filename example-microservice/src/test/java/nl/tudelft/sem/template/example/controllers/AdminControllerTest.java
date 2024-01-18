@@ -67,7 +67,7 @@ class AdminControllerTest {
     @Test
     void updateDefaultRadius403() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.updateDefaultRadius(1L, 5D);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -90,7 +90,7 @@ class AdminControllerTest {
     @Test
     void getDefaultRadius403() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getDefaultRadius(1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -99,8 +99,8 @@ class AdminControllerTest {
     @Test
     void getDeliveredOrdersWorks200() {
         List<Order> orders = List.of(new Order().id(1L).status(Order.StatusEnum.DELIVERED),
-                new Order().id(2L).status(Order.StatusEnum.DELIVERED),
-                new Order().id(3L).status(Order.StatusEnum.DELIVERED));
+            new Order().id(2L).status(Order.StatusEnum.DELIVERED),
+            new Order().id(3L).status(Order.StatusEnum.DELIVERED));
         Mockito.when(adminService.getDelivered()).thenReturn(Optional.of(orders));
 
         var res = controller.getDeliveredOrders(1L);
@@ -132,7 +132,7 @@ class AdminControllerTest {
     @Test
     void getDeliveredOrders403() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getDeliveredOrders(1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -193,7 +193,7 @@ class AdminControllerTest {
     @Test
     void getCourierEfficienciesWorks200() {
         Mockito.when(adminService.getCouriersEfficiencies()).thenReturn(
-                Optional.of(Map.of("22", 60.0D, "23", 120.0D)));
+            Optional.of(Map.of("22", 60.0D, "23", 120.0D)));
 
         var res = controller.getCourierEfficiencies(1L);
         assertEquals(new ResponseEntity<>(Map.of("22", 60.0D, "23", 120.0D), HttpStatus.OK), res);
@@ -202,7 +202,7 @@ class AdminControllerTest {
     @Test
     void getCourierEfficienciesWorks404() {
         Mockito.when(adminService.getCouriersEfficiencies()).thenReturn(
-                Optional.empty());
+            Optional.empty());
 
         var res = controller.getCourierEfficiencies(1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
@@ -211,7 +211,7 @@ class AdminControllerTest {
     @Test
     void getCourierEfficienciesWorks403() {
         Mockito.when(authorizationService.authorizeAdminOnly(anyLong())).thenReturn(
-                Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getCourierEfficiencies(1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -220,7 +220,7 @@ class AdminControllerTest {
     @Test
     void updateException403() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.updateException(1L, 1L, null);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -229,7 +229,7 @@ class AdminControllerTest {
     @Test
     void getExceptions403() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getExceptions(1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -238,7 +238,7 @@ class AdminControllerTest {
     @Test
     void makeException403() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.makeException(1L, 1L, null);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -247,7 +247,7 @@ class AdminControllerTest {
     @Test
     void getExceptionForOrder403() {
         Mockito.when(authorizationService.authorizeAdminOnly(1L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getExceptionForOrder(1L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -256,11 +256,11 @@ class AdminControllerTest {
     @Test
     void getAllRatings200() {
         List<BigDecimal> ratings = Arrays.asList(
-                new BigDecimal("4.5"),
-                new BigDecimal("3.2"),
-                new BigDecimal("5.0"),
-                new BigDecimal("2.8"),
-                new BigDecimal("4.0")
+            new BigDecimal("4.5"),
+            new BigDecimal("3.2"),
+            new BigDecimal("5.0"),
+            new BigDecimal("2.8"),
+            new BigDecimal("4.0")
         );
         Mockito.when(adminService.getAllRatings()).thenReturn(Optional.of(ratings));
         var res = controller.getAllRatings(0L);
@@ -278,7 +278,7 @@ class AdminControllerTest {
     @Test
     void getAllOrders403() {
         Mockito.when(authorizationService.authorizeAdminOnly(0L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getAllRatings(0L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);
@@ -305,7 +305,7 @@ class AdminControllerTest {
     @Test
     void getAllDeliveryTimes403() {
         Mockito.when(authorizationService.authorizeAdminOnly(0L))
-                .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
+            .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
         var res = controller.getAllDeliveryTimes(0L);
         assertEquals(new ResponseEntity<>(HttpStatus.FORBIDDEN), res);

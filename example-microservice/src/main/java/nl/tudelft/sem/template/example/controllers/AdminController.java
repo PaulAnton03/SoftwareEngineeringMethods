@@ -1,5 +1,11 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import nl.tudelft.sem.template.api.AdminApi;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.admin.AdminService;
@@ -8,14 +14,14 @@ import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static nl.tudelft.sem.template.example.authorization.AuthorizationService.doesNotHaveAuthority;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/admin")
@@ -76,7 +82,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/exceptions")
     public ResponseEntity<List<DeliveryException>> getExceptions(
-            @RequestParam(value = "authorization") Long authorization) {
+        @RequestParam(value = "authorization") Long authorization) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
             return auth.get();
@@ -136,7 +142,7 @@ public class AdminController implements AdminApi {
         Optional<DeliveryException> exception = adminService.getExceptionByOrder(orderId);
 
         return exception.map(e -> new ResponseEntity<>(e, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 
@@ -154,8 +160,8 @@ public class AdminController implements AdminApi {
     @Override
     @PutMapping("/vendor/radius")
     public ResponseEntity<Void> updateDefaultRadius(
-            @RequestParam(name = "authorization") Long authorization,
-            @RequestBody Double body) {
+        @RequestParam(name = "authorization") Long authorization,
+        @RequestBody Double body) {
 
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
@@ -184,7 +190,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/vendor/radius")
     public ResponseEntity<Double> getDefaultRadius(
-            @RequestParam(name = "authorization") Long authorization) {
+        @RequestParam(name = "authorization") Long authorization) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (auth.isPresent()) {
             return auth.get();
@@ -193,7 +199,7 @@ public class AdminController implements AdminApi {
         Optional<Double> res = adminService.getDefaultRadius();
 
         return res.map(aDouble -> new ResponseEntity<>(aDouble, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 
@@ -211,7 +217,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/orders/status/delivered")
     public ResponseEntity<List<Order>> getDeliveredOrders(
-            @RequestParam(name = "authorization") Long authorization
+        @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (doesNotHaveAuthority(auth)) {
@@ -221,7 +227,7 @@ public class AdminController implements AdminApi {
         Optional<List<Order>> res = adminService.getDelivered();
 
         return res.map(orders -> new ResponseEntity<>(orders, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 
@@ -238,7 +244,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/analytics/courier-efficiency")
     public ResponseEntity<Map<String, Double>> getCourierEfficiencies(
-            @RequestParam(name = "authorization") Long authorization
+        @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (doesNotHaveAuthority(auth)) {
@@ -248,7 +254,7 @@ public class AdminController implements AdminApi {
         Optional<Map<String, Double>> res = adminService.getCouriersEfficiencies();
 
         return res.map(stringDoubleMap -> new ResponseEntity<>(stringDoubleMap, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 
@@ -265,7 +271,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/analytics/delivery-times")
     public ResponseEntity<List<String>> getAllDeliveryTimes(
-            @RequestParam(name = "authorization") Long authorization) {
+        @RequestParam(name = "authorization") Long authorization) {
 
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (doesNotHaveAuthority(auth)) {
@@ -275,7 +281,7 @@ public class AdminController implements AdminApi {
         Optional<List<String>> deliveryTimes = adminService.getAllDeliveryTimes();
 
         return deliveryTimes.map(strings -> new ResponseEntity<>(strings, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -291,7 +297,7 @@ public class AdminController implements AdminApi {
     @Override
     @GetMapping("/analytics/all-ratings")
     public ResponseEntity<List<BigDecimal>> getAllRatings(
-            @RequestParam(name = "authorization") Long authorization) {
+        @RequestParam(name = "authorization") Long authorization) {
 
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (doesNotHaveAuthority(auth)) {
@@ -301,6 +307,6 @@ public class AdminController implements AdminApi {
         Optional<List<BigDecimal>> ratingsList = adminService.getAllRatings();
 
         return ratingsList.map(ratings -> new ResponseEntity<>(ratings, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

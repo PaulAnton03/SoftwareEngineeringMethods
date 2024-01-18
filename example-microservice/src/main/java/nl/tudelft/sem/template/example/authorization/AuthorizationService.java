@@ -1,5 +1,9 @@
 package nl.tudelft.sem.template.example.authorization;
 
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.COURIER;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.CUSTOMER;
+import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.VENDOR;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -10,13 +14,12 @@ import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import nl.tudelft.sem.template.example.utils.DbUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import static nl.tudelft.sem.template.example.authorization.Authorization.UserType.*;
 
 @Service
 public class AuthorizationService {
 
     private final UserExternalService userExternalService;
-    private DbUtils dbUtils;
+    private final DbUtils dbUtils;
     @Getter
     private HashMap<String, List<Authorization.UserType>> permissions;
 
@@ -40,6 +43,15 @@ public class AuthorizationService {
         this.validationMethods = validationMethods;
     }
 
+    /**
+     * Wrapper for authorize.
+     *
+     * @param response response
+     * @return boolean for authorization
+     */
+    public static boolean doesNotHaveAuthority(Optional<ResponseEntity> response) {
+        return response.isPresent();
+    }
 
     /**
      * Checks if the user is authorized to call the method.
@@ -54,15 +66,6 @@ public class AuthorizationService {
             new Validation(dbUtils, validationMethods));
         return handler.check(userId, methodName, other);
     }
-
-
-    /**
-     * Wrapper for authorize.
-     * @param response response
-     * @return boolean for authorization
-     */
-    public static boolean doesNotHaveAuthority(Optional<ResponseEntity> response) { return response.isPresent(); }
-
 
     /**
      * Checks if the user is an admin.

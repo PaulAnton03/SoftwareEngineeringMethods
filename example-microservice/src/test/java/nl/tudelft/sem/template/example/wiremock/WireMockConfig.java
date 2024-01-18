@@ -13,11 +13,10 @@ import org.springframework.http.MediaType;
  */
 public class WireMockConfig {
 
-    public static WireMockServer userMicroservice;
-    public static WireMockServer orderMicroservice;
-
     private static final int USER_SERVER_PORT = 4269;
     private static final int ORDER_SERVER_PORT = 8082;
+    public static WireMockServer userMicroservice;
+    public static WireMockServer orderMicroservice;
 
     /**
      * Starts the WireMock user server.

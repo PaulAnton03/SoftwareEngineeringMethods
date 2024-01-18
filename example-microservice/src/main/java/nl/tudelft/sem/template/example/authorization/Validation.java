@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 public class Validation extends Handler {
 
     private final HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods;
-    private DbUtils dbUtils;
+    private final DbUtils dbUtils;
 
     public Validation(DbUtils dbUtils, HashMap<String, BiFunction<Long, Long, Boolean>> validationMethods) {
         this.dbUtils = dbUtils;
