@@ -31,6 +31,12 @@ public class StatusController implements StatusApi {
     public StatusService statusService;
     public OrderService orderService;
 
+    /**
+     * Status Controller constructor
+     * @param statusService service for status
+     * @param orderService service for orders
+     * @param authorizationService authorization
+     */
     public StatusController(StatusService statusService, OrderService orderService,
                             AuthorizationService authorizationService) {
         this.statusService = statusService;
@@ -44,11 +50,11 @@ public class StatusController implements StatusApi {
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param orderId       id of the order to update its status to accepted (required)
      * @return a response entity with nothing,
-     * 400 if previous status doesn't match method,
-     * 404 if not found,
-     * 403 if not authorized,
-     * 500 if server error,
-     * only for vendors
+     *         400 if previous status doesn't match method,
+     *         404 if not found,
+     *         403 if not authorized,
+     *         500 if server error,
+     *         only for vendors
      */
     @Override
     @PutMapping("/{orderId}/accepted")
@@ -124,11 +130,11 @@ public class StatusController implements StatusApi {
      * @param orderId       id of the order to update its status to given_to_courier (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return a response entity with nothing,
-     * 400 if previous status doesn't match method,
-     * 404 if not found,
-     * 403 if not authorized,
-     * 500 if server error,
-     * only for vendors
+     *         400 if previous status doesn't match method,
+     *         404 if not found,
+     *         403 if not authorized,
+     *         500 if server error,
+     *         only for vendors
      */
     @Override
     @PutMapping("/{orderId}/giventocourier")
@@ -137,7 +143,8 @@ public class StatusController implements StatusApi {
         @RequestParam(name = "authorization") Long authorization,
         @RequestBody UpdateToGivenToCourierRequest updateToGivenToCourierRequest) {
 
-        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToGivenToCourier", orderId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization,
+                "updateToGivenToCourier", orderId);
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
@@ -158,13 +165,13 @@ public class StatusController implements StatusApi {
     }
 
     /**
-     * Helper method for updating status objects, checks if the previous status is the expected one
+     * Helper method for updating status objects, checks if the previous status is the expected one.
      *
      * @param orderId          the id of the order
      * @param expectedPrevious the expected status value
      * @return Optional of empty if everything is fine,
-     * NOT_FOUND if there is no previous order,
-     * BAD_REQUEST if the previous status does not match the expected value
+     *         NOT_FOUND if there is no previous order,
+     *         BAD_REQUEST if the previous status does not match the expected value
      */
     private Optional<ResponseEntity<Void>> checkPrevStatus(Long orderId, Order.StatusEnum expectedPrevious) {
         Optional<Order.StatusEnum> currentStatus = statusService.getOrderStatus(orderId);
@@ -186,11 +193,11 @@ public class StatusController implements StatusApi {
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param orderId       id of the order to update its status to in_transit (required)
      * @return a response entity with nothing,
-     * 400 if previous status doesn't match method,
-     * 404 if not found,
-     * 403 if not authorized,
-     * 500 if server error,
-     * only for couriers
+     *         400 if previous status doesn't match method,
+     *         404 if not found,
+     *         403 if not authorized,
+     *         500 if server error,
+     *         only for couriers
      */
     @Override
     @PutMapping("/{orderId}/intransit")
@@ -218,11 +225,24 @@ public class StatusController implements StatusApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * PUT /status/{orderId}/preparing : Change the order status from accepted to preparing
+     * Update the order status to preparing.
+     *
+     * @param orderId                  Id of order to change status (required)
+     * @param authorization            The userId to check if they have the rights to make a request (required)
+     * @param updateToPreparingRequest Request body for status change from accepted to preparing (required)
+     * @return Successful update of status to preparing (status code 200)
+     *         or Invalid arguments (status code 400)
+     *         or Order not found (status code 404)
+     *         or Unauthorized (status code 403)
+     */
     @Override
     @PutMapping("/{orderId}/preparing")
-    public ResponseEntity<Void> updateToPreparing(@PathVariable(name = "orderId") Long orderId,
-                                                  @RequestParam(name = "authorization") Long authorization,
-                                                  @Valid @RequestBody UpdateToPreparingRequest updateToPreparingRequest) {
+    public ResponseEntity<Void> updateToPreparing(
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Valid @RequestBody UpdateToPreparingRequest updateToPreparingRequest) {
 
         var auth = authorizationService.checkIfUserIsAuthorized(authorization,
             "updateToPreparing", orderId);
@@ -253,17 +273,18 @@ public class StatusController implements StatusApi {
      * @param authorization            the UserId to check if they have the rights to make this request (required)
      * @param updateToDeliveredRequest Request body for status change from in-transit to delivered (required)
      * @return a response entity with nothing,
-     * 400 if previous status doesn't match method or the given variables are wrong,
-     * 404 if not found,
-     * 403 if not authorized,
-     * 500 if server error,
-     * only for couriers
+     *         400 if previous status doesn't match method or the given variables are wrong,
+     *         404 if not found,
+     *         403 if not authorized,
+     *         500 if server error,
+     *         only for couriers
      */
     @Override
     @PutMapping("/{orderId}/delivered")
-    public ResponseEntity<Void> updateToDelivered(@PathVariable("orderId") Long orderId,
-                                                  @RequestParam(value = "authorization", required = true) Long authorization,
-                                                  @Valid @RequestBody UpdateToDeliveredRequest updateToDeliveredRequest) {
+    public ResponseEntity<Void> updateToDelivered(
+            @PathVariable("orderId") Long orderId,
+            @RequestParam(value = "authorization") Long authorization,
+            @Valid @RequestBody UpdateToDeliveredRequest updateToDeliveredRequest) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "updateToDelivered", orderId);
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
@@ -295,10 +316,10 @@ public class StatusController implements StatusApi {
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param orderId       id of the order to update its status to accepted (required)
      * @return a response entity with a status String,
-     * 404 if not found,
-     * 403 if not authorized,
-     * 500 if server error,
-     * for customers, vendors, couriers
+     *         404 if not found,
+     *         403 if not authorized,
+     *         500 if server error,
+     *         for customers, vendors, couriers
      */
 
     @Override

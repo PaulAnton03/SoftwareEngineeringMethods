@@ -48,6 +48,15 @@ public class OrderController implements OrderApi {
     @Setter
     private NextOrderStrategy strategy;
 
+    /**
+     * OrderController constructor.
+     *
+     * @param orderService service for orders
+     * @param courierService service for couriers
+     * @param authorizationService authorization
+     * @param orderRepository Repo for orders
+     * @param vendorRepository Repo for Vendors
+     */
     @Autowired
     public OrderController(OrderService orderService, CourierService courierService,
                            AuthorizationService authorizationService, OrderRepository orderRepository,
@@ -84,8 +93,8 @@ public class OrderController implements OrderApi {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        var auth =
-            authorizationService.checkIfUserIsAuthorized(authorization, "getNextOrderForVendor", courier.get().getBossId());
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getNextOrderForVendor",
+                    courier.get().getBossId());
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
@@ -119,19 +128,23 @@ public class OrderController implements OrderApi {
 
     /**
      * GET /order/unassigned : Retrieve all independent and unassigned orders.
-     * Return a list of all independent and unassigned orders. Independent orders are orders that belong  to a vendor without own couriers.
+     * Return a list of all independent and unassigned orders. Independent orders are orders that belong
+     * to a vendor without own couriers.
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, independent and unassigned orders received (status code 200)
-     *         or Unsuccessful, independent and unassigned orders cannot be retrieved because of a bad request (status code 400)
-     *         or Unsuccessful, entity does not have access rights to retrieve independent and unassigned orders (status code 403)
+     *         or Unsuccessful, independent and unassigned orders cannot be retrieved because of a bad request
+     *         (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve independent and unassigned orders
+     *         (status code 403)
      *         or Unsuccessful, no independent and unassigned orders were found (status code 404)
      */
     @Override
     @GetMapping("/unassigned")
     public ResponseEntity<List<Order>> getIndependentOrders(
         @RequestParam(value = "authorization") Long authorization) {
-        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getIndependentOrders", authorization);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization,
+                "getIndependentOrders", authorization);
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
@@ -162,7 +175,8 @@ public class OrderController implements OrderApi {
         @RequestParam(name = "authorization") Long authorization,
         @PathVariable(name = "orderId") Long orderId
     ) {
-        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getFinalDestination", orderId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization,
+                "getFinalDestination", orderId);
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
@@ -230,7 +244,8 @@ public class OrderController implements OrderApi {
      * @param orderId       (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, vendor location of the order received (status code 200)
-     *         or Unsuccessful, vendor location of the order cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, vendor location of the order cannot be retrieved because of a bad request
+     *         (status code 400)
      *         or Unsuccessful, entity does not have access rights to retrieve vendor location (status code 403)
      *         or Unsuccessful, vendor location for the order not found (status code 404)
      */
@@ -240,7 +255,8 @@ public class OrderController implements OrderApi {
         @PathVariable(name = "orderId") Long orderId,
         @RequestParam(name = "authorization") Long authorization
     ) {
-        var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getPickupDestination", orderId);
+        var auth = authorizationService.checkIfUserIsAuthorized(authorization,
+                "getPickupDestination", orderId);
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
@@ -536,7 +552,8 @@ public class OrderController implements OrderApi {
      * @param orderId       Id of the order to get it&#39;s ETA (required)
      * @return Successful response, order found (status code 200)
      *         or Invalid arguments (status code 400)
-     *         or Unsuccessful, entity does not have access rights to retrieve estimated time of arrival (status code 403)
+     *         or Unsuccessful, entity does not have access rights to retrieve estimated time of arrival
+     *         (status code 403)
      *         or Unsuccessful, order not found (status code 404)
      */
     @Override
@@ -559,7 +576,8 @@ public class OrderController implements OrderApi {
 
     /**
      * GET /order/{orderId}/distance : Retrieve the current distance to the courier with this order.
-     * return the distance (given in meters) between final delivery location and the courier  who has the order corresponding to the id
+     * return the distance (given in meters) between final delivery location and the courier  who has the order
+     * corresponding to the id.
      *
      * @param orderId       id of the order with the distance to retrieve (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
@@ -581,7 +599,7 @@ public class OrderController implements OrderApi {
         }
 
         Optional<Float> distance = orderService.getDistance(orderId);
-        return distance.map(aFloat -> new ResponseEntity<>(aFloat, HttpStatus.OK))
+        return distance.map(flt -> new ResponseEntity<>(flt, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
