@@ -1,0 +1,1752 @@
+{
+	"info": {
+		"_postman_id": "d518402d-0ce9-40f0-a965-52a693aeef73",
+		"name": "System tests final",
+		"description": "This is a microservice for managing delivery in the YumYumNow company.\n\nPlease run the folders and tests inside the folders in the order they come, so that the setup is correct :))",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26149725",
+		"_collection_link": "https://martian-robot-803705.postman.co/workspace/New-Team-Workspace~ac3991b1-86df-4837-abba-f4adc0f8ce7c/collection/26149725-d518402d-0ce9-40f0-a965-52a693aeef73?action=share&source=collection_link&creator=26149725"
+	},
+	"item": [
+		{
+			"name": "POPULATING-DATABASE",
+			"item": [
+				{
+					"name": "post-vendor-11",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 11,\n  \"hasCouriers\": true,\n  \"radius\": 50,\n  \"location\": {\n    \"latitude\": 23.92488,\n    \"longitude\": 66.7099\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/vendor/add-whole?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"vendor",
+								"add-whole"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add a vendor to the database. One needs to provide the whole object. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "post-vendor-12",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 12,\n  \"hasCouriers\": false,\n  \"radius\": 500,\n  \"location\": {\n    \"latitude\": 23.92488,\n    \"longitude\": 66.7099\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/vendor/add-whole?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"vendor",
+								"add-whole"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add a vendor to the database. One needs to provide the whole object. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "post-vendor-13-using-id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/vendor/13?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"vendor",
+								"13"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add a vendor to the database. Only input needed is the id. The other fields will be set to a default value. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "post-courier-21",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 21,\n  \"currentLocation\": {\n    \"latitude\": 55.92488,\n    \"longitude\": 74.7099\n  },\n  \"bossId\": 11\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/courier/add-whole?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"courier",
+								"add-whole"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add a courier to the database. One needs to provide the whole object. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "post-courier-23",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 23,\n  \"currentLocation\": {\n    \"latitude\": 56.92488,\n    \"longitude\": 74.7099\n  },\n  \"bossId\": 11\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/courier/add-whole?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"courier",
+								"add-whole"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add a courier to the database. One needs to provide the whole object. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "post-courier-24-using-id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/courier/24?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"courier",
+								"24"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add a courier to the database. Only input needed is the id. The other fields will be set to  a default value. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "post-order-1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"status\": \"pending\",\r\n  \"id\": 1,\r\n  \"vendorId\": 10,\r\n  \"deliveryDestination\": {\r\n    \"latitude\": 23.92488,\r\n    \"longitude\": 74.7099\r\n  },\r\n  \"timeValues\": {\r\n      \"orderTime\": \"2024-01-17T16:21:32.378Z\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/1?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post-order-2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"status\": \"pending\",\r\n  \"id\": 2,\r\n  \"vendorId\": 12,\r\n  \"deliveryDestination\": {\r\n    \"latitude\": 23.92488,\r\n    \"longitude\": 74.7099\r\n  },\r\n  \"timeValues\": {\r\n    \"prepTime\": \"01:30:00\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/2?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"2"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post-order-3",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"status\": \"in-transit\",\r\n  \"id\": 3,\r\n  \"vendorId\": 11,\r\n  \"courierId\": 21,\r\n  \"deliveryDestination\": {\r\n    \"latitude\": 23.92488,\r\n    \"longitude\": 74.7099\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/3?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"3"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post-order-4",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"status\": \"pending\",\r\n  \"id\": 4,\r\n  \"vendorId\": 11,\r\n  \"deliveryDestination\": {\r\n    \"latitude\": 23.92488,\r\n    \"longitude\": 74.7099\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/4?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"4"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "set-courier-of-order-3-to-21",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"in-transit\",\n  \"id\": 3,\n  \"vendorId\": 11,\n  \"courierId\": 23,\n  \"deliveryDestination\": {\n    \"latitude\": 23.92488,\n    \"longitude\": 74.7099\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/3/courier/23?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"3",
+								"courier",
+								"23"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "update the courier id of the order"
+					},
+					"response": []
+				},
+				{
+					"name": "update-order-1",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"pending\",\n  \"id\": 1,\n  \"vendorId\": 11,\n  \"deliveryDestination\": {\n    \"latitude\": 80.92488,\n    \"longitude\": 74.7099\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/1?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						},
+						"description": "update the order corresponding to the id"
+					},
+					"response": []
+				}
+			],
+			"description": "Run things in this folder before running things in the other folders, so that the database is populated and ready :))"
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "update-boss-of-courier",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/courier/24/13?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"courier",
+								"24",
+								"13"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						},
+						"description": "Update the boss of the courier corresponding to the courierId. The boss can either be a vendor (if the courier works for that vendor) or the admin (if not)."
+					},
+					"response": []
+				},
+				{
+					"name": "get-courier-21",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/user/courier/21?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"courier",
+								"21"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the UserId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "return the courier corresponding to the id"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "status",
+			"item": [
+				{
+					"name": "get-status-order-1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/status/1?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"status",
+								"1"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						},
+						"description": "Get the status of an order"
+					},
+					"response": []
+				},
+				{
+					"name": "pending-to-rejected",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/status/2/rejected?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"status",
+								"2",
+								"rejected"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the UserId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Sends an exception, goes from “pending” to [said by vendor] “rejected”"
+					},
+					"response": []
+				},
+				{
+					"name": "pending-to-accepted",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/status/1/accepted?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"status",
+								"1",
+								"accepted"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make a request"
+								}
+							]
+						},
+						"description": "Update the order status to accepted"
+					},
+					"response": []
+				},
+				{
+					"name": "accepted-to-preparing",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"prepTime\": \"01:30:00\",\n  \"expectedDeliveryTime\": \"2024-01-17T11:15:17.516Z\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/status/1/preparing?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"status",
+								"1",
+								"preparing"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make a request"
+								}
+							]
+						},
+						"description": "Update the order status to preparing"
+					},
+					"response": []
+				},
+				{
+					"name": "preparing-to-givenToCourier",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courierId\": \"21\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/status/1/giventocourier?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"status",
+								"1",
+								"giventocourier"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the UserId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Goes from “preparing” to [said by vendor] “given to courier” and set the courierID"
+					},
+					"response": []
+				},
+				{
+					"name": "givenToCourier-to-inTransit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/status/1/intransit?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"status",
+								"1",
+								"intransit"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make a request"
+								}
+							]
+						},
+						"description": "Update the order status to in-transit"
+					},
+					"response": []
+				},
+				{
+					"name": "inTransit-to-delivered",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"actualDeliveryTime\": \"2024-01-17T11:21:51.344Z\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/status/1/delivered?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"status",
+								"1",
+								"delivered"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the UserId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Goes from “in transit” to [said by courier] “delivered” and set the actualDeliveryTime"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "order",
+			"item": [
+				{
+					"name": "get-order-1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/order/1?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9"
+								}
+							]
+						},
+						"description": "return a list of order objects"
+					},
+					"response": []
+				},
+				{
+					"name": "update-location-of-courier-23",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"latitude\": 100.00,\n  \"longitude\": 200.00\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/3/current?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"3",
+								"current"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "update the location of the courier who has the order corresponding to the id"
+					},
+					"response": []
+				},
+				{
+					"name": "get-location-of-courier-23",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/3/current?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"3",
+								"current"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "return the location of the courier who has the order corresponding to the id"
+					},
+					"response": []
+				},
+				{
+					"name": "update-rating",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "5.0",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/1/rating?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1",
+								"rating"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Update both of the orders ratings"
+					},
+					"response": []
+				},
+				{
+					"name": "get-rating",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/1/rating?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1",
+								"rating"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Retrieve the rating details for a specific order"
+					},
+					"response": []
+				},
+				{
+					"name": "get-distance-order-1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/1/distance?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1",
+								"distance"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "return the distance (given in meters) between final delivery location and the courier  who has the order corresponding to the id"
+					},
+					"response": []
+				},
+				{
+					"name": "get-vendor-location-order-1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/1/pickup-destination?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1",
+								"pickup-destination"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Return the vendor location of the specified order"
+					},
+					"response": []
+				},
+				{
+					"name": "get-final-destination-order-1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/1/final-destination?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1",
+								"final-destination"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Retrieve the final destination of an order"
+					},
+					"response": []
+				},
+				{
+					"name": "get-eta-order-1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/1/ETA?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"1",
+								"ETA"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "return the ETA of an order"
+					},
+					"response": []
+				},
+				{
+					"name": "update-prep-time",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"05:30:00\"",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/2/preparation-time?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"2",
+								"preparation-time"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "update the preparation time of the order"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "Retrieve all exceptions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/admin/exceptions?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"exceptions"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Return a list of all exceptions collected from orders. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve exception for a specific order",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/admin/exceptions/2?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"exceptions",
+								"2"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Return exception information for a specific order. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "Add exception for a specific order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"order\": {\n        \"status\": \"in-transit\",\n        \"id\": 4,\n        \"vendorId\": 11,\n        \"deliveryDestination\": {\n            \"latitude\": 23.92488,\n            \"longitude\": 74.7099\n        }\n    },\n    \"message\": \"Order was delivered laaaate\",\n    \"isResolved\": true,\n    \"exceptionType\": \"LateDelivery\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/exceptions/4?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"exceptions",
+								"4"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Add exception information for a specific order. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "Update exception for a specific order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"order\": {\n        \"status\": \"in-transit\",\n        \"id\": 4,\n        \"vendorId\": 11,\n        \"deliveryDestination\": {\n            \"latitude\": 23.92488,\n            \"longitude\": 74.7099\n        }\n    },\n    \"message\": \"Order was delivered not so late\",\n    \"isResolved\": true,\n    \"exceptionType\": \"LateDelivery\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/exceptions/4?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"exceptions",
+								"4"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Update exception information for a specific order. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "update-default-radius-independent-vendors",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "10.0",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/vendor/radius?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"vendor",
+								"radius"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Update the default radius of all independent vendors. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "get-default-radius-independent-vendors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/admin/vendor/radius?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"vendor",
+								"radius"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Return the default radius of all independent vendors. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-delivered-orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/admin/orders/status/delivered?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"orders",
+								"status",
+								"delivered"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Return a list of orders with a status of delivered. To be used by admin."
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-courier-efficiencies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/admin/analytics/courier-efficiency?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"analytics",
+								"courier-efficiency"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the userId to check if they have the rights to make this request, only admin is allowed."
+								}
+							]
+						},
+						"description": "Return the all courier efficiencies."
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-ratings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/admin/analytics/all-ratings?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"analytics",
+								"all-ratings"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the userId to check if they have the rights to make this request, only admin is allowed."
+								}
+							]
+						},
+						"description": "Return rating of all of the orders."
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-delivery-times",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/admin/analytics/delivery-times?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"analytics",
+								"delivery-times"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the userId to check if they have the rights to make this request, only admin is allowed."
+								}
+							]
+						},
+						"description": "Return delivery times of all of the orders. The difference in time between ETA and actual time arrival."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "require integration",
+			"item": [
+				{
+					"name": "get-next-orders-independent-vendors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/unassigned?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"unassigned"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "Return a list of all independent and unassigned orders. Independent orders are orders that belong  to a vendor without own couriers."
+					},
+					"response": []
+				},
+				{
+					"name": "get-next-order-dependent-vendor",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/order/11?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"11"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request"
+								}
+							]
+						},
+						"description": "return the next order object that is assigned to specific vendor"
+					},
+					"response": []
+				},
+				{
+					"name": "get-vendor-radius",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/user/vendor/radius?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"vendor",
+								"radius"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) the userId to check if they have the rights to make this request, also the vendor id to set."
+								}
+							]
+						},
+						"description": "Return the specific radius of the vendor."
+					},
+					"response": []
+				},
+				{
+					"name": "update-vendor-radius",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "10.0",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/vendor/radius?authorization=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"vendor",
+								"radius"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": "9",
+									"description": "(Required) The userId to check if they have the rights to make this request, also the vendor id to set."
+								}
+							]
+						},
+						"description": "Update the specific radius of a vendor. To be used by that vendor."
+					},
+					"response": []
+				}
+			],
+			"description": "For these to run the User microservice should be running and users/vendors with required properties shoud be added to the database. Without running that microservice we can't easily authenticate vendors/couriers, which is what these methods require."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	]
+}
