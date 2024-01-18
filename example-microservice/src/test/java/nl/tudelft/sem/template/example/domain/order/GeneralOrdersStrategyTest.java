@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
-import nl.tudelft.sem.template.example.domain.order.OrderStrategy.GeneralOrdersStrategy;
+import nl.tudelft.sem.template.example.domain.order.orderstrategy.GeneralOrdersStrategy;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;

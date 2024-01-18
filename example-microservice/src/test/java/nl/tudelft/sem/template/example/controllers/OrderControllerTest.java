@@ -12,8 +12,8 @@ import java.util.Optional;
 import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderService;
-import nl.tudelft.sem.template.example.domain.order.OrderStrategy.GeneralOrdersStrategy;
-import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
+import nl.tudelft.sem.template.example.domain.order.orderstrategy.GeneralOrdersStrategy;
+import nl.tudelft.sem.template.example.domain.order.orderstrategy.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.example.domain.user.CourierService;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.example.externalservices.NavigationMock;
@@ -68,7 +68,7 @@ class OrderControllerTest {
         this.controller = new OrderController(orderService, courierService, authorizationService, orderRepo, vendorRepo);
 
         NavigationMock navigationMock = new NavigationMock();
-        this.eta = navigationMock.getETA(1L, new Time());
+        this.eta = navigationMock.getEta(1L, new Time());
     }
 
     @Test
@@ -558,14 +558,14 @@ class OrderControllerTest {
     }
 
     @Test
-    void getETA200() {
+    void getEta200() {
         Mockito.when(orderService.getEta(1L)).thenReturn(Optional.of(eta));
         var res = controller.getETA(2L, 1L);
         assertEquals(new ResponseEntity<>(eta, HttpStatus.OK), res);
     }
 
     @Test
-    void getETA403() {
+    void getEta403() {
         Mockito.when(orderService.getEta(1L)).thenReturn(Optional.of(eta));
         Mockito.when(authorizationService.checkIfUserIsAuthorized(anyLong(), anyString(), any()))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
@@ -575,7 +575,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void getETA404() {
+    void getEtaA404() {
         Mockito.when(orderService.getEta(1L)).thenReturn(Optional.empty());
         var res = controller.getETA(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);

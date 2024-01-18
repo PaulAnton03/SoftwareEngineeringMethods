@@ -1,7 +1,7 @@
 package nl.tudelft.sem.template.example.domain.user;
 
-import nl.tudelft.sem.template.model.Vendor;
 import java.util.Optional;
+import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

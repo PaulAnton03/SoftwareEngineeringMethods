@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
-import nl.tudelft.sem.template.example.domain.order.OrderStrategy.OrderPerVendorStrategy;
+import nl.tudelft.sem.template.example.domain.order.orderstrategy.OrderPerVendorStrategy;
 import nl.tudelft.sem.template.model.Location;
 import nl.tudelft.sem.template.model.Order;
 import nl.tudelft.sem.template.model.Vendor;

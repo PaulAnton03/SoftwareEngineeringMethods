@@ -257,7 +257,7 @@ public class OrderService {
 
         // if ETA did not exist, calculate it and persist it
         if (time.getExpectedDeliveryTime() == null) {
-            OffsetDateTime eta = navigationMock.getETA(orderId, time);
+            OffsetDateTime eta = navigationMock.getEta(orderId, time);
 
             time.setExpectedDeliveryTime(eta);
             orderObject.setTimeValues(time);

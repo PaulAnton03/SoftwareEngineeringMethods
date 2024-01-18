@@ -366,7 +366,7 @@ class OrderServiceTest {
 
         Optional<OffsetDateTime> res = os.getEta(1L);
         assertFalse(res.isEmpty());
-        assertEquals(res.get(), new NavigationMock().getETA(1L, new Time()));
+        assertEquals(res.get(), new NavigationMock().getEta(1L, new Time()));
     }
 
     @Test
@@ -458,11 +458,12 @@ class OrderServiceTest {
 
     @Test
     void getOrderLocationDelivered() {
-        Location finalLocation = new Location().latitude(11F).longitude(22F);
         order1.setStatus(Order.StatusEnum.DELIVERED);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
         Optional<Location> res = os.getOrderLocation(order1);
         assertTrue(res.isPresent());
+
+        Location finalLocation = new Location().latitude(11F).longitude(22F);
         assertEquals(res.get(), finalLocation);
     }
 
