@@ -2,14 +2,11 @@ package nl.tudelft.sem.template.example.authorization;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.externalservices.UserExternalService;
 import org.springframework.http.ResponseEntity;
 
 public class Authorization extends Handler {
-
-    private final Long ADMIN_ID = 9L;
 
     private final UserExternalService userExternalService;
     // Maps method names to the user types that are allowed to call them
@@ -30,9 +27,6 @@ public class Authorization extends Handler {
      */
     @Override
     public Optional<ResponseEntity> check(Long userId, String methodName, Long other) {
-        if (Objects.equals(userId, ADMIN_ID)) {
-            return Optional.empty();
-        }
 
         Authorization.UserType actualUserType = getUserType(userId);
         if (actualUserType == Authorization.UserType.NAN) {
@@ -54,9 +48,6 @@ public class Authorization extends Handler {
      * @return An optional containing a ResponseEntity with an error message if authorization fails, or empty if authorized.
      */
     public Optional<ResponseEntity> authorizeAdminOnly(Long userId) {
-        if (Objects.equals(userId, ADMIN_ID)) {
-            return Optional.empty();
-        }
 
         Authorization.UserType actualUserType = getUserType(userId);
         if (actualUserType == Authorization.UserType.NAN) {
