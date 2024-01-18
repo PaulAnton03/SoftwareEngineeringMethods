@@ -366,12 +366,6 @@ public class OrderController implements OrderApi {
             return auth.get();
         }
 
-        Optional<BigDecimal> currentRating = orderService.getRating(orderId);
-
-        if (currentRating.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
         Optional<BigDecimal> newRating = orderService.updateRating(orderId, body);
 
         if (newRating.isEmpty()) {
