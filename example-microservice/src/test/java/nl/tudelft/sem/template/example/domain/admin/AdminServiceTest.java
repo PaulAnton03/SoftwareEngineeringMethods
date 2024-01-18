@@ -14,28 +14,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.*;
 
-import nl.tudelft.sem.template.example.authorization.AuthorizationService;
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
 import nl.tudelft.sem.template.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import wiremock.org.apache.hc.core5.util.TimeValue;
 
 public class AdminServiceTest {
 
     private Vendor vendor1;
 
     private AdminService adminService;
-
-    private AuthorizationService authorizationService;
-
     private DeliveryException exception1;
 
     private DeliveryException exception2;
@@ -64,7 +57,6 @@ public class AdminServiceTest {
         this.orderRepo = Mockito.mock(OrderRepository.class);
         this.exceptionRepo = Mockito.mock(DeliveryExceptionRepository.class);
         this.adminService = new AdminService(vendorRepo, orderRepo, exceptionRepo);
-        this.authorizationService = Mockito.mock(AuthorizationService.class);
     }
 
     @Test
@@ -230,6 +222,7 @@ public class AdminServiceTest {
         Mockito.when(vendorRepo.findVendorsByHasCouriers(false)).thenReturn(vendors);
 
         Optional<Double> res = adminService.getDefaultRadius();
+        assertTrue(res.isPresent());
         assertEquals(res.get(), 1D);
     }
 
@@ -240,6 +233,7 @@ public class AdminServiceTest {
         Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED)).thenReturn(orders);
 
         Optional<List<Order>> res = adminService.getDelivered();
+        assertTrue(res.isPresent());
         assertEquals(orders, res.get());
     }
 
@@ -263,7 +257,7 @@ public class AdminServiceTest {
                 .thenReturn(List.of(order1));
 
         var res = adminService.getCouriersEfficiencies();
-        assertEquals(Optional.of(Map.of(22L, 60D)), res);
+        assertEquals(Optional.of(Map.of("22", 60D)), res);
     }
 
     @Test

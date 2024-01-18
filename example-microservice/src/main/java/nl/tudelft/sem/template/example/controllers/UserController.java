@@ -60,11 +60,8 @@ public class UserController implements UserApi {
         }
 
         Optional<Courier> courier = courierService.getCourierById(courierId);
-        if (courier.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(courier.get(), HttpStatus.OK);
+        return courier.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -79,7 +76,7 @@ public class UserController implements UserApi {
      */
     @Override
     @GetMapping("/vendor/radius")
-    public ResponseEntity getSpecificRadius(
+    public ResponseEntity<Double> getSpecificRadius(
         @RequestParam(name = "authorization") Long authorization
     ) {
         var auth =
@@ -90,11 +87,8 @@ public class UserController implements UserApi {
 
         Optional<Double> ratingReceived = vendorService.getRadiusOfVendor(authorization);
 
-        if (ratingReceived.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(ratingReceived.get(), HttpStatus.OK);
+        return ratingReceived.map(aDouble -> new ResponseEntity<>(aDouble, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -209,7 +203,7 @@ public class UserController implements UserApi {
      */
     @Override
     @PutMapping("/vendor/radius")
-    public ResponseEntity updateSpecificRadius(
+    public ResponseEntity<Void> updateSpecificRadius(
         @RequestParam(name = "authorization") Long authorization,
         @RequestBody @Valid Double body
     ) {

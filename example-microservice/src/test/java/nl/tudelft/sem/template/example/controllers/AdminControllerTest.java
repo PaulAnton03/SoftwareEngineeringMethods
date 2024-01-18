@@ -31,12 +31,10 @@ class AdminControllerTest {
 
     private DeliveryException exception2;
 
-    private Order order1;
-
 
     @BeforeEach
     void setUp() {
-        this.order1 = new Order().status(Order.StatusEnum.DELIVERED).id(3L);
+        Order order1 = new Order().status(Order.StatusEnum.DELIVERED).id(3L);
         this.exception1 = new DeliveryException().id(2L)
             .exceptionType(DeliveryException.ExceptionTypeEnum.LATEDELIVERY)
             .isResolved(false)
@@ -100,13 +98,13 @@ class AdminControllerTest {
 
     @Test
     void getDeliveredOrdersWorks200() {
-        List orders = List.of(new Order().id(1L).status(Order.StatusEnum.DELIVERED),
+        List<Order> orders = List.of(new Order().id(1L).status(Order.StatusEnum.DELIVERED),
                 new Order().id(2L).status(Order.StatusEnum.DELIVERED),
                 new Order().id(3L).status(Order.StatusEnum.DELIVERED));
         Mockito.when(adminService.getDelivered()).thenReturn(Optional.of(orders));
 
         var res = controller.getDeliveredOrders(1L);
-        assertEquals(new ResponseEntity<>(Optional.of(orders), HttpStatus.OK), res);
+        assertEquals(new ResponseEntity<>(orders, HttpStatus.OK), res);
     }
 
     @Test
@@ -195,11 +193,10 @@ class AdminControllerTest {
     @Test
     void getCourierEfficienciesWorks200() {
         Mockito.when(adminService.getCouriersEfficiencies()).thenReturn(
-                Optional.of(Map.of(22L, 60.0D, 23L, 120.0D)));
+                Optional.of(Map.of("22", 60.0D, "23", 120.0D)));
 
         var res = controller.getCourierEfficiencies(1L);
-        assertEquals(new ResponseEntity<>(Optional.of(
-                Map.of(22L, 60.0D, 23L, 120.0D)), HttpStatus.OK), res);
+        assertEquals(new ResponseEntity<>(Map.of("22", 60.0D, "23", 120.0D), HttpStatus.OK), res);
     }
 
     @Test

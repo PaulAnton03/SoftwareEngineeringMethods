@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.example.domain.user;
 
 import nl.tudelft.sem.template.model.Courier;
-import nl.tudelft.sem.template.model.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,7 +78,7 @@ public class CourierService {
      * @return boolean true if courier with this id exists
      */
     public boolean existsCourier(Long id) {
-            return courierRepo.existsById(id);
+        return courierRepo.existsById(id);
     }
 
 }

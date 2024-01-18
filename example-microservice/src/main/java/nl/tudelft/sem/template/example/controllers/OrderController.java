@@ -69,7 +69,7 @@ public class OrderController implements OrderApi {
     @GetMapping("/{vendorId}/get-next-order")
     public ResponseEntity<Order> getNextOrderForVendor(
             @PathVariable("vendorId") Long vendorId,
-            @RequestParam(value = "authorization", required = true) Long authorization) {
+            @RequestParam(value = "authorization") Long authorization) {
 
         Optional<Courier> courier = courierService.getCourierById(authorization);
 
@@ -123,7 +123,7 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/unassigned")
     public ResponseEntity<List<Order>> getIndependentOrders(
-            @RequestParam(value = "authorization", required = true) Long authorization) {
+            @RequestParam(value = "authorization") Long authorization) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getIndependentOrders", authorization);
         if (doesNotHaveAuthority(auth)) {
             return auth.get();
@@ -132,7 +132,7 @@ public class OrderController implements OrderApi {
         this.setStrategy(new GeneralOrdersStrategy(orderRepository, vendorRepository));
         Optional<List<Order>> orders = strategy.availableOrders(Optional.empty());
 
-        if (orders.get().isEmpty()) {
+        if (orders.isEmpty() || orders.get().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -151,9 +151,9 @@ public class OrderController implements OrderApi {
      */
     @Override
     @GetMapping("/{orderId}/final-destination")
-    public ResponseEntity getFinalDestination(
-        @RequestParam(name = "authorization") Long authorization,
-        @PathVariable(name = "orderId") Long orderId
+    public ResponseEntity<Location> getFinalDestination(
+            @RequestParam(name = "authorization") Long authorization,
+            @PathVariable(name = "orderId") Long orderId
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getFinalDestination", orderId);
         if (doesNotHaveAuthority(auth)) {
@@ -161,12 +161,9 @@ public class OrderController implements OrderApi {
         }
         Optional<Location> location = orderService.getFinalDestinationOfOrder(orderId);
 
-        if (location.isEmpty()) {
-            // 404 not found if not found :(
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(location.get(), HttpStatus.OK);
-
+        // 404 not found if not found :(
+        return location.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -183,8 +180,8 @@ public class OrderController implements OrderApi {
     @Override
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrder", orderId);
         if (doesNotHaveAuthority(auth)) {
@@ -192,11 +189,8 @@ public class OrderController implements OrderApi {
         }
 
         Optional<Order> o = orderService.getOrderById(orderId);
-        if (o.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(o.get(), HttpStatus.OK);
-
+        return o.map(order -> new ResponseEntity<>(order, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -218,10 +212,8 @@ public class OrderController implements OrderApi {
         }
 
         Optional<List<Order>> o = orderService.getOrders();
-        if (o.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(o.get(), HttpStatus.OK);
+        return o.map(orders -> new ResponseEntity<>(orders, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -237,7 +229,7 @@ public class OrderController implements OrderApi {
      */
     @Override
     @GetMapping("/{orderId}/pickup-destination")
-    public ResponseEntity getPickupDestination(
+    public ResponseEntity<Location> getPickupDestination(
             @PathVariable(name = "orderId") Long orderId,
             @RequestParam(name = "authorization") Long authorization
     ) {
@@ -248,11 +240,8 @@ public class OrderController implements OrderApi {
 
         Optional<Location> pickup = orderService.getPickupDestination(orderId);
 
-        if (pickup.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(pickup.get(), HttpStatus.OK);
+        return pickup.map(location -> new ResponseEntity<>(location, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -271,9 +260,9 @@ public class OrderController implements OrderApi {
     @Override
     @PostMapping("/{orderId}")
     public ResponseEntity<Void> makeOrder(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization,
-        @Parameter(name = "Order") @RequestBody @Valid Order order
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @Parameter(name = "Order") @RequestBody @Valid Order order
     ) {
         var auth = authorizationService.authorizeAdminOnly(authorization);
         if (doesNotHaveAuthority(auth)) {
@@ -285,7 +274,7 @@ public class OrderController implements OrderApi {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Order> created = orderService.createOrder(order);
+        orderService.createOrder(order);
 
         return new ResponseEntity<>(HttpStatus.OK);
 
@@ -337,9 +326,9 @@ public class OrderController implements OrderApi {
      */
     @Override
     @GetMapping("/{orderId}/rating")
-    public ResponseEntity getOrderRating(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization
+    public ResponseEntity<BigDecimal> getOrderRating(
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "getOrderRating", orderId);
         if (doesNotHaveAuthority(auth)) {
@@ -348,11 +337,8 @@ public class OrderController implements OrderApi {
 
         Optional<BigDecimal> currentRating = orderService.getRating(orderId);
 
-        if (currentRating.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(currentRating.get(), HttpStatus.OK);
+        return currentRating.map(bigDecimal -> new ResponseEntity<>(bigDecimal, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -370,10 +356,10 @@ public class OrderController implements OrderApi {
      */
     @Override
     @PutMapping("/{orderId}/rating")
-    public ResponseEntity putOrderRating(
-        @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(name = "authorization") Long authorization,
-        @RequestBody @Valid BigDecimal body
+    public ResponseEntity<Void> putOrderRating(
+            @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
+            @RequestBody @Valid BigDecimal body
     ) {
         var auth = authorizationService.checkIfUserIsAuthorized(authorization, "putOrderRating", orderId);
         if (doesNotHaveAuthority(auth)) {
@@ -445,7 +431,7 @@ public class OrderController implements OrderApi {
      */
     @Override
     @PutMapping("/{orderId}/preparation-time")
-    public ResponseEntity setPreparationTime(
+    public ResponseEntity<Void> setPreparationTime(
             @PathVariable(name = "orderId") Long orderId,
             @RequestParam(name = "authorization") Long authorization,
             @RequestBody @Valid String body
@@ -483,12 +469,12 @@ public class OrderController implements OrderApi {
             @RequestParam(name = "authorization") Long authorization) {
         var auth = authorizationService
                 .checkIfUserIsAuthorized(authorization, "getOrderLocation", orderId);
-        if(doesNotHaveAuthority(auth)) {
+        if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
 
         Optional<Order> order = orderService.getOrderById(orderId);
-        if(order.isEmpty()){
+        if (order.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Optional<Location> res = orderService.getOrderLocation(order.get());
@@ -517,17 +503,17 @@ public class OrderController implements OrderApi {
             @RequestBody Location location) {
         var auth = authorizationService
                 .checkIfUserIsAuthorized(authorization, "updateLocation", orderId);
-        if(doesNotHaveAuthority(auth)) {
+        if (doesNotHaveAuthority(auth)) {
             return auth.get();
         }
         Optional<Order> order = orderService.getOrderById(orderId);
-        if(order.isEmpty()){
+        if (order.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Optional<Location> res = orderService.updateLocation(order.get(), location);
 
-        if(res.isEmpty()){
+        if (res.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -559,11 +545,9 @@ public class OrderController implements OrderApi {
         }
 
         Optional<OffsetDateTime> eta = orderService.getETA(orderId);
-        if (eta.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return eta.map(offsetDateTime -> new ResponseEntity<>(offsetDateTime, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
-        return new ResponseEntity<>(eta.get(), HttpStatus.OK);
     }
 
     @Override
@@ -579,12 +563,8 @@ public class OrderController implements OrderApi {
         }
 
         Optional<Float> distance = orderService.getDistance(orderId);
-        if (distance.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(distance.get(), HttpStatus.OK);
+        return distance.map(aFloat -> new ResponseEntity<>(aFloat, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
 
 }

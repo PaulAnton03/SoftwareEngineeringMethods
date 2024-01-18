@@ -34,7 +34,12 @@ public class AdminService {
         this.vendorRepo = vendorRepo;
     }
 
-
+    /**
+     * updates the Default Radius
+     *
+     * @param body new Radius
+     * @return changed list of Vendors
+     */
     public Optional<List<Vendor>> updateDefaultRadius(Double body) {
 
         List<Vendor> vendors = vendorRepo.findVendorsByHasCouriers(false);
@@ -50,6 +55,11 @@ public class AdminService {
         return Optional.of(vendors);
     }
 
+    /**
+     * gets the default radius
+     *
+     * @return the default Radius
+     */
     public Optional<Double> getDefaultRadius(){
         List<Vendor> vendors = vendorRepo.findVendorsByHasCouriers(false);
 
@@ -197,7 +207,7 @@ public class AdminService {
      *
      * @return map of couriers and their efficiencies
      */
-    public Optional<Map<Long, Double>> getCouriersEfficiencies() {
+    public Optional<Map<String, Double>> getCouriersEfficiencies() {
         List<Order> orders = orderRepo.findByStatus(Order.StatusEnum.DELIVERED);
 
         if(orders.isEmpty()) {
@@ -208,7 +218,7 @@ public class AdminService {
                 .map(Order::getCourierId)
                 .collect(Collectors.toSet());
 
-        Map<Long, Double> res = new HashMap<>();
+        Map<String, Double> res = new HashMap<>();
 
         for(Long courier : couriers) {
             List<Order> courierOrders = orderRepo.findByCourierIdAndStatus(courier, Order.StatusEnum.DELIVERED);
@@ -223,12 +233,17 @@ public class AdminService {
 
             double result = value/size;
 
-            res.put(courier, result);
+            res.put(courier.toString(), result);
         }
 
         return Optional.of(res);
     }
 
+    /**
+     * gets all the Delivery Times
+     *
+     * @return Optional list of delivery Times
+     */
     public Optional<List<String>> getAllDeliveryTimes(){
         List<Order> orders = orderRepo.findAll();
         if (orders.isEmpty()) {
@@ -249,6 +264,11 @@ public class AdminService {
         return Optional.of(collect);
     }
 
+    /**
+     * gets all the ratings
+     *
+     * @return Optional List of Ratings
+     */
     public Optional<List<BigDecimal>> getAllRatings(){
         List<Order> orders = orderRepo.findAll();
 
