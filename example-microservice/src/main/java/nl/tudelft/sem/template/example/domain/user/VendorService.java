@@ -1,10 +1,10 @@
 package nl.tudelft.sem.template.example.domain.user;
 
 import nl.tudelft.sem.template.model.Vendor;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class VendorService {
@@ -17,7 +17,7 @@ public class VendorService {
     }
 
     /**
-     * Tries to add the given vendor to the database
+     * Tries to add the given vendor to the database.
      *
      * @param vendor the vendor to add
      * @return an optional of the added vendor (or empty optional)
@@ -28,7 +28,7 @@ public class VendorService {
     }
 
     /**
-     * Tries to add a new vendor with given id to the database
+     * Tries to add a new vendor with given id to the database.
      *
      * @param vendorId the id to create a vendor with
      * @return an optional of the added vendor (or empty optional)
@@ -40,7 +40,7 @@ public class VendorService {
     }
 
     /**
-     * Check if id of vendor exists
+     * Check if id of vendor exists.
      *
      * @param id id of vendor to check
      * @return boolean true if vendor with this id exists
@@ -50,7 +50,8 @@ public class VendorService {
     }
 
     /**
-     * Gets the radius of vendor
+     * Gets the radius of vendor.
+     *
      * @param id id of vendor
      * @return Optional of Double - radius
      */
@@ -65,7 +66,8 @@ public class VendorService {
     }
 
     /**
-     * Updates the radius of vendor
+     * Updates the radius of vendor.
+     *
      * @param id id of vendor
      * @param body the new radius
      * @return Optional of Double - new radius
@@ -84,7 +86,8 @@ public class VendorService {
     }
 
     /**
-     * Gets vendor
+     * Gets vendor.
+     *
      * @param id id of vendor to get
      * @return Optional of Vendor
      */
