@@ -173,10 +173,10 @@ class OrderServiceTest {
 
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order5));
 
-        Optional<String> res = os.updatePrepTime(1L,"03:30:00");
+        Optional<String> res = os.updatePrepTime(1L, "03:30:00");
         assertTrue(res.isPresent());
         assertEquals(res.get(), "03:30:00");
-        assertEquals(order5.getTimeValues().getPrepTime(),"03:30:00");
+        assertEquals(order5.getTimeValues().getPrepTime(), "03:30:00");
     }
 
     @Test
