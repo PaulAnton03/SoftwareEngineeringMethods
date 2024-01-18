@@ -10,11 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
 import nl.tudelft.sem.template.example.domain.exception.DeliveryExceptionRepository;
 import nl.tudelft.sem.template.example.domain.order.OrderRepository;
 import nl.tudelft.sem.template.example.domain.user.VendorRepository;
@@ -313,6 +310,16 @@ public class AdminServiceTest {
 
         var res = adminService.getAllDeliveryTimes();
         assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getAllDeliveryTimesEmptyTimeValue() {
+        Order o7 = new Order().id(5L).timeValues(null);
+        Mockito.when(orderRepo.findAll()).thenReturn(Collections.singletonList(o7));
+
+        var res = adminService.getAllDeliveryTimes();
+        assertTrue(res.isPresent());
+        assertEquals(Optional.of(new ArrayList<>()), res);
     }
 
     @Test
