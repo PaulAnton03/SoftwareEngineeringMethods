@@ -236,6 +236,9 @@ public class AdminService {
         }
 
         List<String> collect = orders.stream()
+                .filter(order -> order.getTimeValues() != null)
+                .filter(order -> order.getTimeValues().getOrderTime() != null
+                        && order.getTimeValues().getActualDeliveryTime() != null)
                 .map(order -> Duration.between(order.getTimeValues().getOrderTime(),
                         order.getTimeValues().getActualDeliveryTime()))
                 .map(order -> String.format("%d Hours, %d Minutes, %d Seconds",

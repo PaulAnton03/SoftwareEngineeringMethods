@@ -216,6 +216,9 @@ public class OrderService {
         }
 
         Order o = order.get();
+        if (o.getTimeValues() == null) {
+            o.setTimeValues(new Time());
+        }
         Time timeOfOrder = o.getTimeValues();
         timeOfOrder.setPrepTime(body);
 

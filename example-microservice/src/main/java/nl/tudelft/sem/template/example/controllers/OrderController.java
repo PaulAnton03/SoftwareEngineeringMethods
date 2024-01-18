@@ -446,8 +446,8 @@ public class OrderController implements OrderApi {
     @Override
     @PutMapping("/{orderId}/preparation-time")
     public ResponseEntity setPreparationTime(
-            @RequestParam(name = "authorization") Long authorization,
             @PathVariable(name = "orderId") Long orderId,
+            @RequestParam(name = "authorization") Long authorization,
             @RequestBody @Valid String body
     ) {
         var auth =
