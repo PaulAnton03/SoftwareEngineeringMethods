@@ -1,23 +1,28 @@
 package nl.tudelft.sem.template.example.domain.order;
 
-import nl.tudelft.sem.template.example.domain.user.CourierRepository;
-import nl.tudelft.sem.template.example.domain.user.VendorRepository;
-import nl.tudelft.sem.template.example.externalservices.NavigationMock;
-import nl.tudelft.sem.template.model.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
+import nl.tudelft.sem.template.example.domain.user.CourierRepository;
+import nl.tudelft.sem.template.example.domain.user.VendorRepository;
+import nl.tudelft.sem.template.example.externalservices.NavigationMock;
+import nl.tudelft.sem.template.model.Courier;
+import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Order;
+import nl.tudelft.sem.template.model.Time;
+import nl.tudelft.sem.template.model.Vendor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class OrderServiceTest {
     private OrderRepository orderRepo;
@@ -40,15 +45,17 @@ class OrderServiceTest {
         this.courierRepo = mock(CourierRepository.class);
 
         this.order1 = new Order().id(1L).vendorId(2L).deliveryDestination(new Location().latitude(11F).longitude(22F))
-                .ratingNumber(BigDecimal.valueOf(5L)).courierId(2L);
+            .ratingNumber(BigDecimal.valueOf(5L)).courierId(2L);
         this.courierRepo = mock(CourierRepository.class);
-        this.order1 = new Order().id(1L).vendorId(2L).courierId(21L).deliveryDestination(new Location().latitude(11F).longitude(22F))
+        this.order1 =
+            new Order().id(1L).vendorId(2L).courierId(21L).deliveryDestination(new Location().latitude(11F).longitude(22F))
                 .ratingNumber(BigDecimal.valueOf(5L));
-        this.order2 = new Order().id(1L).vendorId(2L).courierId(2L).deliveryDestination(new Location().latitude(22F).longitude(33F))
+        this.order2 =
+            new Order().id(1L).vendorId(2L).courierId(2L).deliveryDestination(new Location().latitude(22F).longitude(33F))
                 .ratingNumber(BigDecimal.valueOf(5L));
         this.vendor1 = new Vendor().id(2L).location(new Location().latitude(22F).longitude(33F));
         this.eta = OffsetDateTime.of(2000, 1, 1,
-                1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
+            1, 30, 0, 0, ZoneOffset.ofTotalSeconds(0));
         this.os = new OrderService(orderRepo, vendorRepo, courierRepo);
         this.courier1 = new Courier().id(21L).currentLocation(new Location().latitude(11F).longitude(16F));
         this.os = new OrderService(orderRepo, vendorRepo, courierRepo);
@@ -328,45 +335,45 @@ class OrderServiceTest {
     }
 
     @Test
-    void getETAValid() {
+    void getEtaValid() {
         Order order2 = new Order().timeValues(new Time().expectedDeliveryTime(eta).prepTime("03:30:00"));
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertFalse(res.isEmpty());
         assertEquals(res.get(), eta);
     }
 
     @Test
-    void getETANoTime() {
+    void getEtaNoTime() {
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertTrue(res.isEmpty());
     }
 
     @Test
-    void getETANoPrep() {
+    void getEtaNoPrep() {
         Order order2 = new Order().timeValues(new Time());
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertTrue(res.isEmpty());
     }
 
     @Test
-    void getETANoETA() {
+    void getEtaNoEta() {
         Order order2 = new Order().timeValues(new Time().prepTime("03:30:00"));
         Mockito.when(orderRepo.saveAndFlush(any())).thenReturn(order2);
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
 
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertFalse(res.isEmpty());
-        assertEquals(res.get(), new NavigationMock().getETA(1L, new Time()));
+        assertEquals(res.get(), new NavigationMock().getEta(1L, new Time()));
     }
 
     @Test
-    void getETAEmpty() {
+    void getEtaEmpty() {
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.empty());
 
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertTrue(res.isEmpty());
     }
 
@@ -432,7 +439,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrderLocationACCEPTED() {
+    void getOrderLocationAccepted() {
         order1.setStatus(Order.StatusEnum.ACCEPTED);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
         Optional<Location> res = os.getOrderLocation(order1);
@@ -441,7 +448,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrderLocationPREPARING() {
+    void getOrderLocationPreparing() {
         order1.setStatus(Order.StatusEnum.PREPARING);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
         Optional<Location> res = os.getOrderLocation(order1);
@@ -450,17 +457,18 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrderLocationDELIVERED() {
-        Location finalLocation = new Location().latitude(11F).longitude(22F);
+    void getOrderLocationDelivered() {
         order1.setStatus(Order.StatusEnum.DELIVERED);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
         Optional<Location> res = os.getOrderLocation(order1);
         assertTrue(res.isPresent());
+
+        Location finalLocation = new Location().latitude(11F).longitude(22F);
         assertEquals(res.get(), finalLocation);
     }
 
     @Test
-    void getOrderLocationGIVENTOCOURIER() {
+    void getOrderLocationGivenToCourier() {
         order1.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
         Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
@@ -470,7 +478,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrderLocationINTRANSIT() {
+    void getOrderLocationInTransit() {
         order1.setStatus(Order.StatusEnum.IN_TRANSIT);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
         Mockito.when(courierRepo.findById(anyLong())).thenReturn(Optional.of(courier1));
@@ -489,7 +497,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrderLocationREJECTED() {
+    void getOrderLocationRejected() {
         order1.setStatus(Order.StatusEnum.REJECTED);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
         Optional<Location> res = os.getOrderLocation(order1);
@@ -497,7 +505,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrderLocationPENDING() {
+    void getOrderLocationPending() {
         order1.setStatus(Order.StatusEnum.PENDING);
         Mockito.when(vendorRepo.findById(anyLong())).thenReturn(Optional.of(vendor1));
 
@@ -515,7 +523,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateLocationGIVENTOCOURIER() {
+    void updateLocationGivenToCourier() {
         order1.setStatus(Order.StatusEnum.GIVEN_TO_COURIER);
         Location newLocation = new Location().latitude(32F).longitude(23F);
         Courier c2 = new Courier().currentLocation(newLocation);
@@ -529,7 +537,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateLocationINTRANSIT() {
+    void updateLocationInTransit() {
         order1.setStatus(Order.StatusEnum.IN_TRANSIT);
         Location newLocation = new Location().latitude(32F).longitude(23F);
         Courier c2 = new Courier().currentLocation(newLocation);
@@ -543,7 +551,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateLocationOTHERSTATUS() {
+    void updateLocationOtherStatus() {
         order1.setStatus(Order.StatusEnum.PENDING);
         Location newLocation = new Location().latitude(32F).longitude(23F);
 

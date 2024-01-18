@@ -19,15 +19,11 @@ import org.mockito.Mockito;
 
 public class DbUtilsTest {
 
-    private DbUtils dbUtils;
-
-    private OrderRepository orderRepo;
-
-    private VendorRepository vendorRepo;
-
-    private CourierRepository courierRepo;
-
     private final OrderExternalService orderExternalService = new OrderExternalService();
+    private DbUtils dbUtils;
+    private OrderRepository orderRepo;
+    private VendorRepository vendorRepo;
+    private CourierRepository courierRepo;
 
     @BeforeEach
     void setUp() {

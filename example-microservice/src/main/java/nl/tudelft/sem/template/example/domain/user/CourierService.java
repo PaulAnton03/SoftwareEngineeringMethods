@@ -1,10 +1,10 @@
 package nl.tudelft.sem.template.example.domain.user;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.model.Courier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class CourierService {
@@ -49,7 +49,7 @@ public class CourierService {
     }
 
     /**
-     * Tries to add the given courier to the database
+     * Tries to add the given courier to the database.
      *
      * @param courier the courier to add
      * @return an optional of the added courier (or empty optional)
@@ -60,7 +60,7 @@ public class CourierService {
     }
 
     /**
-     * Tries to add a new courier with given id to the database
+     * Tries to add a new courier with given id to the database.
      *
      * @param courierId the id to create a courier with
      * @return an optional of the added courier (or empty optional)
@@ -72,7 +72,7 @@ public class CourierService {
     }
 
     /**
-     * Check if id of courier exists
+     * Check if id of courier exists.
      *
      * @param id id of courier to check
      * @return boolean true if courier with this id exists

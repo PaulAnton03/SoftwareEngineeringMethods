@@ -49,8 +49,9 @@ public class StatusServiceTest {
         this.order4 = new Order().id(1L).status(Order.StatusEnum.IN_TRANSIT).timeValues(new Time().prepTime("00:22::00"));
         this.order5 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED);
         this.order6 = new Order().id(1L).status(Order.StatusEnum.ACCEPTED).timeValues(new Time());
-        this.delException1 = new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER)
-            .message("Test exception").isResolved(false).id(1L);
+        this.delException1 =
+            new DeliveryException().exceptionType(DeliveryException.ExceptionTypeEnum.OTHER).message("Test exception")
+                .isResolved(false).id(1L);
         this.ss = new StatusService(orderRepo, exceptionRepo);
     }
 
@@ -192,8 +193,8 @@ public class StatusServiceTest {
     void updateStatusToDelivered200() {
         OffsetDateTime deliveryTime = OffsetDateTime.of(2023, 12, 17, 12, 30, 0, 0, ZoneOffset.UTC);
         UpdateToDeliveredRequest req = new UpdateToDeliveredRequest().actualDeliveryTime(deliveryTime);
-        Order order44 = new Order().id(order4.getId()).status(Order.StatusEnum.DELIVERED).timeValues(
-            new Time().actualDeliveryTime(deliveryTime).prepTime(order4.getTimeValues().getPrepTime()));
+        Order order44 = new Order().id(order4.getId()).status(Order.StatusEnum.DELIVERED)
+            .timeValues(new Time().actualDeliveryTime(deliveryTime).prepTime(order4.getTimeValues().getPrepTime()));
         Mockito.when(orderRepo.findById(anyLong())).thenReturn(Optional.of(order4));
         Mockito.when(orderRepo.saveAndFlush(order4)).thenReturn(order44);
 

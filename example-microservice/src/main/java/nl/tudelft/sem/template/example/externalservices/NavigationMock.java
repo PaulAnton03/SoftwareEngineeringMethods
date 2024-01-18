@@ -1,25 +1,30 @@
 package nl.tudelft.sem.template.example.externalservices;
 
-import nl.tudelft.sem.template.model.Location;
-import nl.tudelft.sem.template.model.Time;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import nl.tudelft.sem.template.model.Location;
+import nl.tudelft.sem.template.model.Time;
 
 public class NavigationMock {
 
     public NavigationMock() {
     }
 
-    public OffsetDateTime getETA(Long orderId, Time timeValues) {
-        // this is a mock, so it does not actually do anything with the time values or the id
+    /**
+     * this is a mock, so it does not actually do anything with the time values or the id.
+      */
+
+    public OffsetDateTime getEta(Long orderId, Time timeValues) {
 
         return OffsetDateTime.of(2024, 1, 9,
-                11, 45, 0, 0, ZoneOffset.ofTotalSeconds(0));
+            11, 45, 0, 0, ZoneOffset.ofTotalSeconds(0));
     }
 
-    public Float getDistance(Location courier, Location order){
-        // this is a mock, so it does not actually calculate anything
+    /**
+     * This is a mock, so it does not actually calculate anything.
+     */
+    public Float getDistance(Location courier, Location order) {
+
 
         return 3.0F;
     }

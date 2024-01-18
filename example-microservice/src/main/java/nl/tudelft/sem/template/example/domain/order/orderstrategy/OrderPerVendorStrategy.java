@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.example.domain.order.OrderStrategy;
+package nl.tudelft.sem.template.example.domain.order.orderstrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +20,12 @@ public class OrderPerVendorStrategy implements NextOrderStrategy {
 
     /**
      * The strategy used for couriers working for a vendor (dependent couriers).
-     *
-     * @return a list containing a single order that was assigned by the vendor to that courier
-     * <p>
      * !! This does not set the courierId of the order as only the available order is returned,
      * there is a separate endpoint for the courier to "claim" an order which sets its courierId.
      * Imagine a UI where it first shows the courier what order they're going to get,
      * then they push an "accept" button to make another request that will set the courierId of the order
+     *
+     * @return a list containing a single order that was assigned by the vendor to that courier
      */
     @Override
     public Optional<List<Order>> availableOrders(Optional<Long> vendorId) {

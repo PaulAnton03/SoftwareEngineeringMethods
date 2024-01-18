@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.example.domain.order.OrderStrategy;
+package nl.tudelft.sem.template.example.domain.order.orderstrategy;
 
 import java.util.List;
 import java.util.Optional;
