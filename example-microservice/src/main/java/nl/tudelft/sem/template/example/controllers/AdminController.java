@@ -43,9 +43,9 @@ public class AdminController implements AdminApi {
      * @param authorization     The userId to check if they have the rights to make this request (required)
      * @param deliveryException (optional)
      * @return Successful response, exception for the specific order updated (status code 200)
-     * or Unsuccessful, specific exception cannot be updated because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to update specific exception (status code 403)
-     * or Unsuccessful, no specific exception was found (status code 404)
+     *         or Unsuccessful, specific exception cannot be updated because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to update specific exception (status code 403)
+     *         or Unsuccessful, no specific exception was found (status code 404)
      */
     @Override
     @PutMapping("/exceptions/{orderId}")
@@ -75,9 +75,9 @@ public class AdminController implements AdminApi {
      *
      * @param authorization the userId to check if they have the rights to make this request (required)
      * @return Successful response, all exceptions received (status code 200)
-     * or Unsuccessful, exceptions cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve exceptions (status code 403)
-     * or Unsuccessful, no exceptions were found (status code 404)
+     *         or Unsuccessful, exceptions cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve exceptions (status code 403)
+     *         or Unsuccessful, no exceptions were found (status code 404)
      */
     @Override
     @GetMapping("/exceptions")
@@ -97,6 +97,14 @@ public class AdminController implements AdminApi {
         return new ResponseEntity<>(all, HttpStatus.OK);
     }
 
+    /**
+     * Makes an exception.
+     *
+     * @param orderId  (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @param deliveryException  (optional)
+     * @return HttpStatus
+     */
     @Override
     @PostMapping("/exceptions/{orderId}")
     public ResponseEntity<Void> makeException(@PathVariable("orderId") Long orderId,
@@ -125,9 +133,9 @@ public class AdminController implements AdminApi {
      * @param orderId       (required)
      * @param authorization the userId to check if they have the rights to make this request (required)
      * @return Successful response, exception for the specific order received (status code 200)
-     * or Unsuccessful, specific exception cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve specific exception (status code 403)
-     * or Unsuccessful, no specific exception was found (status code 404)
+     *         or Unsuccessful, specific exception cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve specific exception (status code 403)
+     *         or Unsuccessful, no specific exception was found (status code 404)
      */
     @Override
     @GetMapping("/exceptions/{orderId}")
@@ -153,9 +161,9 @@ public class AdminController implements AdminApi {
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param body          Radius in meters to be set as a new value (required)
      * @return Successful response, default radius of vendors with independent couriers updated (status code 200)
-     * or Unsuccessful, default radius cannot be updated because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to update radius. Only admins have this right. (status code 403)
-     * or Unsuccessful, no default radius was found (status code 404)
+     *         or Unsuccessful, default radius cannot be updated because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to update radius. Only admins have this right. (status code 403)
+     *         or Unsuccessful, no default radius was found (status code 404)
      */
     @Override
     @PutMapping("/vendor/radius")
@@ -183,9 +191,9 @@ public class AdminController implements AdminApi {
      *
      * @param authorization the userId to check if they have the rights to make this request (required)
      * @return Successful response, default radius of vendors with independent couriers received (status code 200)
-     * or Unsuccessful, default radius cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve specific radius (status code 403)
-     * or Unsuccessful, no specific radius was found (status code 404)
+     *         or Unsuccessful, default radius cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve specific radius (status code 403)
+     *         or Unsuccessful, no specific radius was found (status code 404)
      */
     @Override
     @GetMapping("/vendor/radius")
@@ -205,14 +213,14 @@ public class AdminController implements AdminApi {
 
 
     /**
-     * GET /admin/orders/status/delivered : Retrieve the orders that have been delivered
+     * GET /admin/orders/status/delivered : Retrieve the orders that have been delivered.
      * Return a list of orders with a status of delivered. To be used by admin.
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, delivered orders received by admin (status code 200)
-     * or Unsuccessful, delivered orders cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve delivered orders (status code 403)
-     * or Unsuccessful, no delivered orders were found (status code 404)
+     *         or Unsuccessful, delivered orders cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve delivered orders (status code 403)
+     *         or Unsuccessful, no delivered orders were found (status code 404)
      */
     @Override
     @GetMapping("/orders/status/delivered")
@@ -232,14 +240,14 @@ public class AdminController implements AdminApi {
     }
 
     /**
-     * GET /admin/analytics/courier-efficiency : Retrieve the efficiencies of all couriers
+     * GET /admin/analytics/courier-efficiency : Retrieve the efficiencies of all couriers.
      * Return the couriers efficiencies
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, courier efficiencies received by admin (status code 200)
-     * or Unsuccessful, courier efficiencies cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve courier efficiencies (status code 403)
-     * or Unsuccessful, no courier efficiencies were found (status code 404)
+     *         or Unsuccessful, courier efficiencies cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve courier efficiencies (status code 403)
+     *         or Unsuccessful, no courier efficiencies were found (status code 404)
      */
     @Override
     @GetMapping("/analytics/courier-efficiency")
@@ -259,14 +267,14 @@ public class AdminController implements AdminApi {
     }
 
     /**
-     * GET /admin/analytics/delivery-times : Retrieve a list of all delivery times
+     * GET /admin/analytics/delivery-times : Retrieve a list of all delivery times.
      * Return delivery times of all of the orders. The difference in time between ETA and actual time arrival.
      *
      * @param authorization the userId to check if they have the rights to make this request, only admin is allowed. (required)
      * @return Successful response, delivery times received (status code 200)
-     * or Unsuccessful, delivery times cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve delivery times (status code 403)
-     * or Unsuccessful, delivery times were not found (status code 404)
+     *         or Unsuccessful, delivery times cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve delivery times (status code 403)
+     *         or Unsuccessful, delivery times were not found (status code 404)
      */
     @Override
     @GetMapping("/analytics/delivery-times")
@@ -285,14 +293,14 @@ public class AdminController implements AdminApi {
     }
 
     /**
-     * GET /admin/analytics/all-ratings : Retrieve a list of all ratings
+     * GET /admin/analytics/all-ratings : Retrieve a list of all ratings.
      * Return rating of all the orders.
      *
      * @param authorization the userId to check if they have the rights to make this request, only admin is allowed. (required)
      * @return Successful response, ratings received (status code 200)
-     * or Unsuccessful, ratings cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve ratings (status code 403)
-     * or Unsuccessful, ratings were not found (status code 404)
+     *         or Unsuccessful, ratings cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve ratings (status code 403)
+     *         or Unsuccessful, ratings were not found (status code 404)
      */
     @Override
     @GetMapping("/analytics/all-ratings")
