@@ -67,9 +67,9 @@ public class OrderController implements OrderApi {
      * @param vendorId      id of the vendor to retrieve the order from (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, order received (status code 200)
-     * or Unsuccessful, order cannot be retrieved because of bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve vendor order (status code 403)
-     * or Unsuccessful, no order was found (status code 404)
+     *         or Unsuccessful, order cannot be retrieved because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve vendor order (status code 403)
+     *         or Unsuccessful, no order was found (status code 404)
      */
     @Override
     @GetMapping("/{vendorId}/get-next-order")
@@ -98,12 +98,12 @@ public class OrderController implements OrderApi {
 
     /**
      * Helper method for getNextOrderForVendor,
-     * used to evaluate the appropriate response type for given available list of orders
+     * used to evaluate the appropriate response type for given available list of orders.
      *
      * @param orders the optional list of available order gotten from service class
      * @return OK, if there is an available order for that courier,
-     * NOT_FOUND if there were none,
-     * BAD_REQUEST if mismatches between vendor-courier and attributes
+     *         NOT_FOUND if there were none,
+     *         BAD_REQUEST if mismatches between vendor-courier and attributes
      */
     private ResponseEntity<Order> getOrderResponseEntity(Optional<List<Order>> orders) {
         if (orders.isEmpty()) {
@@ -123,9 +123,9 @@ public class OrderController implements OrderApi {
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, independent and unassigned orders received (status code 200)
-     * or Unsuccessful, independent and unassigned orders cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve independent and unassigned orders (status code 403)
-     * or Unsuccessful, no independent and unassigned orders were found (status code 404)
+     *         or Unsuccessful, independent and unassigned orders cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve independent and unassigned orders (status code 403)
+     *         or Unsuccessful, no independent and unassigned orders were found (status code 404)
      */
     @Override
     @GetMapping("/unassigned")
@@ -147,14 +147,14 @@ public class OrderController implements OrderApi {
     }
 
     /**
-     * GET /order/{orderId}/final-destination : Get the final destination of a specific order
+     * GET /order/{orderId}/final-destination : Get the final destination of a specific order.
      * Retrieve the final destination of an order.
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param orderId       Id of the order to get its final destination (required)
      * @return Successful response, order found and final destination can be retrieved (status code 200)
-     * or Unsuccessful, entity does not have access rights to retrieve final destination (status code 403)
-     * or Unsuccessful, order not found by id (status code 404)
+     *         or Unsuccessful, entity does not have access rights to retrieve final destination (status code 403)
+     *         or Unsuccessful, order not found by id (status code 404)
      */
     @Override
     @GetMapping("/{orderId}/final-destination")
@@ -180,9 +180,9 @@ public class OrderController implements OrderApi {
      * @param orderId       (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, order object received (status code 200)
-     * or Unsuccessful, order cannot be retrieved because of bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve order (status code 403)
-     * or Unsuccessful, no order was found (status code 404)
+     *         or Unsuccessful, order cannot be retrieved because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve order (status code 403)
+     *         or Unsuccessful, no order was found (status code 404)
      */
     @Override
     @GetMapping("/{orderId}")
@@ -206,9 +206,9 @@ public class OrderController implements OrderApi {
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, order objects received (status code 200)
-     * or Unsuccessful, orders cannot be retrieved because of bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve all orders (status code 403)
-     * or Unsuccessful, no orders were found (status code 404)
+     *         or Unsuccessful, orders cannot be retrieved because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve all orders (status code 403)
+     *         or Unsuccessful, no orders were found (status code 404)
      */
     @Override
     @GetMapping("")
@@ -224,15 +224,15 @@ public class OrderController implements OrderApi {
     }
 
     /**
-     * GET /order/{orderId}/pickup-destination : Retrieve vendor location of the order
+     * GET /order/{orderId}/pickup-destination : Retrieve vendor location of the order.
      * Return the vendor location of the specified order.
      *
      * @param orderId       (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, vendor location of the order received (status code 200)
-     * or Unsuccessful, vendor location of the order cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve vendor location (status code 403)
-     * or Unsuccessful, vendor location for the order not found (status code 404)
+     *         or Unsuccessful, vendor location of the order cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve vendor location (status code 403)
+     *         or Unsuccessful, vendor location for the order not found (status code 404)
      */
     @Override
     @GetMapping("/{orderId}/pickup-destination")
@@ -259,10 +259,10 @@ public class OrderController implements OrderApi {
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param order         Order object to create
      * @return Successful response, order created (status code 200)
-     * or Unsuccessful, order cannot be added because of bad request (status code 400)
-     * - order with this id already exists
-     * or Unsuccessful, entity does not have access rights to add order (status code 403)
-     * or Unsuccessful, no order was found (status code 404)
+     *         or Unsuccessful, order cannot be added because of bad request (status code 400)
+     *         - order with this id already exists
+     *         or Unsuccessful, entity does not have access rights to add order (status code 403)
+     *         or Unsuccessful, no order was found (status code 404)
      */
     @Override
     @PostMapping("/{orderId}")
@@ -295,9 +295,9 @@ public class OrderController implements OrderApi {
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param order         The updated object of the order
      * @return Successful response, order updated (status code 200)
-     * or Unsuccessful, order cannot be updated because of bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to update order (status code 403)
-     * or Unsuccessful, no order was found" (status code 404)
+     *         or Unsuccessful, order cannot be updated because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to update order (status code 403)
+     *         or Unsuccessful, no order was found" (status code 404)
      */
     @Override
     @PutMapping("/{orderId}")
@@ -321,15 +321,15 @@ public class OrderController implements OrderApi {
 
 
     /**
-     * GET /order/{orderId}/rating : Retrieve rating of the order
+     * GET /order/{orderId}/rating : Retrieve rating of the order.
      * Return the rating of the specified order.
      *
      * @param authorization Id of the order to update rating (required)
      * @param orderId       The userId to check if they have the rights to make this request (required)
      * @return Successful response, rating of the order received (status code 200)
-     * or Unsuccessful, rating of the order cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve rating (status code 403)
-     * or Unsuccessful, rating for the order not found (status code 404)
+     *         or Unsuccessful, rating of the order cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve rating (status code 403)
+     *         or Unsuccessful, rating for the order not found (status code 404)
      */
     @Override
     @GetMapping("/{orderId}/rating")
@@ -349,17 +349,17 @@ public class OrderController implements OrderApi {
     }
 
     /**
-     * PUT /order/{orderId}/rating : Update rating of the order
+     * PUT /order/{orderId}/rating : Update rating of the order.
      * Update the rating of the specified order and return response.
      *
      * @param authorization Id of the order to update rating (required)
      * @param orderId       The userId to check if they have the rights to make this request (required)
      * @param body          Order object where ratingNumber is updated (required)
      * @return Successful response, rating of the order received (status code 200)
-     * or Unsuccessful, rating of the order cannot be retrieved because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve rating (status code 403)
-     * or Unsuccessful, rating for the order not found (status code 404)
-     * only for customers
+     *         or Unsuccessful, rating of the order cannot be retrieved because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve rating (status code 403)
+     *         or Unsuccessful, rating for the order not found (status code 404)
+     *         only for customers
      */
     @Override
     @PutMapping("/{orderId}/rating")
@@ -391,9 +391,9 @@ public class OrderController implements OrderApi {
      * @param courierId     The courierId to update (required)
      * @param order         Order object where courierId is updated (required)
      * @return Successful response, courier id of order set (status code 200)
-     * or Unsuccessful, courier id cannot be updated because of bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to update courier id (status code 403)
-     * or Unsuccessful, no order or courier id was found (status code 404)
+     *         or Unsuccessful, courier id cannot be updated because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to update courier id (status code 403)
+     *         or Unsuccessful, no order or courier id was found (status code 404)
      */
     @Override
     @PutMapping("/{orderId}/courier/{courierId}")
@@ -423,18 +423,18 @@ public class OrderController implements OrderApi {
     }
 
     /**
-     * PUT /order/{orderId}/preparation-time : Update prepTime of the order
+     * PUT /order/{orderId}/preparation-time : Update prepTime of the order.
      * Update the preparation time of the specified order and return response.
      *
      * @param orderId       id of the order to update (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param body          New preparation time to be replaced (required)
      * @return Successful response, preparation time of the order updated (status code 200)
-     * or Unsuccessful, preparation time of the order cannot be updated
-     * because of a bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to update
-     * preparation time (status code 403)
-     * or Unsuccessful, preparation time for the order not found (status code 404)
+     *         or Unsuccessful, preparation time of the order cannot be updated
+     *         because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to update
+     *         preparation time (status code 403)
+     *         or Unsuccessful, preparation time for the order not found (status code 404)
      */
     @Override
     @PutMapping("/{orderId}/preparation-time")
@@ -459,15 +459,15 @@ public class OrderController implements OrderApi {
     }
 
     /**
-     * GET /order/{orderId}/current : Retrieve the current location of the courier with this order
+     * GET /order/{orderId}/current : Retrieve the current location of the courier with this order.
      * return the location of the courier who has the order corresponding to the id
      *
      * @param orderId       id of the order with the location to retrieve (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @return Successful response, location received (status code 200)
-     * or Unsuccessful, location cannot be retrieved because of bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve order location (status code 403)
-     * or Unsuccessful, no location was found (status code 404)
+     *         or Unsuccessful, location cannot be retrieved because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve order location (status code 403)
+     *         or Unsuccessful, no location was found (status code 404)
      */
     @Override
     @GetMapping("/{orderId}/current")
@@ -491,16 +491,16 @@ public class OrderController implements OrderApi {
     }
 
     /**
-     * PUT /order/{orderId}/current : Update the current location of the courier with this order
+     * PUT /order/{orderId}/current : Update the current location of the courier with this order.
      * update the location of the courier who has the order corresponding to the id
      *
      * @param orderId       id of the order with the location to update (required)
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param location      Location object (required)
      * @return Successful response, location updated (status code 200)
-     * or Unsuccessful, location cannot be updated because of bad request (status code 400)
-     * or Unsuccessful, entity does not have access rights to update order location (status code 403)
-     * or Unsuccessful, no location was found (status code 404)
+     *         or Unsuccessful, location cannot be updated because of bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to update order location (status code 403)
+     *         or Unsuccessful, no location was found (status code 404)
      */
     @Override
     @PutMapping("/{orderId}/current")
@@ -529,15 +529,15 @@ public class OrderController implements OrderApi {
     }
 
     /**
-     * GET /order/{orderId}/ETA : Get the ETA of an order
+     * GET /order/{orderId}/ETA : Get the ETA of an order.
      * return the ETA of an order
      *
      * @param authorization The userId to check if they have the rights to make this request (required)
      * @param orderId       Id of the order to get it&#39;s ETA (required)
      * @return Successful response, order found (status code 200)
-     * or Invalid arguments (status code 400)
-     * or Unsuccessful, entity does not have access rights to retrieve estimated time of arrival (status code 403)
-     * or Unsuccessful, order not found (status code 404)
+     *         or Invalid arguments (status code 400)
+     *         or Unsuccessful, entity does not have access rights to retrieve estimated time of arrival (status code 403)
+     *         or Unsuccessful, order not found (status code 404)
      */
     @Override
     @GetMapping("/{orderId}/ETA")
@@ -557,11 +557,22 @@ public class OrderController implements OrderApi {
 
     }
 
+    /**
+     * GET /order/{orderId}/distance : Retrieve the current distance to the courier with this order.
+     * return the distance (given in meters) between final delivery location and the courier  who has the order corresponding to the id
+     *
+     * @param orderId       id of the order with the distance to retrieve (required)
+     * @param authorization The userId to check if they have the rights to make this request (required)
+     * @return Successful response, distance received (status code 200)
+     *         or Unsuccessful, distance cannot be retrieved because of bad request (status code 400)
+     *         or Unsuccessful, no distance was found (status code 404)
+     *         or Unsuccessful, entity does not have access rights to retrieve order distance (status code 403)
+     */
     @Override
     @GetMapping("/{orderId}/distance")
     public ResponseEntity<Float> getOrderDistance(
         @PathVariable(name = "orderId") Long orderId,
-        @RequestParam(value = "authorization", required = true) Long authorization
+        @RequestParam(value = "authorization") Long authorization
     ) {
         var auth =
             authorizationService.checkIfUserIsAuthorized(authorization, "getOrderDistance", orderId);

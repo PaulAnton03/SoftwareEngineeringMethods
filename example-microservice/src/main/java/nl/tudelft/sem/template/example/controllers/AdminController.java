@@ -98,12 +98,16 @@ public class AdminController implements AdminApi {
     }
 
     /**
-     * Makes an exception.
+     * POST /admin/exceptions/{orderId} : Add exception for a specific order.
+     * Add exception information for a specific order. To be used by admin.
      *
-     * @param orderId  (required)
-     * @param authorization The userId to check if they have the rights to make this request (required)
-     * @param deliveryException  (optional)
-     * @return HttpStatus
+     * @param orderId           (required)
+     * @param authorization     The userId to check if they have the rights to make this request (required)
+     * @param deliveryException (optional)
+     * @return Successful response, exception for the specific order added (status code 200)
+     *         or Unsuccessful, specific exception cannot be added because of a bad request (status code 400)
+     *         or Unsuccessful, entity does not have access rights to add specific exception (status code 403)
+     *         or Unsuccessful, no specific exception was found (status code 404)
      */
     @Override
     @PostMapping("/exceptions/{orderId}")
