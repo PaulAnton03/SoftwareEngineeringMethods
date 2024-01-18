@@ -58,8 +58,8 @@ public class AuthorizationService {
 
     /**
      * Wrapper for authorize.
-     * @param response
-     * @return
+     * @param response response
+     * @return boolean for authorization
      */
     public static boolean doesNotHaveAuthority(Optional<ResponseEntity> response) { return response.isPresent(); }
 

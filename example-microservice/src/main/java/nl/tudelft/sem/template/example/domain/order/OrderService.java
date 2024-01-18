@@ -39,10 +39,7 @@ public class OrderService {
     public Optional<Location> getFinalDestinationOfOrder(Long orderId) {
         Optional<Order> order = orderRepo.findById(orderId);
 
-        if (order.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(order.get().getDeliveryDestination());
+        return order.map(Order::getDeliveryDestination);
     }
 
     /**
@@ -219,11 +216,17 @@ public class OrderService {
         Time timeOfOrder = o.getTimeValues();
         timeOfOrder.setPrepTime(body);
 
-        Order newOrder = orderRepo.saveAndFlush(o);
+        orderRepo.saveAndFlush(o);
 
         return Optional.of(body);
     }
 
+    /**
+     * Gets the ETA
+     *
+     * @param orderId id of the order
+     * @return Updated Order
+     */
     public Optional<OffsetDateTime> getETA(Long orderId) {
         Optional<Order> order = orderRepo.findById(orderId);
 
@@ -251,6 +254,12 @@ public class OrderService {
         return Optional.of(orderObject.getTimeValues().getExpectedDeliveryTime());
     }
 
+    /**
+     * Gets the distance
+     *
+     * @param orderId id of the order
+     * @return the distance
+     */
     public Optional<Float> getDistance(Long orderId) {
         Optional<Order> order = orderRepo.findById(orderId);
 
@@ -293,6 +302,12 @@ public class OrderService {
         return Optional.of(orderRepo.saveAndFlush(o));
     }
 
+    /**
+     * gets order location
+     *
+     * @param order order to retrieve location from
+     * @return Location of order
+     */
     public Optional<Location> getOrderLocation(Order order){
         Order.StatusEnum status = order.getStatus();
 

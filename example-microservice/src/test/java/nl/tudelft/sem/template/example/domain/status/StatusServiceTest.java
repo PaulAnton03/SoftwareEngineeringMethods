@@ -301,5 +301,12 @@ public class StatusServiceTest {
         assertTrue(ret.isEmpty());
     }
 
+    @Test
+    void updateStatusToDeliveredEmpty() {
+        Mockito.when(orderRepo.findById(0L)).thenReturn(Optional.empty());
+
+        var res = ss.updateStatusToDelivered(0L, null);
+        assertTrue(res.isEmpty());
+    }
 
 }
