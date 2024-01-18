@@ -32,7 +32,8 @@ public class StatusController implements StatusApi {
     public OrderService orderService;
 
     /**
-     * Status Controller constructor
+     * Status Controller constructor.
+     *
      * @param statusService service for status
      * @param orderService service for orders
      * @param authorizationService authorization
