@@ -264,6 +264,25 @@ public class AdminServiceTest {
     }
 
     @Test
+    void getCouriersEfficienciesWorksTwoOrders() {
+        Time time1 = new Time().actualDeliveryTime(OffsetDateTime.parse("2024-01-14T12:30:00+05:00"))
+                .expectedDeliveryTime(OffsetDateTime.parse("2024-01-14T12:31:00+05:00"));
+        Order order1 = new Order().id(1L).courierId(22L).timeValues(time1).status(Order.StatusEnum.DELIVERED);
+
+        Time time2 = new Time().actualDeliveryTime(OffsetDateTime.parse("2024-01-14T12:30:00+05:00"))
+                .expectedDeliveryTime(OffsetDateTime.parse("2024-01-14T12:31:00+05:00"));
+        Order order2 = new Order().id(2L).courierId(22L).timeValues(time2).status(Order.StatusEnum.DELIVERED);
+
+        Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED))
+                .thenReturn(List.of(order1, order2));
+        Mockito.when(orderRepo.findByCourierIdAndStatus(22L, Order.StatusEnum.DELIVERED))
+                .thenReturn(List.of(order1, order2));
+
+        var res = adminService.getCouriersEfficiencies();
+        assertEquals(Optional.of(Map.of("22", 60D)), res);
+    }
+
+    @Test
     void getCouriersEfficienciesDoesNotWork() {
         Mockito.when(orderRepo.findByStatus(Order.StatusEnum.DELIVERED))
             .thenReturn(new ArrayList<>());
@@ -294,6 +313,16 @@ public class AdminServiceTest {
 
         var res = adminService.getAllDeliveryTimes();
         assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getAllDeliveryTimesEmptyTimeValue() {
+        Order o7 = new Order().id(5L).timeValues(null);
+        Mockito.when(orderRepo.findAll()).thenReturn(Collections.singletonList(o7));
+
+        var res = adminService.getAllDeliveryTimes();
+        assertTrue(res.isPresent());
+        assertEquals(Optional.of(new ArrayList<>()), res);
     }
 
     @Test
