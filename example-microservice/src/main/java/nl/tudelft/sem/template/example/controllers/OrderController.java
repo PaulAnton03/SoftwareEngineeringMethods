@@ -568,7 +568,7 @@ public class OrderController implements OrderApi {
             return auth.get();
         }
 
-        Optional<OffsetDateTime> eta = orderService.getETA(orderId);
+        Optional<OffsetDateTime> eta = orderService.getEta(orderId);
         return eta.map(offsetDateTime -> new ResponseEntity<>(offsetDateTime, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 

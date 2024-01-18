@@ -27,6 +27,13 @@ public class AdminService {
 
     VendorRepository vendorRepo;
 
+    /**
+     * Admin Service constructor.
+     *
+     * @param vendorRepo repo for vendors
+     * @param orderRepo repo for orders
+     * @param exceptionRepo repo for exceptions
+     */
     @Autowired
     public AdminService(VendorRepository vendorRepo, OrderRepository orderRepo, DeliveryExceptionRepository exceptionRepo) {
         this.exceptionRepo = exceptionRepo;
@@ -35,7 +42,7 @@ public class AdminService {
     }
 
     /**
-     * updates the Default Radius
+     * updates the Default Radius.
      *
      * @param body new Radius
      * @return changed list of Vendors
@@ -56,7 +63,7 @@ public class AdminService {
     }
 
     /**
-     * gets the default radius
+     * gets the default radius.
      *
      * @return the default Radius
      */
@@ -71,7 +78,7 @@ public class AdminService {
     }
 
     /**
-     * Get all delivered orders
+     * Get all delivered orders.
      *
      * @return an optional list of all delivered orders
      */
@@ -86,7 +93,7 @@ public class AdminService {
     }
 
     /**
-     * Get the exception of an order
+     * Get the exception of an order.
      *
      * @param orderId id of the order
      * @return the optional of th exception, empty if order or exception not found
@@ -108,7 +115,7 @@ public class AdminService {
     }
 
     /**
-     * Saves the exception in the database
+     * Saves the exception in the database.
      *
      * @param deliveryException the exception to save
      * @return the optional object saved, empty if there is an exception for that order
@@ -130,7 +137,7 @@ public class AdminService {
     }
 
     /**
-     * Checks if the exception has valid fields to continue performing operations
+     * Checks if the exception has valid fields to continue performing operations.
      *
      * @param deliveryException the exception to be checked
      * @param orderId           the id of the related order gathered form the path of the request
@@ -154,7 +161,7 @@ public class AdminService {
     }
 
     /**
-     * Updates an exception
+     * Updates an exception.
      *
      * @param deliveryException the exception to be checked
      * @param orderId           the id of the related order gathered form the path of the request
@@ -171,7 +178,7 @@ public class AdminService {
 
 
     /**
-     * Returns all the exceptions stored in the database
+     * Returns all the exceptions stored in the database.
      *
      * @return the list of exceptions, empty if there are none
      */
@@ -181,7 +188,7 @@ public class AdminService {
 
 
     /**
-     * Checks if the current exception exists by id
+     * Checks if the current exception exists by id.
      *
      * @param exception the exception to check
      * @return the boolean value
@@ -198,7 +205,7 @@ public class AdminService {
     }
 
     /**
-     * Get all courier efficiencies
+     * Get all courier efficiencies.
      * The way the method is designed, the couriers that had no orders delivered will
      * not have an efficiency rating.
      * As for the efficiency rating it is based on the difference between the expected time
@@ -240,7 +247,7 @@ public class AdminService {
     }
 
     /**
-     * gets all the Delivery Times
+     * gets all the Delivery Times.
      *
      * @return Optional list of delivery Times
      */
@@ -265,7 +272,7 @@ public class AdminService {
     }
 
     /**
-     * gets all the ratings
+     * gets all the ratings.
      *
      * @return Optional List of Ratings
      */

@@ -559,14 +559,14 @@ class OrderControllerTest {
 
     @Test
     void getETA200() {
-        Mockito.when(orderService.getETA(1L)).thenReturn(Optional.of(eta));
+        Mockito.when(orderService.getEta(1L)).thenReturn(Optional.of(eta));
         var res = controller.getETA(2L, 1L);
         assertEquals(new ResponseEntity<>(eta, HttpStatus.OK), res);
     }
 
     @Test
     void getETA403() {
-        Mockito.when(orderService.getETA(1L)).thenReturn(Optional.of(eta));
+        Mockito.when(orderService.getEta(1L)).thenReturn(Optional.of(eta));
         Mockito.when(authorizationService.checkIfUserIsAuthorized(anyLong(), anyString(), any()))
             .thenReturn(Optional.of(new ResponseEntity<>(HttpStatus.FORBIDDEN)));
 
@@ -576,7 +576,7 @@ class OrderControllerTest {
 
     @Test
     void getETA404() {
-        Mockito.when(orderService.getETA(1L)).thenReturn(Optional.empty());
+        Mockito.when(orderService.getEta(1L)).thenReturn(Optional.empty());
         var res = controller.getETA(2L, 1L);
         assertEquals(new ResponseEntity<>(HttpStatus.NOT_FOUND), res);
     }

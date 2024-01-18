@@ -24,6 +24,13 @@ public class OrderService {
     private final CourierRepository courierRepo;
 
 
+    /**
+     * Order Service Constructor.
+     *
+     * @param orderRepo repo for orders
+     * @param vendorRepo repo for vendors
+     * @param courierRepo repo for couriers
+     */
     @Autowired
     public OrderService(OrderRepository orderRepo, VendorRepository vendorRepo, CourierRepository courierRepo) {
         this.vendorRepo = vendorRepo;
@@ -228,12 +235,12 @@ public class OrderService {
     }
 
     /**
-     * Gets the ETA
+     * Gets the ETA.
      *
      * @param orderId id of the order
      * @return Updated Order
      */
-    public Optional<OffsetDateTime> getETA(Long orderId) {
+    public Optional<OffsetDateTime> getEta(Long orderId) {
         Optional<Order> order = orderRepo.findById(orderId);
 
         if (order.isEmpty()) {
@@ -261,7 +268,7 @@ public class OrderService {
     }
 
     /**
-     * Gets the distance
+     * Gets the distance.
      *
      * @param orderId id of the order
      * @return the distance
@@ -309,7 +316,7 @@ public class OrderService {
     }
 
     /**
-     * gets order location
+     * gets order location.
      *
      * @param order order to retrieve location from
      * @return Location of order
@@ -321,22 +328,22 @@ public class OrderService {
         if (v.isEmpty()) {
             return Optional.empty();
         }
-        Location vLocation = v.get().getLocation();
+        Location vendorLocation = v.get().getLocation();
 
         Optional<Courier> c = courierRepo.findById(order.getCourierId());
-        Location cLocation = null;
+        Location courierLocation = null;
         if (c.isPresent()) {
-            cLocation = c.get().getCurrentLocation();
+            courierLocation = c.get().getCurrentLocation();
         }
         switch (status) {
             case ACCEPTED, PREPARING -> {
-                return Optional.of(vLocation);
+                return Optional.of(vendorLocation);
             }
             case GIVEN_TO_COURIER, IN_TRANSIT -> {
-                if (cLocation == null) {
+                if (courierLocation == null) {
                     return Optional.empty();
                 }
-                return Optional.of(cLocation);
+                return Optional.of(courierLocation);
             }
             case DELIVERED -> {
                 return Optional.of(order.getDeliveryDestination());
@@ -347,6 +354,13 @@ public class OrderService {
         }
     }
 
+    /**
+     * Updates the location of an order.
+     *
+     * @param order order to update
+     * @param location location to be updated to
+     * @return the new location as an optional
+     */
     public Optional<Location> updateLocation(Order order, Location location) {
         Order.StatusEnum status = order.getStatus();
 

@@ -338,7 +338,7 @@ class OrderServiceTest {
     void getETAValid() {
         Order order2 = new Order().timeValues(new Time().expectedDeliveryTime(eta).prepTime("03:30:00"));
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertFalse(res.isEmpty());
         assertEquals(res.get(), eta);
     }
@@ -346,7 +346,7 @@ class OrderServiceTest {
     @Test
     void getETANoTime() {
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order1));
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertTrue(res.isEmpty());
     }
 
@@ -354,7 +354,7 @@ class OrderServiceTest {
     void getETANoPrep() {
         Order order2 = new Order().timeValues(new Time());
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertTrue(res.isEmpty());
     }
 
@@ -364,7 +364,7 @@ class OrderServiceTest {
         Mockito.when(orderRepo.saveAndFlush(any())).thenReturn(order2);
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.of(order2));
 
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertFalse(res.isEmpty());
         assertEquals(res.get(), new NavigationMock().getETA(1L, new Time()));
     }
@@ -373,7 +373,7 @@ class OrderServiceTest {
     void getETAEmpty() {
         Mockito.when(orderRepo.findById(1L)).thenReturn(Optional.empty());
 
-        Optional<OffsetDateTime> res = os.getETA(1L);
+        Optional<OffsetDateTime> res = os.getEta(1L);
         assertTrue(res.isEmpty());
     }
 
